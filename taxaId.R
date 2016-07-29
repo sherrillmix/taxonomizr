@@ -88,6 +88,9 @@ condenseTaxa<-function(taxaTable){
   if(mostSpecific<ncol(taxaTable))out[(mostSpecific+1):ncol(taxaTable)]<-NA
   return(out)
 }
+lastNotNa<-function(x,default='Unknown'){
+  tail(na.omit(c(default,x)),1)
+}
 
 ##DOWNLOAD NCBI DUMP##
 ######################
