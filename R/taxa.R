@@ -123,10 +123,10 @@ streamingRead<-function(bigFile,n=1e6,FUN=function(xx)sub(',.*','',xx),...,vocal
 #'   "Z17430\tZ17430.1\t3702\t16572"
 #' )
 #' temp<-tempfile()
-#' read.accession2taxid(list(textConnection(taxa)),temp)
+#' read.accession2taxaid(list(textConnection(taxa)),temp)
 #' db<-RSQLite::dbConnect(RSQLite::SQLite(),dbname=temp)
 #' RSQLite::dbGetQuery(db,'SELECT * FROM accessionTaxa')
-read.accession2taxid<-function(taxaFiles,sqlFile,n=1e6,vocal=TRUE){
+read.accession2taxaid<-function(taxaFiles,sqlFile,n=1e6,vocal=TRUE){
   tmp<-tempfile()
   tmpHandle<-file(tmp,'w')
   writeLines('accession\ttaxa',tmpHandle)
@@ -218,5 +218,5 @@ condenseTaxa<-function(taxaTable){
 #}
 
 #readLines(list.files('../chlorophyll/dump','nucl_.*accession2taxid.gz',full.names=TRUE)[1],n=5)
-#accessionTaxa<-read.accession2taxid(list.files('../chlorophyll/dump','nucl_.*accession2taxid.gz',full.names=TRUE),'test.sql')
+#accessionTaxa<-read.accession2taxaid(list.files('../chlorophyll/dump','nucl_.*accession2taxid.gz',full.names=TRUE),'test.sql')
 

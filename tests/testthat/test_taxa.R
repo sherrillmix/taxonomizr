@@ -55,7 +55,7 @@ test_that("Test streamingRead",{
 })
 
 
-test_that("Test read.accession2taxid",{
+test_that("Test read.accession2taxaid",{
   taxa<-c(
     "accession\taccession.version\ttaxid\tgi",
     "Z17427\tZ17427.1\t3702\t16569",
@@ -64,7 +64,7 @@ test_that("Test read.accession2taxid",{
     "Z17430\tZ17430.1\t3702\t16572"
   )
   temp<-tempfile()
-  read.accession2taxid(list(textConnection(taxa)),temp)
+  read.accession2taxaid(list(textConnection(taxa)),temp)
   db<-RSQLite::dbConnect(RSQLite::SQLite(),dbname=temp)
   out<-data.frame('accession'=c('Z17427.1','Z17428.1','Z17429.1','Z17430.1'),taxa=3702,stringsAsFactors=FALSE)
   expect_true(file.exists(temp))
