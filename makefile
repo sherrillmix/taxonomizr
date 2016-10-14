@@ -21,9 +21,9 @@ man: R/*.R
 	#R -e 'devtools::build_vignettes()'
 	#touch inst/doc
 
-#README.md: README.Rmd R/*.R
-	#make localInstall
-	#R -e 'knitr::opts_chunk$$set(fig.path="README_files/");knitr::knit("README.Rmd")'
+README.md: README.Rmd R/*.R
+	make localInstall
+	R -e 'knitr::opts_chunk$$set(fig.path="README_files/");knitr::knit("README.Rmd")'
 	
 #inst/doc tests/testthat/tests.R
 $(PACKAGEFILE): man R/*.R DESCRIPTION 
