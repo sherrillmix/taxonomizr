@@ -8,7 +8,7 @@ streamingRead(bigFile, n = 1e+06, FUN = function(x) sub(",.*", "", x), ...,
   vocal = FALSE)
 }
 \arguments{
-\item{bigFile}{a path to a file to be read in}
+\item{bigFile}{a string giving the path to a file to be read in or a connection opened with "r" mode}
 
 \item{n}{number of lines to read per chuck}
 
@@ -25,6 +25,7 @@ a list containing the results from applying func to the multiple chunks of the f
 A convenience function to read in a large file piece by piece, process it (hopefully reducing the size either by summarizing or removing extra rows or columns) and return the output
 }
 \examples{
+streamingRead(textConnection(LETTERS),10,head,1)
 temp<-tempfile()
 writeLines(letters,temp)
 streamingRead(temp,2,paste,collapse='',vocal=TRUE)

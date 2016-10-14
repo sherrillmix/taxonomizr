@@ -48,4 +48,8 @@ test_that("Test streamingRead",{
   close(gz)
   expect_equal(streamingRead(temp,2,paste,collapse=''),unname(as.list(tapply(letters,rep(1:13,each=2),function(x)paste(x,collapse='')))))
   expect_output(streamingRead(temp,2,vocal=TRUE),'.............')
+  handle<-file(temp)
+  expect_equal(streamingRead(handle,2,paste,collapse=''),unname(as.list(tapply(letters,rep(1:13,each=2),function(x)paste(x,collapse='')))))
+  handle<-file(temp,'w')
+  expect_error(streamingRead(handle,2,paste,collapse=''),'read.*connection')
 })

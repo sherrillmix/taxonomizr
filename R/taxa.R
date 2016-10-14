@@ -75,7 +75,7 @@ lastNotNa<-function(x,default='Unknown'){
 #' 
 #' A convenience function to read in a large file piece by piece, process it (hopefully reducing the size either by summarizing or removing extra rows or columns) and return the output
 #'
-#' @param bigFile a path to a file to be read in
+#' @param bigFile a string giving the path to a file to be read in or a connection opened with "r" mode
 #' @param n number of lines to read per chuck
 #' @param FUN a function taking the unparsed lines from a chunk of the bigfile as a single argument and returning the desired output
 #' @param vocal if TRUE cat a "." as each chunk is processed
@@ -92,6 +92,7 @@ streamingRead<-function(bigFile,n=1e6,FUN=function(x)sub(',.*','',x),...,vocal=F
   FUN<-match.fun(FUN)
   if(is.character(bigFile))handle<-file(bigFile,'r')
   else handle<-bigFile
+  if(!isOpen(handle))open(handle)
   out<-list()
   while(length(piece<-readLines(handle,n=n))>0){
     if(vocal)cat('.')
