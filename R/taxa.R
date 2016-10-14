@@ -1,13 +1,21 @@
-if(!require(data.table)){
-  install.packages('data.table')
-  library(data.table)
-}
-library(parallel)
-library(sqldf)
-
-##HELPER FUNCTIONS##
-####################
+#' Read NCBI names file
+#' 
+#' Take an NCBI names file, keep only scientific names and convert it to a data.table
+#'
+#' @param nameFile string giving the path to an NCBI name file to read from (both gzipped or uncompressed files are ok)
+#' @return a data.table with columns id and name with a key on id
+#' @export
+#' @examples
+#' names<-c(
+#'   "1\t|\tall\t|\t\t|\tsynonym\t|",
+#'   "1\t|\troot\t|\t\t|\tscientific name\t|",
+#'   "2\t|\tBacteria\t|\tBacteria <prokaryotes>\t|\tscientific name\t|",
+#'   "2\t|\tMonera\t|\tMonera <Bacteria>\t|\tin-part\t|",
+#'   "2\t|\tProcaryotae\t|\tProcaryotae <Bacteria>\t|\tin-part\t|"
+#' )
+#' readNames(textConnection(names))
 readNames<-function(nameFile){
+  #giTaxa<-readGiToTaxa('dump/gi_taxid_nucl.dmp.gz')
   splitLines<-do.call(rbind,strsplit(readLines(nameFile),'\\s*\\|\\s*'))
   splitLines<-splitLines[splitLines[,4]=='scientific name',-(3:4)]
   colnames(splitLines)<-c('id','name')
@@ -15,6 +23,7 @@ readNames<-function(nameFile){
   out<-data.table(splitLines,key='id')
   return(out)
 }
+
 readGiToTaxa<-function(giTaxaFile){
   giTaxa<-read.table(giTaxaFile,header=FALSE)
   colnames(giTaxa)<-c('gi','taxa')
@@ -113,18 +122,8 @@ if(!file.exists('dump/names.dmp.gz')){
 ##READ NCBI DUMP##
 ##################
 if(!exists('taxaNodes')){
-  taxaNodes<-readNodes('dump/nodes.dmp.gz')
-  taxaNames<-readNames('dump/names.dmp.gz')
-  #giTaxa<-readGiToTaxa('dump/gi_taxid_nucl.dmp.gz')
+  taxaNodes<-readNodes('../chlorophyll/dump/nodes.dmp.gz')
+  taxaNames<-readNames('../chlorophyll/dump/names.dmp.gz')
 }
 
 
-##READ OUR DESIRED TAXA##
-#########################
-#x<-read.table('BI54cytb1-4_117_L001_R1_001.blast',stringsAsFactors=FALSE)
-#x$accession<-sapply(strsplit(x$V2,'\\|'),'[[',4)
-
-##DO THE HEAVY PROCESSING##
-###########################
-#x$taxa<-accessionToTaxa(x$accession,'dump/accessionTaxa.sql')
-#taxonomy<-getTaxonomy(x$taxa,taxaNodes,taxaNames)

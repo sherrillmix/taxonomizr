@@ -1,0 +1,19 @@
+Package: taxonomizr
+Maintainer: Scott Sherrill-Mix <R@sherrillmix.com>
+License: GPL-2
+Title: Simple functions to work with NCBI taxonomy
+Type: Package
+LazyLoad: yes
+Author: Scott Sherrill-Mix
+Description: Some simple functions to work with NCBI taxonomy and ids to assign taxa to reads
+Version: 0.1.0
+Date: 2016-08-12
+Suggests:
+  testthat
+Depends:
+  R (>= 3.0.0)
+Imports:
+  parallel
+  sqldf
+  data.table
+
