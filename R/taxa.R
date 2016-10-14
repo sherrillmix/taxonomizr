@@ -7,7 +7,8 @@
 #' @export
 #' @examples
 #' @references \url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid}
-#' @seealso \code{\link{readNodes}}
+#' @seealso \code{\link{read.nodes}}
+#' @examples
 #' names<-c(
 #'   "1\t|\tall\t|\t\t|\tsynonym\t|",
 #'   "1\t|\troot\t|\t\t|\tscientific name\t|",
@@ -15,8 +16,8 @@
 #'   "2\t|\tMonera\t|\tMonera <Bacteria>\t|\tin-part\t|",
 #'   "2\t|\tProcaryotae\t|\tProcaryotae <Bacteria>\t|\tin-part\t|"
 #' )
-#' readNames(textConnection(names))
-readNames<-function(nameFile){
+#' read.names(textConnection(names))
+read.names<-function(nameFile){
   splitLines<-do.call(rbind,strsplit(readLines(nameFile),'\\s*\\|\\s*'))
   splitLines<-splitLines[splitLines[,4]=='scientific name',-(3:4)]
   colnames(splitLines)<-c('id','name')
@@ -32,7 +33,7 @@ readNames<-function(nameFile){
 #' @param nodeFile string giving the path to an NCBI node file to read from (both gzipped or uncompressed files are ok)
 #' @return a data.table with columns id, parent and rank with a key on id
 #' @references \url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid}
-#' @seealso \code{\link{readNames}}
+#' @seealso \code{\link{read.names}}
 #' @export
 #' @examples
 #' nodes<-c(
@@ -42,8 +43,8 @@ readNames<-function(nameFile){
 #'  "7\t|\t6\t|\tspecies\t|\tAC\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|", 
 #'  "9\t|\t32199\t|\tspecies\t|\tBA\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|"
 #' )
-#' readNodes(textConnection(nodes))
-readNodes<-function(nodeFile){
+#' read.nodes(textConnection(nodes))
+read.nodes<-function(nodeFile){
   splitLines<-do.call(rbind,strsplit(readLines(nodeFile),'\\s*\\|\\s*'))
   splitLines<-splitLines[,1:3]
   colnames(splitLines)<-c('id','parent','rank')
@@ -98,7 +99,7 @@ streamingRead<-function(bigFile,n=1e6,FUN=function(x)sub(',.*','',x),...,vocal=F
   return(out)
 }
 
-readAccessionToTaxa<-function(taxaFiles,sqlFile){
+read.accession2taxid<-function(taxaFiles,sqlFile){
   #zcat, cut off first line, cut out extra columns, read into sqlite, index 
   #db <- dbConnect(SQLite(), dbname = 'my_db.sqlite')
   #dbWriteTable(conn=db, name='my_table', value='my_file.csv', sep='\t')
@@ -176,8 +177,8 @@ condenseTaxa<-function(taxaTable){
 ##READ NCBI DUMP##
 ##################
 #if(!exists('taxaNodes')){
- taxaNodes<-readNodes('../chlorophyll/dump/nodes.dmp.gz')
- taxaNames<-readNames('../chlorophyll/dump/names.dmp.gz')
+ #taxaNodes<-read.nodes('../chlorophyll/dump/nodes.dmp.gz')
+ #taxaNames<-read.names('../chlorophyll/dump/names.dmp.gz')
 #}
 
 

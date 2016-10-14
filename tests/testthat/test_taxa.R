@@ -1,5 +1,5 @@
 context("taxa functions")
-test_that("Test readNames",{
+test_that("Test read.names",{
   names<-c(
     "1\t|\tall\t|\t\t|\tsynonym\t|",
     "1\t|\troot\t|\t\t|\tscientific name\t|",
@@ -8,10 +8,10 @@ test_that("Test readNames",{
     "2\t|\tProcaryotae\t|\tProcaryotae <Bacteria>\t|\tin-part\t|"
   )
   out<-data.table('id'=1:2,'name'=c('root','Bacteria'),key='id')
-  expect_equal(readNames(textConnection(names)),out)
+  expect_equal(read.names(textConnection(names)),out)
 })
 
-test_that("Test readNodes",{
+test_that("Test read.nodes",{
   nodes<-c(
     "1\t|\t1\t|\tno rank\t|\t\t|\t8\t|\t0\t|\t1\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|", 
     "2\t|\t131567\t|\tsuperkingdom\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|", 
@@ -20,7 +20,7 @@ test_that("Test readNodes",{
     "9\t|\t32199\t|\tspecies\t|\tBA\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|"
   )
   out<-data.table('id'=c(1:2,6:7,9),'rank'=c('no rank','superkingdom','genus','species','species'),'parent'=c(1,131567,335928,6,32199),key='id')
-  expect_equal(readNodes(textConnection(nodes)),out)
+  expect_equal(read.nodes(textConnection(nodes)),out)
 })
 
 test_that("Test lastNotNa",{
