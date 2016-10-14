@@ -6,6 +6,8 @@
 #' @return a data.table with columns id and name with a key on id
 #' @export
 #' @examples
+#' @references \url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid}
+#' @seealso \code{\link{readNodes}}
 #' names<-c(
 #'   "1\t|\tall\t|\t\t|\tsynonym\t|",
 #'   "1\t|\troot\t|\t\t|\tscientific name\t|",
@@ -15,7 +17,6 @@
 #' )
 #' readNames(textConnection(names))
 readNames<-function(nameFile){
-  #giTaxa<-readGiToTaxa('dump/gi_taxid_nucl.dmp.gz')
   splitLines<-do.call(rbind,strsplit(readLines(nameFile),'\\s*\\|\\s*'))
   splitLines<-splitLines[splitLines[,4]=='scientific name',-(3:4)]
   colnames(splitLines)<-c('id','name')
@@ -24,12 +25,60 @@ readNames<-function(nameFile){
   return(out)
 }
 
-readGiToTaxa<-function(giTaxaFile){
-  giTaxa<-read.table(giTaxaFile,header=FALSE)
-  colnames(giTaxa)<-c('gi','taxa')
-  out<-data.table(giTaxa,key='gi')
+#' Read NCBI nodes file
+#' 
+#' Take an NCBI nodes file and convert it to a data.table
+#'
+#' @param nodeFile string giving the path to an NCBI node file to read from (both gzipped or uncompressed files are ok)
+#' @return a data.table with columns id, parent and rank with a key on id
+#' @references \url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid}
+#' @seealso \code{\link{readNames}}
+#' @export
+#' @examples
+#' nodes<-c(
+#'  "1\t|\t1\t|\tno rank\t|\t\t|\t8\t|\t0\t|\t1\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|", 
+#'  "2\t|\t131567\t|\tsuperkingdom\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|", 
+#'  "6\t|\t335928\t|\tgenus\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\t\t|", 
+#'  "7\t|\t6\t|\tspecies\t|\tAC\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|", 
+#'  "9\t|\t32199\t|\tspecies\t|\tBA\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|"
+#' )
+#' readNodes(textConnection(nodes))
+readNodes<-function(nodeFile){
+  splitLines<-do.call(rbind,strsplit(readLines(nodeFile),'\\s*\\|\\s*'))
+  splitLines<-splitLines[,1:3]
+  colnames(splitLines)<-c('id','parent','rank')
+  splitLines<-data.frame('id'=as.numeric(splitLines[,'id']),'rank'=splitLines[,'rank'],'parent'=as.numeric(splitLines[,'parent']),stringsAsFactors=FALSE)
+  out<-data.table(splitLines,key='id')
   return(out)
 }
+
+#' Return last not NA value
+#' 
+#' A convenience function to return the last value which is not NA in a vector
+#'
+#' @param x a vector to look for the last value in 
+#' @param default a default value to use when all values are NA in a vector
+#' @return a single element from the last non NA value in x (or the default) 
+#' @export
+#' @examples
+#' lastNotNa(c(1:4,NA,NA))
+#' lastNotNa(c(letters[1:4],NA,'z',NA))
+#' lastNotNa(c(NA,NA))
+lastNotNa<-function(x,default='Unknown'){
+  tail(na.omit(c(default,x)),1)
+}
+
+streamingRead<-function(bigFile,n=1e6,func=function(x)sub(',.*','',x),vocal=FALSE){
+  handle<-file(bigFile,'r')
+  out<-list()
+  while(length(piece<-readLines(handle,n=n))>0){
+    if(vocal)cat('.')
+    out<-c(out,list(func(piece)))
+  }
+  close(handle)
+  return(out)
+}
+
 readAccessionToTaxa<-function(taxaFiles,sqlFile){
   #zcat, cut off first line, cut out extra columns, read into sqlite, index 
   #db <- dbConnect(SQLite(), dbname = 'my_db.sqlite')
@@ -51,15 +100,6 @@ readAccessionToTaxa<-function(taxaFiles,sqlFile){
   #setkey(out,key='accession.version')
   return(sqlFile)
 }
-readNodes<-function(nodeFile){
-  splitLines<-do.call(rbind,strsplit(readLines(nodeFile),'\\s*\\|\\s*'))
-  splitLines<-splitLines[,1:3]
-  colnames(splitLines)<-c('id','parent','rank')
-  splitLines<-data.frame('id'=as.numeric(splitLines[,'id']),'rank'=splitLines[,'rank'],'parent'=as.numeric(splitLines[,'parent']),stringsAsFactors=FALSE)
-  out<-data.table(splitLines,key='id')
-  return(out)
-}
-
 getTaxonomy<-function (ids,taxaNodes ,taxaNames, desiredTaxa=c('superkingdom','phylum','class','order','family','genus','species'),mc.cores=round(detectCores()/2)-1){
   uniqIds<-unique(ids)
   taxa<-do.call(rbind,mclapply(uniqIds,function(id){
@@ -77,9 +117,7 @@ getTaxonomy<-function (ids,taxaNodes ,taxaNames, desiredTaxa=c('superkingdom','p
   out<-taxa[format(ids,scientific=FALSE),]
   return(out)
 }
-giToTaxa<-function(gi,giTaxa){
-  giTaxa[gi,]$taxa
-}
+
 accessionToTaxa<-function(accession,sqlFile){
   db <- dbConnect(SQLite(), dbname=sqlFile)
   dbWriteTable(db,'query',data.frame(accession,stringsAsFactors=FALSE),overwrite=TRUE)
@@ -97,33 +135,30 @@ condenseTaxa<-function(taxaTable){
   if(mostSpecific<ncol(taxaTable))out[(mostSpecific+1):ncol(taxaTable)]<-NA
   return(out)
 }
-lastNotNa<-function(x,default='Unknown'){
-  tail(na.omit(c(default,x)),1)
-}
 
 ##DOWNLOAD NCBI DUMP##
 ######################
-if(!file.exists('dump/names.dmp.gz')){
-  dir.create('dump')
-  setwd('dump')
-  system('wget ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz')
-  system('tar xvfz taxdump.tar.gz')
-  system('gzip nodes.dmp names.dmp')
-  system('wget ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/nucl_gb.accession2taxid.gz')
-  system('wget ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/nucl_est.accession2taxid.gz')
-  system('wget ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/nucl_gss.accession2taxid.gz')
-  system('wget ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/nucl_wgs.accession2taxid.gz')
-  #system('wget ftp://ftp.ncbi.nih.gov/pub/taxonomy/gi_taxid_nucl.dmp.gz')
-  setwd('..')
-  accessionTaxa<-readAccessionToTaxa(list.files('dump','nucl_.*accession2taxid.gz',full.names=TRUE),'dump/accessionTaxa.sql')
-}
+#if(!file.exists('dump/names.dmp.gz')){
+  #dir.create('dump')
+  #setwd('dump')
+  #system('wget ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz')
+  #system('tar xvfz taxdump.tar.gz')
+  #system('gzip nodes.dmp names.dmp')
+  #system('wget ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/nucl_gb.accession2taxid.gz')
+  #system('wget ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/nucl_est.accession2taxid.gz')
+  #system('wget ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/nucl_gss.accession2taxid.gz')
+  #system('wget ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/nucl_wgs.accession2taxid.gz')
+  ##system('wget ftp://ftp.ncbi.nih.gov/pub/taxonomy/gi_taxid_nucl.dmp.gz')
+  #setwd('..')
+  #accessionTaxa<-readAccessionToTaxa(list.files('dump','nucl_.*accession2taxid.gz',full.names=TRUE),'dump/accessionTaxa.sql')
+#}
 
 
 ##READ NCBI DUMP##
 ##################
-if(!exists('taxaNodes')){
-  taxaNodes<-readNodes('../chlorophyll/dump/nodes.dmp.gz')
-  taxaNames<-readNames('../chlorophyll/dump/names.dmp.gz')
-}
+#if(!exists('taxaNodes')){
+ taxaNodes<-readNodes('../chlorophyll/dump/nodes.dmp.gz')
+ taxaNames<-readNames('../chlorophyll/dump/names.dmp.gz')
+#}
 
 
