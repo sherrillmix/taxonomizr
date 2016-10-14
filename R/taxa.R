@@ -21,7 +21,7 @@ readNames<-function(nameFile){
   splitLines<-splitLines[splitLines[,4]=='scientific name',-(3:4)]
   colnames(splitLines)<-c('id','name')
   splitLines<-data.frame('id'=as.numeric(splitLines[,'id']),'name'=splitLines[,'name'],stringsAsFactors=FALSE)
-  out<-data.table(splitLines,key='id')
+  out<-data.table::data.table(splitLines,key='id')
   return(out)
 }
 
@@ -48,7 +48,7 @@ readNodes<-function(nodeFile){
   splitLines<-splitLines[,1:3]
   colnames(splitLines)<-c('id','parent','rank')
   splitLines<-data.frame('id'=as.numeric(splitLines[,'id']),'rank'=splitLines[,'rank'],'parent'=as.numeric(splitLines[,'parent']),stringsAsFactors=FALSE)
-  out<-data.table(splitLines,key='id')
+  out<-data.table::data.table(splitLines,key='id')
   return(out)
 }
 
@@ -65,15 +65,34 @@ readNodes<-function(nodeFile){
 #' lastNotNa(c(letters[1:4],NA,'z',NA))
 #' lastNotNa(c(NA,NA))
 lastNotNa<-function(x,default='Unknown'){
-  tail(na.omit(c(default,x)),1)
+  out<-tail(na.omit(x),1)
+  if(length(out)==0)return(default)
+  return(out)
 }
 
-streamingRead<-function(bigFile,n=1e6,func=function(x)sub(',.*','',x),vocal=FALSE){
+#' Process a large file piecewise
+#' 
+#' A convenience function to read in a large file piece by piece, process it (hopefully reducing the size either by summarizing or removing extra rows or columns) and return the output
+#'
+#' @param bigFile a path to a file to be read in
+#' @param n number of lines to read per chuck
+#' @param FUN a function taking the unparsed lines from a chunk of the bigfile as a single argument and returning the desired output
+#' @param vocal if TRUE cat a "." as each chunk is processed
+#' @param ... any additional arguments to FUN
+#' @return a list containing the results from applying func to the multiple chunks of the file
+#' @export
+#' @examples
+#' temp<-tempfile()
+#' writeLines(letters,temp)
+#' streamingRead(temp,2,paste,collapse='',vocal=TRUE)
+#' unlist(streamingRead(temp,2,sample,1))
+streamingRead<-function(bigFile,n=1e6,FUN=function(x)sub(',.*','',x),...,vocal=FALSE){
+  FUN<-match.fun(FUN)
   handle<-file(bigFile,'r')
   out<-list()
   while(length(piece<-readLines(handle,n=n))>0){
     if(vocal)cat('.')
-    out<-c(out,list(func(piece)))
+    out<-c(out,list(FUN(piece,...)))
   }
   close(handle)
   return(out)
