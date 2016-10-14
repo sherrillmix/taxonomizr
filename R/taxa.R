@@ -106,7 +106,7 @@ streamingRead<-function(bigFile,n=1e6,FUN=function(xx)sub(',.*','',xx),...,vocal
 #'
 #' Take NCBI accession2taxid files, keep only accession and taxa and save it as a sqlite database
 #'
-#' @param taxaFile a string or vector of strings giving the path(s) to files to be read in
+#' @param taxaFiles a string or vector of strings giving the path(s) to files to be read in
 #' @param sqlFile a string giving the path where the output sqlite file should be saved
 #' @param vocal if TRUE output status messages
 #' @param n an integer giving how many lines from an accession files to read at a time
@@ -116,23 +116,26 @@ streamingRead<-function(bigFile,n=1e6,FUN=function(xx)sub(',.*','',xx),...,vocal
 #' @seealso \code{\link{read.nodes}}, \code{\link{read.names}}
 #' @examples
 #' taxa<-c(
-#'  "accession\taccession.version\ttaxid\tgi",
-#'  "Z17427\tZ17427.1\t3702\t16569",
-#'  "Z17428\tZ17428.1\t3702\t16570",
-#'  "Z17429\tZ17429.1\t3702\t16571",
-#'  "Z17430\tZ17430.1\t3702\t16572"
-#')
+#'   "accession\taccession.version\ttaxid\tgi",
+#'   "Z17427\tZ17427.1\t3702\t16569",
+#'   "Z17428\tZ17428.1\t3702\t16570",
+#'   "Z17429\tZ17429.1\t3702\t16571",
+#'   "Z17430\tZ17430.1\t3702\t16572"
+#' )
 #' temp<-tempfile()
-#' read.accession2taxid(textConnection(taxa),temp)
-read.accession2taxid<-function(taxaFiles,sqlFile,n=1e6,vocal=TRUE,...){
+#' read.accession2taxid(list(textConnection(taxa)),temp)
+#' db<-RSQLite::dbConnect(RSQLite::SQLite(),dbname=temp)
+#' RSQLite::dbGetQuery(db,'SELECT * FROM accessionTaxa')
+read.accession2taxid<-function(taxaFiles,sqlFile,n=1e6,vocal=TRUE){
   tmp<-tempfile()
   tmpHandle<-file(tmp,'w')
-  writeLines('accession\ttaxa',tmp)
+  writeLines('accession\ttaxa',tmpHandle)
   for(ii in taxaFiles){
-    if(!file.exists(ii))stop(simpleError(sprintf("Can't open file %s",ii)))
     if(vocal)message('Reading ',ii,'. This may take a while.')
-    handle<-file(ii,'r')
-    #pop first line
+    if(is.character(ii))handle<-file(ii,'r')
+    else handle<-ii
+    if(!isOpen(ii))open(handle)
+    #pop first line to remove header
     readLines(handle,n=1)
     #this would be quicker but assumes system cmds available
     #cmd<-sprintf('zcat %s|sed 1d|cut -f2,3>>%s',ii,tmp)
@@ -141,15 +144,15 @@ read.accession2taxid<-function(taxaFiles,sqlFile,n=1e6,vocal=TRUE,...){
       writeLines(sub('\t[^\t]*$','',sub('^[^\t]*\t','',xx,perl=TRUE),perl=TRUE),tmpHandle)
       return(TRUE)
     },tmpHandle=tmpHandle,vocal=TRUE)
-    if(any(!check))stop(simpleError('Problem in streaming'))
+    if(any(!unlist(check)))stop(simpleError('Problem in streaming'))
   }
   close(tmpHandle)
-  db <- dbConnect(SQLite(), dbname=sqlFile)
+  db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
   if(vocal)message('Reading in values')
-  dbWriteTable(conn = db, name = "accessionTaxa", value =tmp, row.names = FALSE, header = TRUE,sep='\t')
+  RSQLite::dbWriteTable(conn = db, name = "accessionTaxa", value =tmp, row.names = FALSE, header = TRUE,sep='\t')
   if(vocal)message('Adding index')
-  dbGetQuery(db,"CREATE INDEX index_accession ON accessionTaxa (accession)")
-  dbDisconnect(db)
+  RSQLite::dbGetQuery(db,"CREATE INDEX index_accession ON accessionTaxa (accession)")
+  RSQLite::dbDisconnect(db)
   return(TRUE)
 }
 

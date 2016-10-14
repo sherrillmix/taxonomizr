@@ -53,3 +53,20 @@ test_that("Test streamingRead",{
   handle<-file(temp,'w')
   expect_error(streamingRead(handle,2,paste,collapse=''),'read.*connection')
 })
+
+
+test_that("Test read.accession2taxid",{
+  taxa<-c(
+    "accession\taccession.version\ttaxid\tgi",
+    "Z17427\tZ17427.1\t3702\t16569",
+    "Z17428\tZ17428.1\t3702\t16570",
+    "Z17429\tZ17429.1\t3702\t16571",
+    "Z17430\tZ17430.1\t3702\t16572"
+  )
+  temp<-tempfile()
+  read.accession2taxid(list(textConnection(taxa)),temp)
+  db<-RSQLite::dbConnect(RSQLite::SQLite(),dbname=temp)
+  out<-data.frame('accession'=c('Z17427.1','Z17428.1','Z17429.1','Z17430.1'),taxa=3702,stringsAsFactors=FALSE)
+  expect_true(file.exists(temp))
+  expect_equal(dbGetQuery(db,'SELECT * FROM accessionTaxa'),out)
+})
