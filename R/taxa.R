@@ -1,12 +1,12 @@
 #' Read NCBI names file
-#' 
+#'
 #' Take an NCBI names file, keep only scientific names and convert it to a data.table
 #'
 #' @param nameFile string giving the path to an NCBI name file to read from (both gzipped or uncompressed files are ok)
 #' @return a data.table with columns id and name with a key on id
 #' @export
 #' @examples
-#' @references \url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid}
+#' @references \url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/}
 #' @seealso \code{\link{read.nodes}}
 #' @examples
 #' names<-c(
@@ -27,20 +27,20 @@ read.names<-function(nameFile){
 }
 
 #' Read NCBI nodes file
-#' 
+#'
 #' Take an NCBI nodes file and convert it to a data.table
 #'
 #' @param nodeFile string giving the path to an NCBI node file to read from (both gzipped or uncompressed files are ok)
 #' @return a data.table with columns id, parent and rank with a key on id
-#' @references \url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid}
+#' @references \url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/}
 #' @seealso \code{\link{read.names}}
 #' @export
 #' @examples
 #' nodes<-c(
-#'  "1\t|\t1\t|\tno rank\t|\t\t|\t8\t|\t0\t|\t1\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|", 
-#'  "2\t|\t131567\t|\tsuperkingdom\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|", 
-#'  "6\t|\t335928\t|\tgenus\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\t\t|", 
-#'  "7\t|\t6\t|\tspecies\t|\tAC\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|", 
+#'  "1\t|\t1\t|\tno rank\t|\t\t|\t8\t|\t0\t|\t1\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
+#'  "2\t|\t131567\t|\tsuperkingdom\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
+#'  "6\t|\t335928\t|\tgenus\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\t\t|",
+#'  "7\t|\t6\t|\tspecies\t|\tAC\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|",
 #'  "9\t|\t32199\t|\tspecies\t|\tBA\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|"
 #' )
 #' read.nodes(textConnection(nodes))
@@ -54,25 +54,25 @@ read.nodes<-function(nodeFile){
 }
 
 #' Return last not NA value
-#' 
+#'
 #' A convenience function to return the last value which is not NA in a vector
 #'
-#' @param x a vector to look for the last value in 
+#' @param x a vector to look for the last value in
 #' @param default a default value to use when all values are NA in a vector
-#' @return a single element from the last non NA value in x (or the default) 
+#' @return a single element from the last non NA value in x (or the default)
 #' @export
 #' @examples
 #' lastNotNa(c(1:4,NA,NA))
 #' lastNotNa(c(letters[1:4],NA,'z',NA))
 #' lastNotNa(c(NA,NA))
 lastNotNa<-function(x,default='Unknown'){
-  out<-tail(na.omit(x),1)
+  out<-x[!is.na(x)]
   if(length(out)==0)return(default)
-  return(out)
+  return(out[length(out)])
 }
 
 #' Process a large file piecewise
-#' 
+#'
 #' A convenience function to read in a large file piece by piece, process it (hopefully reducing the size either by summarizing or removing extra rows or columns) and return the output
 #'
 #' @param bigFile a string giving the path to a file to be read in or a connection opened with "r" mode
@@ -88,7 +88,7 @@ lastNotNa<-function(x,default='Unknown'){
 #' writeLines(letters,temp)
 #' streamingRead(temp,2,paste,collapse='',vocal=TRUE)
 #' unlist(streamingRead(temp,2,sample,1))
-streamingRead<-function(bigFile,n=1e6,FUN=function(x)sub(',.*','',x),...,vocal=FALSE){
+streamingRead<-function(bigFile,n=1e6,FUN=function(xx)sub(',.*','',xx),...,vocal=FALSE){
   FUN<-match.fun(FUN)
   if(is.character(bigFile))handle<-file(bigFile,'r')
   else handle<-bigFile
@@ -102,30 +102,62 @@ streamingRead<-function(bigFile,n=1e6,FUN=function(x)sub(',.*','',x),...,vocal=F
   return(out)
 }
 
-#taxa
-read.accession2taxid<-function(taxaFiles,sqlFile){
-  message('Reading accessions')
+#' Read NCBI accession2taxid files
+#'
+#' Take NCBI accession2taxid files, keep only accession and taxa and save it as a sqlite database
+#'
+#' @param taxaFile a string or vector of strings giving the path(s) to files to be read in
+#' @param sqlFile a string giving the path where the output sqlite file should be saved
+#' @param vocal if TRUE output status messages
+#' @param n an integer giving how many lines from an accession files to read at a time
+#' @return TRUE if sucessful
+#' @export
+#' @references \url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid}
+#' @seealso \code{\link{read.nodes}}, \code{\link{read.names}}
+#' @examples
+#' taxa<-c(
+#'  "accession\taccession.version\ttaxid\tgi",
+#'  "Z17427\tZ17427.1\t3702\t16569",
+#'  "Z17428\tZ17428.1\t3702\t16570",
+#'  "Z17429\tZ17429.1\t3702\t16571",
+#'  "Z17430\tZ17430.1\t3702\t16572"
+#')
+#' temp<-tempfile()
+#' read.accession2taxid(textConnection(taxa),temp)
+read.accession2taxid<-function(taxaFiles,sqlFile,n=1e6,vocal=TRUE,...){
   tmp<-tempfile()
+  tmpHandle<-file(tmp,'w')
   writeLines('accession\ttaxa',tmp)
   for(ii in taxaFiles){
-    cmd<-sprintf('zcat %s|sed 1d|cut -f2,3>>%s',ii,tmp)
-    message(cmd)
-    system(cmd)
+    if(!file.exists(ii))stop(simpleError(sprintf("Can't open file %s",ii)))
+    if(vocal)message('Reading ',ii,'. This may take a while.')
+    handle<-file(ii,'r')
+    #pop first line
+    readLines(handle,n=1)
+    #this would be quicker but assumes system cmds available
+    #cmd<-sprintf('zcat %s|sed 1d|cut -f2,3>>%s',ii,tmp)
+    check<-streamingRead(handle,n=n,FUN=function(xx,tmpHandle,vocal){
+      #remove first and last column
+      writeLines(sub('\t[^\t]*$','',sub('^[^\t]*\t','',xx,perl=TRUE),perl=TRUE),tmpHandle)
+      return(TRUE)
+    },tmpHandle=tmpHandle,vocal=TRUE)
+    if(any(!check))stop(simpleError('Problem in streaming'))
   }
+  close(tmpHandle)
   db <- dbConnect(SQLite(), dbname=sqlFile)
+  if(vocal)message('Reading in values')
   dbWriteTable(conn = db, name = "accessionTaxa", value =tmp, row.names = FALSE, header = TRUE,sep='\t')
+  if(vocal)message('Adding index')
   dbGetQuery(db,"CREATE INDEX index_accession ON accessionTaxa (accession)")
   dbDisconnect(db)
-  #f<-file(tmp)
-  #out<-sqldf("select * from f", dbname = tempfile(), file.format = list(header = T, row.names = F))
-  #setkey(out,key='accession.version')
-  return(sqlFile)
+  return(TRUE)
 }
+
 getTaxonomy<-function (ids,taxaNodes ,taxaNames, desiredTaxa=c('superkingdom','phylum','class','order','family','genus','species'),mc.cores=round(detectCores()/2)-1){
   uniqIds<-unique(ids)
   taxa<-do.call(rbind,mclapply(uniqIds,function(id){
       out<-structure(rep(NA,length(desiredTaxa)),names=desiredTaxa)
-      thisId<-id    
+      thisId<-id
       while(thisId!=1){
         thisNode<-taxaNodes[J(thisId),]
         if(is.na(thisNode$parent))break() #unknown taxa
@@ -182,4 +214,6 @@ condenseTaxa<-function(taxaTable){
  #taxaNames<-read.names('../chlorophyll/dump/names.dmp.gz')
 #}
 
+#readLines(list.files('../chlorophyll/dump','nucl_.*accession2taxid.gz',full.names=TRUE)[1],n=5)
+#accessionTaxa<-read.accession2taxid(list.files('../chlorophyll/dump','nucl_.*accession2taxid.gz',full.names=TRUE),'test.sql')
 

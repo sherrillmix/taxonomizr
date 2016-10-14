@@ -26,7 +26,7 @@ names<-c(
 read.names(textConnection(names))
 }
 \references{
-\url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid}
+\url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/}
 }
 \seealso{
 \code{\link{read.nodes}}
