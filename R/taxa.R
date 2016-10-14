@@ -83,13 +83,15 @@ lastNotNa<-function(x,default='Unknown'){
 #' @return a list containing the results from applying func to the multiple chunks of the file
 #' @export
 #' @examples
+#' streamingRead(textConnection(LETTERS),10,head,1)
 #' temp<-tempfile()
 #' writeLines(letters,temp)
 #' streamingRead(temp,2,paste,collapse='',vocal=TRUE)
 #' unlist(streamingRead(temp,2,sample,1))
 streamingRead<-function(bigFile,n=1e6,FUN=function(x)sub(',.*','',x),...,vocal=FALSE){
   FUN<-match.fun(FUN)
-  handle<-file(bigFile,'r')
+  if(is.character(bigFile))handle<-file(bigFile,'r')
+  else handle<-bigFile
   out<-list()
   while(length(piece<-readLines(handle,n=n))>0){
     if(vocal)cat('.')
@@ -99,10 +101,8 @@ streamingRead<-function(bigFile,n=1e6,FUN=function(x)sub(',.*','',x),...,vocal=F
   return(out)
 }
 
+#taxa
 read.accession2taxid<-function(taxaFiles,sqlFile){
-  #zcat, cut off first line, cut out extra columns, read into sqlite, index 
-  #db <- dbConnect(SQLite(), dbname = 'my_db.sqlite')
-  #dbWriteTable(conn=db, name='my_table', value='my_file.csv', sep='\t')
   message('Reading accessions')
   tmp<-tempfile()
   writeLines('accession\ttaxa',tmp)

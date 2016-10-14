@@ -35,6 +35,8 @@ test_that("Test lastNotNa",{
 
 
 test_that("Test streamingRead",{
+  expect_equal(streamingRead(textConnection(letters),2,paste,collapse=''),unname(as.list(tapply(letters,rep(1:13,each=2),function(x)paste(x,collapse='')))))
+  expect_output(streamingRead(textConnection(letters),2,vocal=TRUE),'.............')
   temp<-tempfile()
   writeLines(letters,temp)
   expect_equal(streamingRead(temp,2,paste,collapse=''),unname(as.list(tapply(letters,rep(1:13,each=2),function(x)paste(x,collapse='')))))
