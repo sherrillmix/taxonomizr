@@ -4,7 +4,7 @@ PACKAGEFILE:=../$(NAME)_$(VERSION).tar.gz
 
 all: $(PACKAGEFILE) README.md
 
-.PHONY: all install
+.PHONY: all install localInstall
 
 install:
 	R -e 'devtools::install_github("sherrillmix/$(NAME)")'
@@ -25,6 +25,7 @@ README.md: README.Rmd R/*.R
 	make localInstall
 	R -e 'knitr::opts_chunk$$set(fig.path="README_files/");knitr::knit("README.Rmd")'
 	
-#inst/doc tests/testthat/tests.R
-$(PACKAGEFILE): man R/*.R DESCRIPTION 
+#inst/doc 
+$(PACKAGEFILE): man R/*.R DESCRIPTION src/*.c tests/testthat/*.R
+	sed -i "s/^Date:.*$$/Date: `date +%Y-%m-%d`/" DESCRIPTION
 	R -e 'devtools::check();devtools::build()'
