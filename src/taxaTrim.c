@@ -1,6 +1,7 @@
 
-#include <R.h>
-#include <zlib.h>
+#include <R.h> //for errors
+#include <zlib.h> //for compression
+#include <R_ext/Utils.h> //for interrupt
 
 void taxaTrim(char **files){
   int bytes;
@@ -11,12 +12,14 @@ void taxaTrim(char **files){
   FILE *out;
   gzFile in;
   in=gzopen(files[0],"r");
-  if(!in)error("COuld not open in file");
+  if(!in)error("Could not open in file");
   out=fopen(files[1],"a");
-  if(!out)error("COuld not open out file");
+  if(!out)error("Could not open out file");
   //delete first line
-  while(byte = gzgetc(in)&&byte!='\n')continue;
-  while(byte = gzgetc(in)){
+  while((byte = gzgetc(in))!=EOF){
+    if(byte=='\n')break;
+  }
+  while((byte = gzgetc(in))!=EOF){
     if(nTabs==1||(nTabs==2&&byte!='\t'))fputc(byte,out);
     if(byte=='\t')nTabs++;
     if(byte=='\n'){
@@ -26,6 +29,7 @@ void taxaTrim(char **files){
       line++;
       pos=0;
     }
+    if(line%256==0)R_CheckUserInterrupt();
     pos++;
   }
   fclose(out);

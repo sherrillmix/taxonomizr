@@ -55,6 +55,28 @@ test_that("Test streamingRead",{
 })
 
 
+test_that("Test trimTaxa",{
+  expect_error(trimTaxa('NotARealFile','test'),'file')
+  expect_error(.C('taxaTrim',c('NotARealFile','test'),PACKAGE='taxonomizr'),'file')
+  tmp<-tempfile()
+  out<-c(
+    'head\t1\t2\t3',
+    'a\t2\t3\t4',
+    'b\t3\t4\t5',
+    'c\t4\t5\t6'
+  )
+  writeLines(out,tmp)
+  tmp2<-tempfile()
+  dir.create(tmp2)
+  #should error (can't write to directory)
+  expect_error(.C('taxaTrim',c(tmp,tmp2),PACKAGE='taxonomizr'),'file')
+  tmp2<-tempfile()
+  expect_error(trimTaxa(tmp,tmp2),NA)
+  expect_equal(readLines(tmp),c('2\t3','3\t4','4\t5'))
+  writeLines(c(out,'1\t2\t3\t4\t5'),tmp)
+  expect_error(trimTaxa(tmp,tmp2),"line")
+})
+
 test_that("Test read.accession2taxaid",{
   taxa<-c(
     "accession\taccession.version\ttaxid\tgi",
@@ -70,3 +92,4 @@ test_that("Test read.accession2taxaid",{
   expect_true(file.exists(temp))
   expect_equal(dbGetQuery(db,'SELECT * FROM accessionTaxa'),out)
 })
+

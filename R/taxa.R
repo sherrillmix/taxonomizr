@@ -111,7 +111,9 @@ streamingRead<-function(bigFile,n=1e6,FUN=function(xx)sub(',.*','',xx),...,vocal
 #' 
 #' @useDynLib taxonomizr taxaTrim
 trimTaxa<-function(inFile,outFile){
-  if(!file.exists(inFile))stop(simpleError(sprintf('%s file note found',inFile)))
+  inFile<-as.character(inFile)
+  outFile<-as.character(outFile)
+  if(!file.exists(inFile))stop(simpleError(sprintf('%s file not found',inFile)))
   .C('taxaTrim',c(inFile,outFile),PACKAGE='taxonomizr')
 }
 
