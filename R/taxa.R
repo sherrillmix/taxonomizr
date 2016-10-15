@@ -5,7 +5,6 @@
 #' @param nameFile string giving the path to an NCBI name file to read from (both gzipped or uncompressed files are ok)
 #' @return a data.table with columns id and name with a key on id
 #' @export
-#' @examples
 #' @references \url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/}
 #' @seealso \code{\link{read.nodes}}
 #' @examples
@@ -110,7 +109,7 @@ streamingRead<-function(bigFile,n=1e6,FUN=function(xx)sub(',.*','',xx),...,vocal
 #' @param inFile a single string giving the 4 column tab separated file to read from
 #' @param outFile a single string giving the file path to write to
 #' 
-#' @dynlib taxonomizr taxaTrim
+#' @useDynLib taxonomizr taxaTrim
 trimTaxa<-function(inFile,outFile){
   if(!file.exists(inFile))stop(simpleError(sprintf('%s file note found',inFile)))
   .C('taxaTrim',c(inFile,outFile),PACKAGE='taxonomizr')
@@ -176,9 +175,9 @@ getTaxonomy<-function (ids,taxaNodes ,taxaNames, desiredTaxa=c('superkingdom','p
       out<-structure(rep(NA,length(desiredTaxa)),names=desiredTaxa)
       thisId<-id
       while(thisId!=1){
-        thisNode<-taxaNodes[J(thisId),]
+        thisNode<-taxaNodes[list(thisId),] #was J
         if(is.na(thisNode$parent))break() #unknown taxa
-        if(thisNode$rank %in% desiredTaxa)out[thisNode$rank]<-taxaNames[J(thisId),]$name
+        if(thisNode$rank %in% desiredTaxa)out[thisNode$rank]<-taxaNames[list(thisId),]$name #was J
         thisId<-thisNode$parent
       }
       return(out)
