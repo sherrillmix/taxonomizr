@@ -102,6 +102,20 @@ streamingRead<-function(bigFile,n=1e6,FUN=function(xx)sub(',.*','',xx),...,vocal
   return(out)
 }
 
+
+#' Trim columns from taxa file
+#'
+#' A simple script to delete the first row and then delete the first and fourth column of a four column tab delimited file and write to another file.
+#'
+#' @param inFile a single string giving the 4 column tab separated file to read from
+#' @param outFile a single string giving the file path to write to
+#' 
+#' @dynlib taxonomizr taxaTrim
+trimTaxa<-function(inFile,outFile){
+  if(!file.exists(inFile))stop(simpleError(sprintf('%s file note found',inFile)))
+  .C('taxaTrim',c(inFile,outFile),PACKAGE='taxonomizr')
+}
+
 #' Read NCBI accession2taxid files
 #'
 #' Take NCBI accession2taxid files, keep only accession and taxa and save it as a sqlite database
@@ -156,9 +170,9 @@ read.accession2taxaid<-function(taxaFiles,sqlFile,n=1e6,vocal=TRUE){
   return(TRUE)
 }
 
-getTaxonomy<-function (ids,taxaNodes ,taxaNames, desiredTaxa=c('superkingdom','phylum','class','order','family','genus','species'),mc.cores=round(detectCores()/2)-1){
+getTaxonomy<-function (ids,taxaNodes ,taxaNames, desiredTaxa=c('superkingdom','phylum','class','order','family','genus','species'),mc.cores=round(parallel::detectCores()/2)-1){
   uniqIds<-unique(ids)
-  taxa<-do.call(rbind,mclapply(uniqIds,function(id){
+  taxa<-do.call(rbind,parallel::mclapply(uniqIds,function(id){
       out<-structure(rep(NA,length(desiredTaxa)),names=desiredTaxa)
       thisId<-id
       while(thisId!=1){
@@ -175,11 +189,11 @@ getTaxonomy<-function (ids,taxaNodes ,taxaNames, desiredTaxa=c('superkingdom','p
 }
 
 accessionToTaxa<-function(accession,sqlFile){
-  db <- dbConnect(SQLite(), dbname=sqlFile)
-  dbWriteTable(db,'query',data.frame(accession,stringsAsFactors=FALSE),overwrite=TRUE)
-  taxaDf<-dbGetQuery(db,'SELECT query.accession, taxa FROM query LEFT OUTER JOIN accessionTaxa ON query.accession=accessionTaxa.accession')
-  dbGetQuery(db,'DROP TABLE query')
-  dbDisconnect(db)
+  db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
+  RSQLite::dbWriteTable(db,'query',data.frame(accession,stringsAsFactors=FALSE),overwrite=TRUE)
+  taxaDf<-RSQLite::dbGetQuery(db,'SELECT query.accession, taxa FROM query LEFT OUTER JOIN accessionTaxa ON query.accession=accessionTaxa.accession')
+  RSQLite::dbGetQuery(db,'DROP TABLE query')
+  RSQLite::dbDisconnect(db)
   if(any(taxaDf$accession!=accession))stop(simpleError('Query and SQL mismatch'))
   return(taxaDf$taxa)
 }
