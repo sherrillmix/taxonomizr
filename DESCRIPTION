@@ -5,8 +5,7 @@ Title: Simple functions to work with NCBI taxonomy
 Type: Package
 LazyLoad: yes
 Author: Scott Sherrill-Mix
-Description: Some simple functions to work with NCBI taxonomy and ids to assign
-    taxa to reads
+Description: A packages for assigning taxonomy to NCBI accession numbers based on NCBI's \code{accession2taxid} and {taxdump}.
 Version: 0.1.0
 Date: 2016-08-12
 Suggests:
