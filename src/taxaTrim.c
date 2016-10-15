@@ -15,7 +15,7 @@ void taxaTrim(char **files){
   out=fopen(files[1],"a");
   if(!out)error("COuld not open out file");
   //delete first line
-  while(byte = gzgetc(in)&&byte!='\n')next();
+  while(byte = gzgetc(in)&&byte!='\n')continue;
   while(byte = gzgetc(in)){
     if(nTabs==1||(nTabs==2&&byte!='\t'))fputc(byte,out);
     if(byte=='\t')nTabs++;
