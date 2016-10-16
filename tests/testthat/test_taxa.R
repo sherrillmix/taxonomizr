@@ -72,7 +72,7 @@ test_that("Test trimTaxa",{
   expect_error(.C('taxaTrim',c(tmp,tmp2),PACKAGE='taxonomizr'),'file')
   tmp2<-tempfile()
   expect_error(trimTaxa(tmp,tmp2),NA)
-  expect_equal(readLines(tmp),c('2\t3','3\t4','4\t5'))
+  expect_equal(readLines(tmp2),c('2\t3','3\t4','4\t5'))
   writeLines(c(out,'1\t2\t3\t4\t5'),tmp)
   expect_error(trimTaxa(tmp,tmp2),"line")
 })
