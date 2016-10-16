@@ -29,9 +29,11 @@ taxa<-c(
   "Z17429\\tZ17429.1\\t3702\\t16571",
   "Z17430\\tZ17430.1\\t3702\\t16572"
 )
-temp<-tempfile()
-read.accession2taxaid(list(textConnection(taxa)),temp)
-db<-RSQLite::dbConnect(RSQLite::SQLite(),dbname=temp)
+inFile<-tempfile()
+outFile<-tempfile()
+writeLines(taxa,inFile)
+read.accession2taxaid(inFile,outFile)
+db<-RSQLite::dbConnect(RSQLite::SQLite(),dbname=outFile)
 RSQLite::dbGetQuery(db,'SELECT * FROM accessionTaxa')
 }
 \references{

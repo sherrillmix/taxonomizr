@@ -137,31 +137,19 @@ trimTaxa<-function(inFile,outFile){
 #'   "Z17429\tZ17429.1\t3702\t16571",
 #'   "Z17430\tZ17430.1\t3702\t16572"
 #' )
-#' temp<-tempfile()
-#' read.accession2taxaid(list(textConnection(taxa)),temp)
-#' db<-RSQLite::dbConnect(RSQLite::SQLite(),dbname=temp)
+#' inFile<-tempfile()
+#' outFile<-tempfile()
+#' writeLines(taxa,inFile)
+#' read.accession2taxaid(inFile,outFile)
+#' db<-RSQLite::dbConnect(RSQLite::SQLite(),dbname=outFile)
 #' RSQLite::dbGetQuery(db,'SELECT * FROM accessionTaxa')
 read.accession2taxaid<-function(taxaFiles,sqlFile,n=1e6,vocal=TRUE){
   tmp<-tempfile()
-  tmpHandle<-file(tmp,'w')
-  writeLines('accession\ttaxa',tmpHandle)
+  writeLines('accession\ttaxa',tmp)
   for(ii in taxaFiles){
     if(vocal)message('Reading ',ii,'. This may take a while.')
-    if(is.character(ii))handle<-file(ii,'r')
-    else handle<-ii
-    if(!isOpen(ii))open(handle)
-    #pop first line to remove header
-    readLines(handle,n=1)
-    #this would be quicker but assumes system cmds available
-    #cmd<-sprintf('zcat %s|sed 1d|cut -f2,3>>%s',ii,tmp)
-    check<-streamingRead(handle,n=n,FUN=function(xx,tmpHandle,vocal){
-      #remove first and last column
-      writeLines(sub('\t[^\t]*$','',sub('^[^\t]*\t','',xx,perl=TRUE),perl=TRUE),tmpHandle)
-      return(TRUE)
-    },tmpHandle=tmpHandle,vocal=TRUE)
-    if(any(!unlist(check)))stop(simpleError('Problem in streaming'))
+    trimTaxa(ii,tmp)
   }
-  close(tmpHandle)
   db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
   if(vocal)message('Reading in values')
   RSQLite::dbWriteTable(conn = db, name = "accessionTaxa", value =tmp, row.names = FALSE, header = TRUE,sep='\t')
