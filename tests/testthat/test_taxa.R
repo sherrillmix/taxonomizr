@@ -95,3 +95,15 @@ test_that("Test read.accession2taxaid",{
   expect_equal(dbGetQuery(db,'SELECT * FROM accessionTaxa'),result)
 })
 
+
+
+test_that("Test condenseTaxa",{
+  taxas<-matrix(c(
+   'a','b','c','e',
+   'a','b','d','e'
+  ),nrow=2,byrow=TRUE)
+  expect_equal(condenseTaxa(taxas),c('a','b',NA,NA))
+  expect_equal(condenseTaxa(taxas[c(1,1,1),]),c('a','b','c','e'))
+  expect_equal(condenseTaxa(taxas[c(1,1,1,2),]),c('a','b',NA,NA))
+  expect_equal(condenseTaxa(taxas[,3,drop=FALSE]),as.character(NA))
+})

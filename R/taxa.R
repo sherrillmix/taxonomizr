@@ -186,12 +186,26 @@ accessionToTaxa<-function(accession,sqlFile){
   if(any(taxaDf$accession!=accession))stop(simpleError('Query and SQL mismatch'))
   return(taxaDf$taxa)
 }
+
+
+#' Condense a taxa table for a single read
+#'
+#' Take a table of taxonomic assignments from hits to a single read and condense it to a single vector with NAs where there are disagreements between the hits
+#'
+#' @param taxaTable a matrix or data.frame with hits on the rows and various levels of taxonomy in the columns
+#' @return a vector of length \code{ncol(taxaTable)} with NAs where the is not complete agreement
+#' @export
+#' @examples
+#' taxas<-matrix(c(
+#'  'a','b','c','e',
+#'  'a','b','d','e'
+#' ),nrow=2,byrow=TRUE)
+#' condenseTaxa(taxas)
 condenseTaxa<-function(taxaTable){
   nTaxa<-apply(taxaTable,2,function(x)length(unique(x[!is.na(x)])))
-  singles<-which(nTaxa==1)
-  mostSpecific<-max(c(0,singles))
+  firstDisagree<-min(c(Inf,which(nTaxa!=1)))
   out<-taxaTable[1,]
-  if(mostSpecific<ncol(taxaTable))out[(mostSpecific+1):ncol(taxaTable)]<-NA
+  if(firstDisagree<=ncol(taxaTable))out[(firstDisagree):ncol(taxaTable)]<-NA
   return(out)
 }
 
