@@ -95,6 +95,9 @@ test_that("Test read.accession2taxid",{
   expect_equal(dbGetQuery(db,'SELECT * FROM accessionTaxa'),result)
 })
 
+test_that("Test getTaxonomy",{
+})
+
 test_that("Test accessionToTaxa",{
   taxa<-c(
     "accession\taccession.version\ttaxid\tgi",
