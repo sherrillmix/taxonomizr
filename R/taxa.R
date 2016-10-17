@@ -326,6 +326,37 @@ condenseTaxa<-function(taxaTable){
   return(out)
 }
 
+#' Download names and nodes files from NCBI
+#'
+#' Download a taxdump.tar.gz file from NCBI servers and extract the names.dmp and nodes.dmp files from it. These can then be used to create data.tables with \code{\link{read.names}} and \code{\link{read.nodes}}. Note that if the files already exist in the target directory then this function will not redownload them. Delete the files if a fresh download is desired.
+#'
+#' @param outDir the directory to put names.dmp and nodes.dmp in
+#' @param url the url where taxdump.tar.gz is located 
+#' @param fileNames the filenames desired from the tar.gz file
+#' @return a vector of file path strings of the locations of the output files
+#' @export
+#' @examples
+#' \dontrun{
+#'   getNamesAndNodes()
+#' }
+getNamesAndNodes<-function(outDir='.',url='ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz',fileNames=c('names.dmp','nodes.dmp')){
+  outFiles<-file.path(outDir,fileNames)
+  if(all(file.exists(outFiles))){
+    message(paste(outFiles,collapse=', '),' already exist. Delete to redownload')
+    return(outFiles)
+  }
+  base<-basename(url)
+  tmp<-tempdir()
+  tarFile<-file.path(tmp,base)
+  utils::download.file(url,tarFile)
+  utils::untar(tarFile,fileNames,exdir=tmp)
+  tmpFiles<-file.path(tmp,fileNames)
+  if(!all(file.exists(tmpFiles)))stop("Problem finding files ",paste(tmpFiles[!file.exists(tmpFiles)],collapse=', '))
+  mapply(file.copy,tmpFiles,outFiles) 
+  file.remove(c(tarFile,tmpFiles))
+  return(outFiles)
+}
+
 ##DOWNLOAD NCBI DUMP##
 ######################
 #if(!file.exists('dump/names.dmp.gz')){

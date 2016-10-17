@@ -177,7 +177,6 @@ test_that("Test accessionToTaxa",{
   expect_error(accessionToTaxa("Z17430.1","NOTREAL"),"no such")
 })
 
-
 test_that("Test condenseTaxa",{
   taxas<-matrix(c(
    'a','b','c','e',
@@ -187,4 +186,11 @@ test_that("Test condenseTaxa",{
   expect_equal(condenseTaxa(taxas[c(1,1,1),]),c('a','b','c','e'))
   expect_equal(condenseTaxa(taxas[c(1,1,1,2),]),c('a','b',NA,NA))
   expect_equal(condenseTaxa(taxas[,3,drop=FALSE]),as.character(NA))
+})
+
+test_that("Test getNamesAndNodes",{
+  tmp<-tempfile()
+  dir.create(tmp)
+  expect_error(getNamesAndNodes(tmp,'file://fakeNamesNodes.tar.gz'),NA)
+  expect_equal(sort(list.files(tmp,'^(names|nodes).dmp$')),c('names.dmp','nodes.dmp'))
 })
