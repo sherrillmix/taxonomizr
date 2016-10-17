@@ -173,23 +173,23 @@ read.accession2taxid<-function(taxaFiles,sqlFile,n=1e6,vocal=TRUE){
 #' @export
 #' @seealso \code{\link{read.nodes}}, \code{\link{read.names}}
 #' @examples
-#' nameText<-c(
+#' namesText<-c(
 #'   "1\t|\tall\t|\t\t|\tsynonym\t|",
 #'   "1\t|\troot\t|\t\t|\tscientific name\t|",
 #'   "2\t|\tBacteria\t|\tBacteria <prokaryotes>\t|\tscientific name\t|",
 #'   "2\t|\tMonera\t|\tMonera <Bacteria>\t|\tin-part\t|",
 #'   "2\t|\tProcaryotae\t|\tProcaryotae <Bacteria>\t|\tin-part\t|"
 #' )
-#' taxaNames<-read.names(textConnection(names))
-#' nodeText<-c(
+#' taxaNames<-read.names(textConnection(namesText))
+#' nodesText<-c(
 #'  "1\t|\t1\t|\tno rank\t|\t\t|\t8\t|\t0\t|\t1\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
 #'  "2\t|\t131567\t|\tsuperkingdom\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
 #'  "6\t|\t335928\t|\tgenus\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\t\t|",
 #'  "7\t|\t6\t|\tspecies\t|\tAC\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|",
 #'  "9\t|\t32199\t|\tspecies\t|\tBA\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|"
 #' )
-#' taxaNodes<-read.nodes(textConnection(nodes))
-#' getTaxonomy(c(123,123),tanaNodes,taxaNames)
+#' taxaNodes<-read.nodes(textConnection(nodesText))
+#' getTaxonomy(c(123,123),taxaNodes,taxaNames,mc.cores=1)
 getTaxonomy<-function (ids,taxaNodes ,taxaNames, desiredTaxa=c('superkingdom','phylum','class','order','family','genus','species'),mc.cores=parallel::detectCores()){
   uniqIds<-unique(ids)
   taxa<-do.call(rbind,parallel::mclapply(uniqIds,function(id){
