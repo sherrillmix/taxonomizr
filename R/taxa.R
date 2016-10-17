@@ -140,10 +140,10 @@ trimTaxa<-function(inFile,outFile){
 #' inFile<-tempfile()
 #' outFile<-tempfile()
 #' writeLines(taxa,inFile)
-#' read.accession2taxaid(inFile,outFile)
+#' read.accession2taxid(inFile,outFile)
 #' db<-RSQLite::dbConnect(RSQLite::SQLite(),dbname=outFile)
 #' RSQLite::dbGetQuery(db,'SELECT * FROM accessionTaxa')
-read.accession2taxaid<-function(taxaFiles,sqlFile,n=1e6,vocal=TRUE){
+read.accession2taxid<-function(taxaFiles,sqlFile,n=1e6,vocal=TRUE){
   tmp<-tempfile()
   writeLines('accession\ttaxa',tmp)
   for(ii in taxaFiles){
@@ -177,13 +177,42 @@ getTaxonomy<-function (ids,taxaNodes ,taxaNames, desiredTaxa=c('superkingdom','p
   return(out)
 }
 
-accessionToTaxa<-function(accession,sqlFile){
+#' Convert accessions to taxa
+#'
+#' Convert a vector of NCBI accession numbers to their assigned taxonomy
+#'
+#' @param accessions a vector of NCBI accession strings to convert to taxa
+#' @param sqlFile a string giving the path to a sqlite file screated by \code{\link{read.accession2taxid}}
+#' @return a vector of NCBI taxa ids
+#' @export
+#' @references \url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid}
+#' @seealso \code{\link{getTaxonomy}}, \code{\link{read.accession2taxid}}
+#' @examples
+#' taxa<-c(
+#'  "accession\taccession.version\ttaxid\tgi",
+#'  "Z17427\tZ17427.1\t3702\t16569",
+#'  "Z17428\tZ17428.1\t3702\t16570",
+#'  "Z17429\tZ17429.1\t3702\t16571",
+#'  "Z17430\tZ17430.1\t3702\t16572",
+#'  "X62402\tX62402.1\t9606\t30394"
+#' )
+#' inFile<-tempfile()
+#' sqlFile<-tempfile()
+#' writeLines(taxa,inFile)
+#' read.accession2taxid(inFile,sqlFile)
+#' accessionToTaxa(c("Z17430.1","Z17429.1","X62402.1",'NOTREAL'),sqlFile)
+accessionToTaxa<-function(accessions,sqlFile){
+  if(length(accessions)==0)return(c())
   db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
-  RSQLite::dbWriteTable(db,'query',data.frame(accession,stringsAsFactors=FALSE),overwrite=TRUE)
-  taxaDf<-RSQLite::dbGetQuery(db,'SELECT query.accession, taxa FROM query LEFT OUTER JOIN accessionTaxa ON query.accession=accessionTaxa.accession')
-  RSQLite::dbGetQuery(db,'DROP TABLE query')
+  tmp<-tempfile()
+  RSQLite::dbGetQuery(db, sprintf("ATTACH '%s' AS tmp",tmp))
+  RSQLite::dbWriteTable(db,'tmp.query',data.frame('accession'=accessions,stringsAsFactors=FALSE),overwrite=TRUE)
+  taxaDf<-RSQLite::dbGetQuery(db,'SELECT tmp.query.accession, taxa FROM tmp.query LEFT OUTER JOIN accessionTaxa ON tmp.query.accession=accessionTaxa.accession')
+  RSQLite::dbGetQuery(db,'DROP TABLE tmp.query')
+  RSQLite::dbGetQuery(db,'DETACH tmp')
   RSQLite::dbDisconnect(db)
-  if(any(taxaDf$accession!=accession))stop(simpleError('Query and SQL mismatch'))
+  file.remove(tmp)
+  if(any(taxaDf$accession!=accessions))stop(simpleError('Query and SQL mismatch'))
   return(taxaDf$taxa)
 }
 
@@ -235,5 +264,5 @@ condenseTaxa<-function(taxaTable){
 #}
 
 #readLines(list.files('../chlorophyll/dump','nucl_.*accession2taxid.gz',full.names=TRUE)[1],n=5)
-#accessionTaxa<-read.accession2taxaid(list.files('../chlorophyll/dump','nucl_.*accession2taxid.gz',full.names=TRUE),'test.sql')
+#accessionTaxa<-read.accession2taxid(list.files('../chlorophyll/dump','nucl_.*accession2taxid.gz',full.names=TRUE),'test.sql')
 

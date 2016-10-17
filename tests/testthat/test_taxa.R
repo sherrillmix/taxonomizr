@@ -77,7 +77,7 @@ test_that("Test trimTaxa",{
   expect_error(trimTaxa(tmp,tmp2),"line")
 })
 
-test_that("Test read.accession2taxaid",{
+test_that("Test read.accession2taxid",{
   taxa<-c(
     "accession\taccession.version\ttaxid\tgi",
     "Z17427\tZ17427.1\t3702\t16569",
@@ -88,13 +88,33 @@ test_that("Test read.accession2taxaid",{
   outFile<-tempfile()
   inFile<-tempfile()
   writeLines(taxa,inFile)
-  read.accession2taxaid(inFile,outFile)
+  read.accession2taxid(inFile,outFile)
   db<-RSQLite::dbConnect(RSQLite::SQLite(),dbname=outFile)
   result<-data.frame('accession'=c('Z17427.1','Z17428.1','Z17429.1','Z17430.1'),taxa=3702,stringsAsFactors=FALSE)
   expect_true(file.exists(outFile))
   expect_equal(dbGetQuery(db,'SELECT * FROM accessionTaxa'),result)
 })
 
+test_that("Test accessionToTaxa",{
+  taxa<-c(
+    "accession\taccession.version\ttaxid\tgi",
+    "Z17427\tZ17427.1\t3702\t16569",
+    "Z17428\tZ17428.1\t3702\t16570",
+    "Z17429\tZ17429.1\t3702\t16571",
+    "Z17430\tZ17430.1\t3702\t16572",
+    "X62402\tX62402.1\t9606\t30394"
+  )
+  inFile<-tempfile()
+  sqlFile<-tempfile()
+  #not created yet
+  expect_error(accessionToTaxa("Z17430.1",sqlFile),"no such")
+  writeLines(taxa,inFile)
+  read.accession2taxid(inFile,sqlFile)
+  expect_equal(accessionToTaxa(c("Z17430.1","Z17429.1","X62402.1"),sqlFile),c(3702,3702,9606))
+  expect_equal(accessionToTaxa(c(),sqlFile),c())
+  expect_equal(accessionToTaxa(c("Z17430.1","NOTREAL","X62402.1","Z17429.1","X62402.1"),sqlFile),c(3702,NA,9606,3702,9606))
+  expect_error(accessionToTaxa("Z17430.1","NOTREAL"),"no such")
+})
 
 
 test_that("Test condenseTaxa",{
