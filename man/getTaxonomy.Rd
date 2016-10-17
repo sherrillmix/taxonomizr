@@ -26,7 +26,23 @@ a data.frame with a row for each id and a column for each desiredTaxa
 Take NCBI taxa IDs and get the corresponding taxa ranks from name and node data.tables
 }
 \examples{
-1
+nameText<-c(
+  "1\\t|\\tall\\t|\\t\\t|\\tsynonym\\t|",
+  "1\\t|\\troot\\t|\\t\\t|\\tscientific name\\t|",
+  "2\\t|\\tBacteria\\t|\\tBacteria <prokaryotes>\\t|\\tscientific name\\t|",
+  "2\\t|\\tMonera\\t|\\tMonera <Bacteria>\\t|\\tin-part\\t|",
+  "2\\t|\\tProcaryotae\\t|\\tProcaryotae <Bacteria>\\t|\\tin-part\\t|"
+)
+taxaNames<-read.names(textConnection(names))
+nodeText<-c(
+ "1\\t|\\t1\\t|\\tno rank\\t|\\t\\t|\\t8\\t|\\t0\\t|\\t1\\t|\\t0\\t|\\t0\\t|\\t0\\t|\\t0\\t|\\t0\\t|\\t\\t|",
+ "2\\t|\\t131567\\t|\\tsuperkingdom\\t|\\t\\t|\\t0\\t|\\t0\\t|\\t11\\t|\\t0\\t|\\t0\\t|\\t0\\t|\\t0\\t|\\t0\\t|\\t\\t|",
+ "6\\t|\\t335928\\t|\\tgenus\\t|\\t\\t|\\t0\\t|\\t1\\t|\\t11\\t|\\t1\\t|\\t0\\t|\\t1\\t|\\t0\\t|\\t0\\t|\\t\\t|",
+ "7\\t|\\t6\\t|\\tspecies\\t|\\tAC\\t|\\t0\\t|\\t1\\t|\\t11\\t|\\t1\\t|\\t0\\t|\\t1\\t|\\t1\\t|\\t0\\t|\\t\\t|",
+ "9\\t|\\t32199\\t|\\tspecies\\t|\\tBA\\t|\\t0\\t|\\t1\\t|\\t11\\t|\\t1\\t|\\t0\\t|\\t1\\t|\\t1\\t|\\t0\\t|\\t\\t|"
+)
+taxaNodes<-read.nodes(textConnection(nodes))
+getTaxonomy(c(123,123),tanaNodes,taxaNames)
 }
 \seealso{
 \code{\link{read.nodes}}, \code{\link{read.names}}

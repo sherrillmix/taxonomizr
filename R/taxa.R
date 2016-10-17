@@ -147,13 +147,13 @@ read.accession2taxid<-function(taxaFiles,sqlFile,n=1e6,vocal=TRUE){
   tmp<-tempfile()
   writeLines('accession\ttaxa',tmp)
   for(ii in taxaFiles){
-    if(vocal)message('Reading ',ii,'. This may take a while.')
+    if(vocal)message('Reading ',ii,'.')
     trimTaxa(ii,tmp)
   }
   db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
-  if(vocal)message('Reading in values')
+  if(vocal)message('Reading in values. This may take a while.')
   RSQLite::dbWriteTable(conn = db, name = "accessionTaxa", value =tmp, row.names = FALSE, header = TRUE,sep='\t')
-  if(vocal)message('Adding index')
+  if(vocal)message('Adding index. This may also take a while.')
   RSQLite::dbGetQuery(db,"CREATE INDEX index_accession ON accessionTaxa (accession)")
   RSQLite::dbDisconnect(db)
   return(TRUE)
@@ -169,19 +169,36 @@ read.accession2taxid<-function(taxaFiles,sqlFile,n=1e6,vocal=TRUE){
 #' @param desiredTaxa a vector of strings giving the desired taxa levels
 #' @param mc.cores the number of cores to use when processing
 #' @return a data.frame with a row for each id and a column for each desiredTaxa
+#' @import data.table
 #' @export
 #' @seealso \code{\link{read.nodes}}, \code{\link{read.names}}
 #' @examples
-#' 1
+#' nameText<-c(
+#'   "1\t|\tall\t|\t\t|\tsynonym\t|",
+#'   "1\t|\troot\t|\t\t|\tscientific name\t|",
+#'   "2\t|\tBacteria\t|\tBacteria <prokaryotes>\t|\tscientific name\t|",
+#'   "2\t|\tMonera\t|\tMonera <Bacteria>\t|\tin-part\t|",
+#'   "2\t|\tProcaryotae\t|\tProcaryotae <Bacteria>\t|\tin-part\t|"
+#' )
+#' taxaNames<-read.names(textConnection(names))
+#' nodeText<-c(
+#'  "1\t|\t1\t|\tno rank\t|\t\t|\t8\t|\t0\t|\t1\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
+#'  "2\t|\t131567\t|\tsuperkingdom\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
+#'  "6\t|\t335928\t|\tgenus\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\t\t|",
+#'  "7\t|\t6\t|\tspecies\t|\tAC\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|",
+#'  "9\t|\t32199\t|\tspecies\t|\tBA\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|"
+#' )
+#' taxaNodes<-read.nodes(textConnection(nodes))
+#' getTaxonomy(c(123,123),tanaNodes,taxaNames)
 getTaxonomy<-function (ids,taxaNodes ,taxaNames, desiredTaxa=c('superkingdom','phylum','class','order','family','genus','species'),mc.cores=parallel::detectCores()){
   uniqIds<-unique(ids)
   taxa<-do.call(rbind,parallel::mclapply(uniqIds,function(id){
       out<-structure(rep(NA,length(desiredTaxa)),names=desiredTaxa)
       thisId<-id
       while(thisId!=1){
-        thisNode<-taxaNodes[list(thisId),] #was J
+        thisNode<-taxaNodes[list(thisId),]
         if(is.na(thisNode$parent))break() #unknown taxa
-        if(thisNode$rank %in% desiredTaxa)out[thisNode$rank]<-taxaNames[list(thisId),]$name #was J
+        if(thisNode$rank %in% desiredTaxa)out[thisNode$rank]<-taxaNames[list(thisId),]$name
         thisId<-thisNode$parent
       }
       return(out)
@@ -272,6 +289,7 @@ condenseTaxa<-function(taxaTable){
 
 ##READ NCBI DUMP##
 ##################
+#library(taxonomizr)
 #if(!exists('taxaNodes')){
  #taxaNodes<-read.nodes('../chlorophyll/dump/nodes.dmp.gz')
  #taxaNames<-read.names('../chlorophyll/dump/names.dmp.gz')
