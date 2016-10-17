@@ -1,5 +1,8 @@
 # Convert accession numbers to taxonomy
 
+[![Build Status](https://travis-ci.org/sherrillmix/taxonomizr.svg?branch=master)](https://travis-ci.org/sherrillmix/taxonomizr)
+[![codecov.io](https://codecov.io/github/sherrillmix/dnaplotr/taxonomizr.svg?branch=master)](https://codecov.io/github/sherrillmix/taxonomizr?branch=master)
+
 ## Introduction
 
 `taxonomizr` provides a some simple functions to parse NCBI taxonomy and accession dumps and use them to assign taxonomy to accession numbers.
