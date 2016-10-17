@@ -89,7 +89,7 @@ test_that("Test read.accession2taxid",{
   inFile<-tempfile()
   writeLines(taxa,inFile)
   expect_error(read.accession2taxid(inFile,outFile),NA)
-  #expect_output(read.accession2taxid(inFile,outFile),'exists')
+  expect_message(read.accession2taxid(inFile,outFile),'exists')
   db<-RSQLite::dbConnect(RSQLite::SQLite(),dbname=outFile)
   result<-data.frame('accession'=c('Z17427.1','Z17428.1','Z17429.1','Z17430.1'),taxa=3702,stringsAsFactors=FALSE)
   expect_true(file.exists(outFile))
