@@ -32,8 +32,8 @@ getAccession2taxid()
 And process the download files into easily accessed forms:
 
 ```r
-nodes<-read.nodes('nodes.dmp')
-names<-read.names('names.dmp')
+taxaNodes<-read.nodes('nodes.dmp')
+taxaNames<-read.names('names.dmp')
 read.accession2taxid(list.files('.','accession2taxid.gz$'),'accessionTaxa.sql')
 ```
 
