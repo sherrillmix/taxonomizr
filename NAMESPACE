@@ -2,6 +2,7 @@
 
 export(accessionToTaxa)
 export(condenseTaxa)
+export(getTaxonomy)
 export(lastNotNa)
 export(read.accession2taxid)
 export(read.names)

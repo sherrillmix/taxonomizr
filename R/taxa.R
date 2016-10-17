@@ -159,7 +159,21 @@ read.accession2taxid<-function(taxaFiles,sqlFile,n=1e6,vocal=TRUE){
   return(TRUE)
 }
 
-getTaxonomy<-function (ids,taxaNodes ,taxaNames, desiredTaxa=c('superkingdom','phylum','class','order','family','genus','species'),mc.cores=round(parallel::detectCores()/2)-1){
+#' Get taxonomic ranks for a taxa
+#'
+#' Take NCBI taxa IDs and get the corresponding taxa ranks from name and node data.tables
+#'
+#' @param ids a vector of ids to find taxonomy for
+#' @param taxaNodes a nodes data.table from \code{\link{read.nodes}}
+#' @param taxaNames a names data.table from \code{\link{read.names}}
+#' @param desiredTaxa a vector of strings giving the desired taxa levels
+#' @param mc.cores the number of cores to use when processing
+#' @return a data.frame with a row for each id and a column for each desiredTaxa
+#' @export
+#' @seealso \code{\link{read.nodes}}, \code{\link{read.names}}
+#' @examples
+#' 1
+getTaxonomy<-function (ids,taxaNodes ,taxaNames, desiredTaxa=c('superkingdom','phylum','class','order','family','genus','species'),mc.cores=parallel::detectCores()){
   uniqIds<-unique(ids)
   taxa<-do.call(rbind,parallel::mclapply(uniqIds,function(id){
       out<-structure(rep(NA,length(desiredTaxa)),names=desiredTaxa)
