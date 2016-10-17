@@ -331,9 +331,10 @@ condenseTaxa<-function(taxaTable){
 #' Download a taxdump.tar.gz file from NCBI servers and extract the names.dmp and nodes.dmp files from it. These can then be used to create data.tables with \code{\link{read.names}} and \code{\link{read.nodes}}. Note that if the files already exist in the target directory then this function will not redownload them. Delete the files if a fresh download is desired.
 #'
 #' @param outDir the directory to put names.dmp and nodes.dmp in
-#' @param url the url where taxdump.tar.gz is located 
+#' @param url the url where taxdump.tar.gz is located
 #' @param fileNames the filenames desired from the tar.gz file
 #' @return a vector of file path strings of the locations of the output files
+#' @seealso \code{\link{read.nodes}}, \code{\link{read.names}}
 #' @export
 #' @examples
 #' \dontrun{
@@ -352,37 +353,34 @@ getNamesAndNodes<-function(outDir='.',url='ftp://ftp.ncbi.nih.gov/pub/taxonomy/t
   utils::untar(tarFile,fileNames,exdir=tmp)
   tmpFiles<-file.path(tmp,fileNames)
   if(!all(file.exists(tmpFiles)))stop("Problem finding files ",paste(tmpFiles[!file.exists(tmpFiles)],collapse=', '))
-  mapply(file.copy,tmpFiles,outFiles) 
+  mapply(file.copy,tmpFiles,outFiles)
   file.remove(c(tarFile,tmpFiles))
   return(outFiles)
 }
 
-##DOWNLOAD NCBI DUMP##
-######################
-#if(!file.exists('dump/names.dmp.gz')){
-  #dir.create('dump')
-  #setwd('dump')
-  #system('wget ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz')
-  #system('tar xvfz taxdump.tar.gz')
-  #system('gzip nodes.dmp names.dmp')
-  #system('wget ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/nucl_gb.accession2taxid.gz')
-  #system('wget ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/nucl_est.accession2taxid.gz')
-  #system('wget ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/nucl_gss.accession2taxid.gz')
-  #system('wget ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/nucl_wgs.accession2taxid.gz')
-  ##system('wget ftp://ftp.ncbi.nih.gov/pub/taxonomy/gi_taxid_nucl.dmp.gz')
-  #setwd('..')
-  #accessionTaxa<-readAccessionToTaxa(list.files('dump','nucl_.*accession2taxid.gz',full.names=TRUE),'dump/accessionTaxa.sql')
-#}
-
-
-##READ NCBI DUMP##
-##################
-#library(taxonomizr)
-#if(!exists('taxaNodes')){
- #taxaNodes<-read.nodes('../chlorophyll/dump/nodes.dmp.gz')
- #taxaNames<-read.names('../chlorophyll/dump/names.dmp.gz')
-#}
-
-#readLines(list.files('../chlorophyll/dump','nucl_.*accession2taxid.gz',full.names=TRUE)[1],n=5)
-#accessionTaxa<-read.accession2taxid(list.files('../chlorophyll/dump','nucl_.*accession2taxid.gz',full.names=TRUE),'test.sql')
+#' Download accession2taxid files from NCBI
+#'
+#' Download a nucl_xxx.accession2taxid.gz from NCBI servers. These can then be used to create a SQLite datanase with \code{\link{read.accession2taxid}}. Note that if the files already exist in the target directory then this function will not redownload them. Delete the files if a fresh download is desired.
+#'
+#' @param outDir the directory to put the accession2taxid.gz files in
+#' @param baseUrl the url of the directory where accession2taxid.gz files are located
+#' @param types the types if accession2taxid.gz files desired where type is the xxx in nucl_xxx.accession2taxid.gz
+#' @return a vector of file path strings of the locations of the output files
+#' @seealso \code{\link{read.accession2taxid}}
+#' @export
+#' @examples
+#' \dontrun{
+#'   getAccession2taxid()
+#' }
+getAccession2taxid<-function(outDir='.',baseUrl='ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/',types=c('gb','est','gss','wgs')){
+  fileNames<-sprintf('nucl_%s.accession2taxid.gz',types)
+  outFiles<-file.path(outDir,fileNames)
+  if(all(file.exists(outFiles))){
+    message(paste(outFiles,collapse=', '),' already exist. Delete to redownload')
+    return(outFiles)
+  }
+  urls<-paste(baseUrl,fileNames,sep='/')
+  mapply(utils::download.file,urls,outFiles)
+  return(outFiles)
+}
 

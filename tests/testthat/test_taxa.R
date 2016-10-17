@@ -194,3 +194,22 @@ test_that("Test getNamesAndNodes",{
   expect_error(getNamesAndNodes(tmp,'file://fakeNamesNodes.tar.gz'),NA)
   expect_equal(sort(list.files(tmp,'^(names|nodes).dmp$')),c('names.dmp','nodes.dmp'))
 })
+
+test_that("Test getNamesAndNodes",{
+  tmp<-tempfile()
+  dir.create(tmp)
+  expect_error(getNamesAndNodes(tmp,'file://fakeNamesNodes.tar.gz'),NA)
+  expect_equal(sort(list.files(tmp,'^(names|nodes).dmp$')),c('names.dmp','nodes.dmp'))
+})
+
+test_that("Test getAccession2taxid",{
+  tmp<-tempfile()
+  dir.create(tmp)
+  types<-c('XxXx','XyXyX')
+  targets<-sprintf('nucl_%s.accession2taxid.gz',types)
+  sapply(targets,function(xx)writeLines('TEST',file.path(tmp,xx)))
+  tmp2<-tempfile()
+  dir.create(tmp2)
+  expect_error(getAccession2taxid(tmp2,baseUrl=sprintf('file://%s',tmp),types=c('XxXx','XyXyX')),NA)
+  expect_equal(sort(list.files(tmp2,'accession2taxid.gz$')),sort(targets))
+})
