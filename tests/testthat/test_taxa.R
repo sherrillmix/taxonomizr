@@ -88,7 +88,8 @@ test_that("Test read.accession2taxid",{
   outFile<-tempfile()
   inFile<-tempfile()
   writeLines(taxa,inFile)
-  read.accession2taxid(inFile,outFile)
+  expect_error(read.accession2taxid(inFile,outFile),NA)
+  #expect_output(read.accession2taxid(inFile,outFile),'exists')
   db<-RSQLite::dbConnect(RSQLite::SQLite(),dbname=outFile)
   result<-data.frame('accession'=c('Z17427.1','Z17428.1','Z17429.1','Z17430.1'),taxa=3702,stringsAsFactors=FALSE)
   expect_true(file.exists(outFile))
@@ -168,13 +169,13 @@ test_that("Test accessionToTaxa",{
   inFile<-tempfile()
   sqlFile<-tempfile()
   #not created yet
-  expect_error(accessionToTaxa("Z17430.1",sqlFile),"no such")
+  expect_error(accessionToTaxa("Z17430.1",sqlFile),"exist")
   writeLines(taxa,inFile)
   read.accession2taxid(inFile,sqlFile)
   expect_equal(accessionToTaxa(c("Z17430.1","Z17429.1","X62402.1"),sqlFile),c(3702,3702,9606))
   expect_equal(accessionToTaxa(c(),sqlFile),c())
   expect_equal(accessionToTaxa(c("Z17430.1","NOTREAL","X62402.1","Z17429.1","X62402.1"),sqlFile),c(3702,NA,9606,3702,9606))
-  expect_error(accessionToTaxa("Z17430.1","NOTREAL"),"no such")
+  expect_error(accessionToTaxa("Z17430.1","NOTREAL"),"exist")
 })
 
 test_that("Test condenseTaxa",{

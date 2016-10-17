@@ -143,6 +143,10 @@ trimTaxa<-function(inFile,outFile){
 #' db<-RSQLite::dbConnect(RSQLite::SQLite(),dbname=outFile)
 #' RSQLite::dbGetQuery(db,'SELECT * FROM accessionTaxa')
 read.accession2taxid<-function(taxaFiles,sqlFile,n=1e6,vocal=TRUE){
+  if(file.exists(sqlFile)){
+    message(sqlFile,' already exists. Delete to reprocess data')
+    return(TRUE)
+  }
   tmp<-tempfile()
   writeLines('accession\ttaxa',tmp)
   for(ii in taxaFiles){
@@ -291,6 +295,7 @@ getTaxonomy<-function (ids,taxaNodes ,taxaNames, desiredTaxa=c('superkingdom','p
 #' accessionToTaxa(c("Z17430.1","Z17429.1","X62402.1",'NOTREAL'),sqlFile)
 accessionToTaxa<-function(accessions,sqlFile){
   if(length(accessions)==0)return(c())
+  if(!file.exists(sqlFile))stop(sqlFile,' does not exist.')
   db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
   tmp<-tempfile()
   RSQLite::dbGetQuery(db, sprintf("ATTACH '%s' AS tmp",tmp))
