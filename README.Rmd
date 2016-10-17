@@ -13,3 +13,29 @@ To install directly from github, use the [<code>devtools</code>](https://github.
 devtools::install_github("sherrillmix/taxonomizr")
 ```
 
+## Examples
+
+To use the library, include it in R:
+```
+library(taxonomizr)
+```
+
+Then download the necessary files from NCBI:
+```{r,eval=FALSE}
+getNamesAndNodes()
+#this is a big download
+getAccession2taxid()
+```
+
+And process the download files into easily accessed forms:
+```{r,eval=FALSE}
+nodes<-read.nodes('nodes.dmp')
+names<-read.names('names.dmp')
+read.accession2taxid(list.files('.','accession2taxid.gz$'),'accessionTaxa.sql')
+```
+
+Now everything should be ready for processing. For example, to find the taxonomy associated with NCBI accession number "LN847353.1":
+```{r,eval=FALSE}
+taxaId<-accessionToTaxa("LN847353.1","accessionTaxa.sql")
+taxonomy<-getTaxonomy(taxaId,taxaNodes,taxaNames)
+```
