@@ -324,7 +324,7 @@ accessionToTaxa<-function(accessions,sqlFile){
 #' ),nrow=2,byrow=TRUE)
 #' condenseTaxa(taxas)
 condenseTaxa<-function(taxaTable){
-  nTaxa<-apply(taxaTable,2,function(x)length(unique(x[!is.na(x)])))
+  nTaxa<-apply(taxaTable,2,function(x)length(unique(x)))
   firstDisagree<-min(c(Inf,which(nTaxa!=1)))
   out<-taxaTable[1,]
   if(firstDisagree<=ncol(taxaTable))out[(firstDisagree):ncol(taxaTable)]<-NA

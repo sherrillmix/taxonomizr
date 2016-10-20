@@ -187,6 +187,12 @@ test_that("Test condenseTaxa",{
   expect_equal(condenseTaxa(taxas[c(1,1,1),]),c('a','b','c','e'))
   expect_equal(condenseTaxa(taxas[c(1,1,1,2),]),c('a','b',NA,NA))
   expect_equal(condenseTaxa(taxas[,3,drop=FALSE]),as.character(NA))
+  taxas<-matrix(c(
+   'a','b',NA,'e',
+   'a','b','d','e'
+  ),nrow=2,byrow=TRUE)
+  expect_equal(condenseTaxa(taxas),c('a','b',NA,NA))
+  expect_equal(condenseTaxa(taxas[1,,drop=FALSE]),c('a','b',NA,'e'))
 })
 
 test_that("Test getNamesAndNodes",{

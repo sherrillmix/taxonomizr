@@ -96,6 +96,7 @@ print(taxaId)
 ## [1] 1313 9606
 ```
 
+
 ```r
 getTaxonomy(taxaId,taxaNodes,taxaNames)
 ```
