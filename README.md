@@ -11,12 +11,12 @@
 To install directly from github, use the [<code>devtools</code>](https://github.com/hadley/devtools) library and run:
 
 ```r
-devtools::install_github("sherrillmix/taxonomizr") ```
+devtools::install_github("sherrillmix/taxonomizr")
+```
 
 ## Examples
 
 To use the library, include it in R:
-```
 
 ```r
 library(taxonomizr)
