@@ -78,7 +78,7 @@ read.accession2taxid(list.files('.','accession2taxid.gz$'),'accessionTaxa.sql')
 ```
 
 
-Now everything should be ready for processing. For example, to find the taxonomy associated with NCBI accession number "LN847353.1":
+Now everything should be ready for processing. For example, to find the taxonomic IDs associated with NCBI accession numbers "LN847353.1" and "AL079352.3":
 ```{r,eval=FALSE}
 taxaId<-accessionToTaxa(c("LN847353.1","AL079352.3"),"accessionTaxa.sql")
 print(taxaId)
@@ -87,6 +87,8 @@ print(taxaId)
 ```
 ## [1] 1313 9606
 ```
+
+And to get the taxonomy for those IDs:
 
 ```{r,eval=FALSE}
 getTaxonomy(taxaId,taxaNodes,taxaNames)
