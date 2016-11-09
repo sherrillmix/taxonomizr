@@ -33,7 +33,6 @@ test_that("Test lastNotNa",{
   expect_equal(lastNotNa(c(),999),999)
 })
 
-
 test_that("Test streamingRead",{
   expect_equal(streamingRead(textConnection(letters),2,paste,collapse=''),unname(as.list(tapply(letters,rep(1:13,each=2),function(x)paste(x,collapse='')))))
   expect_output(streamingRead(textConnection(letters),2,vocal=TRUE),'.............')
@@ -53,7 +52,6 @@ test_that("Test streamingRead",{
   handle<-file(temp,'w')
   expect_error(streamingRead(handle,2,paste,collapse=''),'read.*connection')
 })
-
 
 test_that("Test trimTaxa",{
   expect_error(trimTaxa('NotARealFile','test'),'file')
@@ -193,6 +191,7 @@ test_that("Test condenseTaxa",{
   ),nrow=2,byrow=TRUE)
   expect_equal(condenseTaxa(taxas),c('a','b',NA,NA))
   expect_equal(condenseTaxa(taxas[1,,drop=FALSE]),c('a','b',NA,'e'))
+  expect_equal(condenseTaxa(taxas[c(1,1,1),,drop=FALSE]),c('a','b',NA,'e'))
 })
 
 test_that("Test getNamesAndNodes",{
