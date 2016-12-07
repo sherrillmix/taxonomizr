@@ -147,19 +147,26 @@ read.accession2taxid<-function(taxaFiles,sqlFile,vocal=TRUE,extraSqlCommand=''){
     message(sqlFile,' already exists. Delete to reprocess data')
     return(TRUE)
   }
-  tmp<-tempfile()
-  writeLines('accession\ttaxa',tmp)
-  for(ii in taxaFiles){
-    if(vocal)message('Reading ',ii,'.')
-    trimTaxa(ii,tmp)
+  tryCatch({
+    tmp<-tempfile()
+    writeLines('accession\ttaxa',tmp)
+    for(ii in taxaFiles){
+      if(vocal)message('Reading ',ii,'.')
+      trimTaxa(ii,tmp)
+    }
+    db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
+    if(extraSqlCommand!='')RSQLite::dbGetQuery(db,extraSqlCommand)
+    if(vocal)message('Reading in values. This may take a while.')
+    RSQLite::dbWriteTable(conn = db, name = "accessionTaxa", value =tmp, row.names = FALSE, header = TRUE,sep='\t')
+    if(vocal)message('Adding index. This may also take a while.')
+    RSQLite::dbGetQuery(db,"CREATE INDEX index_accession ON accessionTaxa (accession)")
+    RSQLite::dbDisconnect(db)
+  },error=function(e){
+    message('Error: Problem creating sql file. Deleting.')
+    file.remove(sqlFile)
+    stop(e)
   }
-  db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
-  if(extraSqlCommand!='')RSQLite::dbGetQuery(db,extraSqlCommand)
-  if(vocal)message('Reading in values. This may take a while.')
-  RSQLite::dbWriteTable(conn = db, name = "accessionTaxa", value =tmp, row.names = FALSE, header = TRUE,sep='\t')
-  if(vocal)message('Adding index. This may also take a while.')
-  RSQLite::dbGetQuery(db,"CREATE INDEX index_accession ON accessionTaxa (accession)")
-  RSQLite::dbDisconnect(db)
+  )
   return(TRUE)
 }
 
