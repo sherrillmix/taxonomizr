@@ -123,7 +123,7 @@ trimTaxa<-function(inFile,outFile){
 #' @param taxaFiles a string or vector of strings giving the path(s) to files to be read in
 #' @param sqlFile a string giving the path where the output sqlite file should be saved
 #' @param vocal if TRUE output status messages
-#' @param n an integer giving how many lines from an accession files to read at a time
+#' @param extraSqlCommand for advanced use. A string giving a command to be called on the sqlite databse before loading data e.g. "pragma temp_store = 2;" to keep all temp files in memory (don't do this unless you have a lot (>100 Gb) of RAM)
 #' @return TRUE if sucessful
 #' @export
 #' @references \url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid}
@@ -142,7 +142,7 @@ trimTaxa<-function(inFile,outFile){
 #' read.accession2taxid(inFile,outFile)
 #' db<-RSQLite::dbConnect(RSQLite::SQLite(),dbname=outFile)
 #' RSQLite::dbGetQuery(db,'SELECT * FROM accessionTaxa')
-read.accession2taxid<-function(taxaFiles,sqlFile,n=1e6,vocal=TRUE){
+read.accession2taxid<-function(taxaFiles,sqlFile,vocal=TRUE,extraSqlCommand=''){
   if(file.exists(sqlFile)){
     message(sqlFile,' already exists. Delete to reprocess data')
     return(TRUE)
@@ -154,6 +154,7 @@ read.accession2taxid<-function(taxaFiles,sqlFile,n=1e6,vocal=TRUE){
     trimTaxa(ii,tmp)
   }
   db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
+  if(extraSqlCommand!='')RSQLite::dbGetQuery(db,extraSqlCommand)
   if(vocal)message('Reading in values. This may take a while.')
   RSQLite::dbWriteTable(conn = db, name = "accessionTaxa", value =tmp, row.names = FALSE, header = TRUE,sep='\t')
   if(vocal)message('Adding index. This may also take a while.')

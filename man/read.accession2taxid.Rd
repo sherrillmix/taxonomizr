@@ -4,16 +4,16 @@
 \alias{read.accession2taxid}
 \title{Read NCBI accession2taxid files}
 \usage{
-read.accession2taxid(taxaFiles, sqlFile, n = 1e+06, vocal = TRUE)
+read.accession2taxid(taxaFiles, sqlFile, vocal = TRUE, extraSqlCommand = "")
 }
 \arguments{
 \item{taxaFiles}{a string or vector of strings giving the path(s) to files to be read in}
 
 \item{sqlFile}{a string giving the path where the output sqlite file should be saved}
 
-\item{n}{an integer giving how many lines from an accession files to read at a time}
-
 \item{vocal}{if TRUE output status messages}
+
+\item{extraSqlCommand}{for advanced use. A string giving a command to be called on the sqlite databse before loading data e.g. "pragma temp_store = 2;" to keep all temp files in memory (don't do this unless you have a lot (>100 Gb) of RAM)}
 }
 \value{
 TRUE if sucessful
