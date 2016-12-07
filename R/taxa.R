@@ -296,10 +296,16 @@ getTaxonomy<-function (ids,taxaNodes ,taxaNames, desiredTaxa=c('superkingdom','p
 accessionToTaxa<-function(accessions,sqlFile){
   if(length(accessions)==0)return(c())
   if(!file.exists(sqlFile))stop(sqlFile,' does not exist.')
-  db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
   tmp<-tempfile()
+  #set up a new table of accessions in a temp db (avoiding concurrency issues)
+  #some trouble with dbWriteTable writing to "tmp.xxx" in the main database if we do this inside the attach
+  tmpDb <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=tmp)
+  RSQLite::dbWriteTable(tmpDb,'query',data.frame('accession'=accessions,stringsAsFactors=FALSE),overwrite=TRUE)
+  RSQLite::dbDisconnect(tmpDb)
+  #load the big sql
+  db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
+  #attach the temp table
   RSQLite::dbGetQuery(db, sprintf("ATTACH '%s' AS tmp",tmp))
-  RSQLite::dbWriteTable(db,'tmp.query',data.frame('accession'=accessions,stringsAsFactors=FALSE),overwrite=TRUE)
   taxaDf<-RSQLite::dbGetQuery(db,'SELECT tmp.query.accession, taxa FROM tmp.query LEFT OUTER JOIN accessionTaxa ON tmp.query.accession=accessionTaxa.accession')
   RSQLite::dbGetQuery(db,'DROP TABLE tmp.query')
   RSQLite::dbGetQuery(db,'DETACH tmp')
