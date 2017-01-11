@@ -248,6 +248,7 @@ read.accession2taxid<-function(taxaFiles,sqlFile,vocal=TRUE,extraSqlCommand=''){
 #' taxaNodes<-read.nodes(textConnection(nodesText))
 #' getTaxonomy(c(9606,9605),taxaNodes,taxaNames,mc.cores=1)
 getTaxonomy<-function (ids,taxaNodes ,taxaNames, desiredTaxa=c('superkingdom','phylum','class','order','family','genus','species'),mc.cores=parallel::detectCores(),debug=FALSE){
+  if(length(ids)==0)return(NULL)
   uniqIds<-unique(ids)
   taxa<-do.call(rbind,parallel::mclapply(uniqIds,function(id){
       out<-structure(rep(NA,length(desiredTaxa)),names=desiredTaxa)

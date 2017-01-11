@@ -158,6 +158,7 @@ test_that("Test getTaxonomy",{
   expect_equal(getTaxonomy(9606,taxaNodes,taxaNames,mc.cores=1,desiredTaxa='NOTREAL'),matrix(NA,dimnames=list(9606,'NOTREAL')))
   expect_equal(getTaxonomy(9999999,taxaNodes,taxaNames,mc.cores=1,desiredTaxa='class'),matrix(NA,dimnames=list(9999999,'class')))
   expect_equal(getTaxonomy(c(9605,9606,9605),taxaNodes,taxaNames,mc.cores=2,desiredTaxa=desiredTaxa),out[c(2,1,2),])
+  expect_equal(getTaxonomy(c(),taxaNodes,taxaNames,mc.cores=1,desiredTaxa=desiredTaxa),NULL)
 })
 
 test_that("Test accessionToTaxa",{
@@ -179,6 +180,7 @@ test_that("Test accessionToTaxa",{
   expect_equal(accessionToTaxa(c(),sqlFile),c())
   expect_equal(accessionToTaxa(c("Z17430.1","NOTREAL","X62402.1","Z17429.1","X62402.1"),sqlFile),c(3702,NA,9606,3702,9606))
   expect_error(accessionToTaxa("Z17430.1","NOTREAL"),"exist")
+  expect_equal(accessionToTaxa(c(),sqlFile),c())
 })
 
 test_that("Test condenseTaxa",{
@@ -197,13 +199,6 @@ test_that("Test condenseTaxa",{
   expect_equal(condenseTaxa(taxas),c('a','b',NA,NA))
   expect_equal(condenseTaxa(taxas[1,,drop=FALSE]),c('a','b',NA,'e'))
   expect_equal(condenseTaxa(taxas[c(1,1,1),,drop=FALSE]),c('a','b',NA,'e'))
-})
-
-test_that("Test getNamesAndNodes",{
-  tmp<-tempfile()
-  dir.create(tmp)
-  expect_error(getNamesAndNodes(tmp,'file://fakeNamesNodes.tar.gz'),NA)
-  expect_equal(sort(list.files(tmp,'^(names|nodes).dmp$')),c('names.dmp','nodes.dmp'))
 })
 
 test_that("Test getNamesAndNodes",{
