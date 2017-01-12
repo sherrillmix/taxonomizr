@@ -7,7 +7,7 @@ LazyLoad: yes
 Author: Scott Sherrill-Mix
 Description: A packages for assigning taxonomy to NCBI accession numbers based on NCBI's \code{accession2taxid} and {taxdump}.
 Version: 0.1.1
-Date: 2017-01-11
+Date: 2017-01-12
 Suggests:
     testthat
 Depends:
