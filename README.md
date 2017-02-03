@@ -16,13 +16,15 @@ devtools::install_github("sherrillmix/taxonomizr")
 
 ## Examples
 
+### Preparation
+
 To use the library, include it in R:
 
 ```r
 library(taxonomizr)
 ```
 
-Then download the necessary files from NCBI:
+Then download the necessary names and nodes files from NCBI:
 
 ```r
 getNamesAndNodes()
@@ -32,6 +34,7 @@ getNamesAndNodes()
 ## [1] "./names.dmp" "./nodes.dmp"
 ```
 
+And download accession to taxa id conversion files from NCBI (this is a _big_ download):
 
 ```r
 #this is a big download
@@ -44,12 +47,7 @@ getAccession2taxid()
 ```
 
 
-And process the download files into easily accessed forms:
-
-```r
-taxaNodes<-read.nodes('nodes.dmp')
-taxaNames<-read.names('names.dmp')
-```
+Then process the downloaded accession files into a more easily accessed form (this could take a while):
 
 
 ```r
@@ -85,7 +83,20 @@ read.accession2taxid(list.files('.','accession2taxid.gz$'),'accessionTaxa.sql')
 ```
 
 
-Now everything should be ready for processing. For example, to find the taxonomic IDs associated with NCBI accession numbers "LN847353.1" and "AL079352.3":
+Now everything should be ready for processing. This should all be cached locally and so is not required every time. It is not necessary to manually check for the presence of these files since the functions automatically check to see if their output is present and if so skip downloading/processing. Delete the local files if you would like to redownload or reprocess them.
+
+### Finding taxonomy for NCBI accession numbers
+
+First, load the nodes and names files into memory:
+
+
+```r
+taxaNodes<-read.nodes('nodes.dmp')
+taxaNames<-read.names('names.dmp')
+```
+
+
+Then we are ready to convert NCBI accession numbers to taxonomic IDs. For example, to find the taxonomic IDs associated with NCBI accession numbers "LN847353.1" and "AL079352.3":
 
 ```r
 taxaId<-accessionToTaxa(c("LN847353.1","AL079352.3"),"accessionTaxa.sql")
@@ -112,13 +123,33 @@ getTaxonomy(taxaId,taxaNodes,taxaNames)
 ## 9606 "Hominidae"        "Homo"          "Homo sapiens"
 ```
 
+### Finding taxonomy for NCBI IDs
+
 If you'd like to find IDs for taxonomic names then you can do something like:
 
 ```r
-getId(c('Homo sapiens','Bos taurus','Homo'),taxaNames)
+taxaId<-getId(c('Homo sapiens','Bos taurus','Homo'),taxaNames)
+print(taxaId)
 ```
 
 ``` 
 ## [1] "9606" "9913" "9605"
 ```
 
+And again to get the taxonomy for those IDs use `getTaxonomy`:
+
+
+```r
+getTaxonomy(taxaId,taxaNodes,taxaNames)
+```
+
+```
+##      superkingdom phylum     class      order      family      genus 
+## 9606 "Eukaryota"  "Chordata" "Mammalia" "Primates" "Hominidae" "Homo"
+## 9913 "Eukaryota"  "Chordata" "Mammalia" NA         "Bovidae"   "Bos" 
+## 9605 "Eukaryota"  "Chordata" "Mammalia" "Primates" "Hominidae" "Homo"
+##      species       
+## 9606 "Homo sapiens"
+## 9913 "Bos taurus"  
+## 9605 NA
+```
