@@ -8,20 +8,21 @@
 #' @references \url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/}
 #' @seealso \code{\link{read.nodes}}
 #' @examples
-#' names<-c(
+#' namesText<-c(
 #'   "1\t|\tall\t|\t\t|\tsynonym\t|",
 #'   "1\t|\troot\t|\t\t|\tscientific name\t|",
 #'   "2\t|\tBacteria\t|\tBacteria <prokaryotes>\t|\tscientific name\t|",
 #'   "2\t|\tMonera\t|\tMonera <Bacteria>\t|\tin-part\t|",
 #'   "2\t|\tProcaryotae\t|\tProcaryotae <Bacteria>\t|\tin-part\t|"
 #' )
-#' read.names(textConnection(names))
+#' read.names(textConnection(namesText))
 read.names<-function(nameFile){
   splitLines<-do.call(rbind,strsplit(readLines(nameFile),'\\s*\\|\\s*'))
   splitLines<-splitLines[splitLines[,4]=='scientific name',-(3:4)]
   colnames(splitLines)<-c('id','name')
   splitLines<-data.frame('id'=as.numeric(splitLines[,'id']),'name'=splitLines[,'name'],stringsAsFactors=FALSE)
   out<-data.table::data.table(splitLines,key='id')
+  data.table::setindex(out,'name')
   return(out)
 }
 
@@ -247,11 +248,13 @@ read.accession2taxid<-function(taxaFiles,sqlFile,vocal=TRUE,extraSqlCommand=''){
 #' )
 #' taxaNodes<-read.nodes(textConnection(nodesText))
 #' getTaxonomy(c(9606,9605),taxaNodes,taxaNames,mc.cores=1)
-getTaxonomy<-function (ids,taxaNodes ,taxaNames, desiredTaxa=c('superkingdom','phylum','class','order','family','genus','species'),mc.cores=parallel::detectCores(),debug=FALSE){
+getTaxonomy<-function (ids,taxaNodes ,taxaNames, desiredTaxa=c('superkingdom','phylum','class','order','family','genus','species'),mc.cores=1,debug=FALSE){
+  ids<-as.numeric(ids)
   if(length(ids)==0)return(NULL)
   uniqIds<-unique(ids)
   taxa<-do.call(rbind,parallel::mclapply(uniqIds,function(id){
-      out<-structure(rep(NA,length(desiredTaxa)),names=desiredTaxa)
+      out<-structure(rep(as.character(NA),length(desiredTaxa)),names=desiredTaxa)
+      if(is.na(id))return(out)
       thisId<-id
       if(debug){
         tmp<-c()
@@ -402,5 +405,43 @@ getAccession2taxid<-function(outDir='.',baseUrl='ftp://ftp.ncbi.nih.gov/pub/taxo
   urls<-paste(baseUrl,fileNames,sep='/')
   mapply(utils::download.file,urls,outFiles)
   return(outFiles)
+}
+
+#' Find a given taxa by name
+#'
+#' Find a taxa by string in the NCBI taxonomy. Note that NCBI species are stored as Genus species e.g. "Bos taurus". Ambiguous taxa names will return a comma concatenated string e.g. "123,234" and generate a warning.
+#'
+#' @param taxa a vector of taxonomic names
+#' @param taxaNames a names data.table from \code{\link{read.names}}
+#' @return a vector of character strings giving taxa IDs (potentially comma concatenated for any taxa with ambiguous names)
+#' @seealso \code{\link{read.names}}
+#' @export
+#' @examples
+#' namesText<-c(
+#'   "1\t|\tall\t|\t\t|\tsynonym\t|",
+#'   "1\t|\troot\t|\t\t|\tscientific name\t|",
+#'   "3\t|\tMulti\t|\tBacteria <prokaryotes>\t|\tscientific name\t|",
+#'   "4\t|\tMulti\t|\tBacteria <prokaryotes>\t|\tscientific name\t|",
+#'   "2\t|\tBacteria\t|\tBacteria <prokaryotes>\t|\tscientific name\t|",
+#'   "2\t|\tMonera\t|\tMonera <Bacteria>\t|\tin-part\t|",
+#'   "2\t|\tProcaryotae\t|\tProcaryotae <Bacteria>\t|\tin-part\t|"
+#' )
+#' names<-read.names(textConnection(namesText))
+#' getId('Bacteria',names)
+#' getId('Not a real name',names)
+#' getId('Multi',names)
+getId<-function(taxa,taxaNames){
+  uniqTaxa<-unique(taxa)
+  out<-lapply(uniqTaxa,function(xx){
+    ids<-taxaNames[as.list(xx),on='name']$id
+  })
+  multiHits<-sapply(out,length)>1
+  if(any(multiHits)){
+    warning('Multiple taxa ids found for ',paste(taxa[multiHits],collapse=', '),'. Collapsing with commas')
+    out<-sapply(out,paste,collapse=',')
+  }
+  out<-as.character(unlist(out))
+  names(out)<-uniqTaxa
+  return(unname(out[taxa]))
 }
 

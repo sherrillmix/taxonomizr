@@ -5,8 +5,8 @@
 \title{Get taxonomic ranks for a taxa}
 \usage{
 getTaxonomy(ids, taxaNodes, taxaNames, desiredTaxa = c("superkingdom",
-  "phylum", "class", "order", "family", "genus", "species"),
-  mc.cores = parallel::detectCores(), debug = FALSE)
+  "phylum", "class", "order", "family", "genus", "species"), mc.cores = 1,
+  debug = FALSE)
 }
 \arguments{
 \item{ids}{a vector of ids to find taxonomy for}

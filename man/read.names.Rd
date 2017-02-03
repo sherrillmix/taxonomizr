@@ -16,14 +16,14 @@ a data.table with columns id and name with a key on id
 Take an NCBI names file, keep only scientific names and convert it to a data.table
 }
 \examples{
-names<-c(
+namesText<-c(
   "1\\t|\\tall\\t|\\t\\t|\\tsynonym\\t|",
   "1\\t|\\troot\\t|\\t\\t|\\tscientific name\\t|",
   "2\\t|\\tBacteria\\t|\\tBacteria <prokaryotes>\\t|\\tscientific name\\t|",
   "2\\t|\\tMonera\\t|\\tMonera <Bacteria>\\t|\\tin-part\\t|",
   "2\\t|\\tProcaryotae\\t|\\tProcaryotae <Bacteria>\\t|\\tin-part\\t|"
 )
-read.names(textConnection(names))
+read.names(textConnection(namesText))
 }
 \references{
 \url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/}

@@ -3,6 +3,7 @@
 export(accessionToTaxa)
 export(condenseTaxa)
 export(getAccession2taxid)
+export(getId)
 export(getNamesAndNodes)
 export(getTaxonomy)
 export(lastNotNa)

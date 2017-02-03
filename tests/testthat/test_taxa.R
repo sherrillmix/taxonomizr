@@ -8,6 +8,7 @@ test_that("Test read.names",{
     "2\t|\tProcaryotae\t|\tProcaryotae <Bacteria>\t|\tin-part\t|"
   )
   out<-data.table('id'=1:2,'name'=c('root','Bacteria'),key='id')
+  setindex(out,'name')
   expect_equal(read.names(textConnection(names)),out)
 })
 
@@ -156,10 +157,17 @@ test_that("Test getTaxonomy",{
   expect_equal(getTaxonomy(c(9605,9606,9605),taxaNodes,taxaNames,mc.cores=1,desiredTaxa=desiredTaxa),out[c(2,1,2),])
   expect_equal(getTaxonomy(c(9605,9606,9605),taxaNodes,taxaNames,mc.cores=1,desiredTaxa=desiredTaxa[3:1]),out[c(2,1,2),3:1])
   expect_output(getTaxonomy(9606,taxaNodes,taxaNames,mc.cores=1,debug=TRUE),'\\\\t')
-  expect_equal(getTaxonomy(9606,taxaNodes,taxaNames,mc.cores=1,desiredTaxa='NOTREAL'),matrix(NA,dimnames=list(9606,'NOTREAL')))
-  expect_equal(getTaxonomy(9999999,taxaNodes,taxaNames,mc.cores=1,desiredTaxa='class'),matrix(NA,dimnames=list(9999999,'class')))
+  expect_equal(getTaxonomy(9606,taxaNodes,taxaNames,mc.cores=1,desiredTaxa='NOTREAL'),matrix(as.character(NA),dimnames=list(9606,'NOTREAL')))
+  expect_equal(getTaxonomy(9999999,taxaNodes,taxaNames,mc.cores=1,desiredTaxa='class'),matrix(as.character(NA),dimnames=list(9999999,'class')))
   expect_equal(getTaxonomy(c(9605,9606,9605),taxaNodes,taxaNames,mc.cores=2,desiredTaxa=desiredTaxa),out[c(2,1,2),])
   expect_equal(getTaxonomy(c(),taxaNodes,taxaNames,mc.cores=1,desiredTaxa=desiredTaxa),NULL)
+  naDf<-out
+  naDf[,]<-NA
+  rownames(naDf)<-c('NA','NA')
+  expect_equal(getTaxonomy(c(NA,NA),taxaNodes,taxaNames),naDf)
+  suppressWarnings(expect_equal(getTaxonomy(c(NA,9605,NA,'9604,9605'),taxaNodes,taxaNames),rbind('  NA'=naDf[1,],'9605'=out[2,],'  NA'=naDf[1,],'  NA'=naDf[1,])))
+  expect_equal(getTaxonomy('9605',taxaNodes,taxaNames),getTaxonomy(9605,taxaNodes,taxaNames))
+  expect_warning(getTaxonomy('9605,123',taxaNodes,taxaNames),'coercion')
 })
 
 test_that("Test accessionToTaxa",{
@@ -220,3 +228,19 @@ test_that("Test getAccession2taxid",{
   expect_error(getAccession2taxid(tmp2,baseUrl=sprintf('file://%s',tmp),types=c('XxXx','XyXyX')),NA)
   expect_equal(sort(list.files(tmp2,'accession2taxid.gz$')),sort(targets))
 })
+
+test_that("Test getId",{
+ namesText<-c(
+   "1\t|\troot\t|\t\t|\tscientific name\t|",
+   "4\t|\tMulti\t|\tBacteria <prokaryotes>\t|\tscientific name\t|",
+   "3\t|\tMulti\t|\tBacteria <prokaryotes>\t|\tscientific name\t|",
+   "2\t|\tBacteria\t|\tBacteria <prokaryotes>\t|\tscientific name\t|"
+ )
+ names<-read.names(textConnection(namesText))
+ expect_equal(getId('Bacteria',names),'2')
+ expect_equal(getId(c('Bacteria','root','Bacteria','NOTREAL'),names),c('2','1','2',NA))
+ expect_equal(getId('Not a real name',names),as.character(NA))
+ suppressWarnings(expect_equal(getId('Multi',names),'3,4'))
+ expect_warning(getId('Multi',names),'Multiple')
+})
+

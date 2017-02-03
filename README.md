@@ -111,3 +111,14 @@ getTaxonomy(taxaId,taxaNodes,taxaNames)
 ## 1313 "Streptococcaceae" "Streptococcus" "Streptococcus pneumoniae"
 ## 9606 "Hominidae"        "Homo"          "Homo sapiens"
 ```
+
+If you'd like to find IDs for taxonomic names then you can do something like:
+
+```r
+getId(c('Homo sapiens','Bos taurus','Homo'),taxaNames)
+```
+
+``` 
+## [1] "9606" "9913" "9605"
+```
+
