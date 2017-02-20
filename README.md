@@ -123,7 +123,7 @@ getTaxonomy(taxaId,taxaNodes,taxaNames)
 ## 9606 "Hominidae"        "Homo"          "Homo sapiens"
 ```
 
-### Finding taxonomy for NCBI IDs
+### Finding taxonomy for taxonomic names
 
 If you'd like to find IDs for taxonomic names then you can do something like:
 
