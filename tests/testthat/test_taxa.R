@@ -10,6 +10,9 @@ test_that("Test read.names",{
   out<-data.table('id'=1:2,'name'=c('root','Bacteria'),key='id')
   setindex(out,'name')
   expect_equal(read.names(textConnection(names)),out)
+  out<-data.table('id'=rep(1:2,2:3),'name'=c('all','root','Bacteria','Monera','Procaryotae'),key='id')
+  setindex(out,'name')
+  expect_equal(read.names(textConnection(names),FALSE),out)
 })
 
 test_that("Test read.nodes",{

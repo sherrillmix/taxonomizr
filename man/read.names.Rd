@@ -4,10 +4,12 @@
 \alias{read.names}
 \title{Read NCBI names file}
 \usage{
-read.names(nameFile)
+read.names(nameFile, onlyScientific = TRUE)
 }
 \arguments{
 \item{nameFile}{string giving the path to an NCBI name file to read from (both gzipped or uncompressed files are ok)}
+
+\item{onlyScientific}{If TRUE, only store scientific names. If FALSE, synonyms and other types are included (increasing the potential for ambiguous taxonomic assignments).}
 }
 \value{
 a data.table with columns id and name with a key on id

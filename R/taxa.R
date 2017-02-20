@@ -3,6 +3,7 @@
 #' Take an NCBI names file, keep only scientific names and convert it to a data.table
 #'
 #' @param nameFile string giving the path to an NCBI name file to read from (both gzipped or uncompressed files are ok)
+#' @param onlyScientific If TRUE, only store scientific names. If FALSE, synonyms and other types are included (increasing the potential for ambiguous taxonomic assignments).
 #' @return a data.table with columns id and name with a key on id
 #' @export
 #' @references \url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/}
@@ -16,9 +17,10 @@
 #'   "2\t|\tProcaryotae\t|\tProcaryotae <Bacteria>\t|\tin-part\t|"
 #' )
 #' read.names(textConnection(namesText))
-read.names<-function(nameFile){
+read.names<-function(nameFile,onlyScientific=TRUE){
   splitLines<-do.call(rbind,strsplit(readLines(nameFile),'\\s*\\|\\s*'))
-  splitLines<-splitLines[splitLines[,4]=='scientific name',-(3:4)]
+  if(onlyScientific)splitLines<-splitLines[splitLines[,4]=='scientific name',]
+  splitLines<-splitLines[,-(3:4)]
   colnames(splitLines)<-c('id','name')
   splitLines<-data.frame('id'=as.numeric(splitLines[,'id']),'name'=splitLines[,'name'],stringsAsFactors=FALSE)
   out<-data.table::data.table(splitLines,key='id')
