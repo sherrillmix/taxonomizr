@@ -14,4 +14,3 @@ trimTaxa(inFile, outFile)
 \description{
 A simple script to delete the first row and then delete the first and fourth column of a four column tab delimited file and write to another file.
 }
-

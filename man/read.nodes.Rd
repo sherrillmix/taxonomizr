@@ -31,4 +31,3 @@ read.nodes(textConnection(nodes))
 \seealso{
 \code{\link{read.names}}
 }
-

@@ -38,4 +38,3 @@ accessionToTaxa(c("Z17430.1","Z17429.1","X62402.1",'NOTREAL'),sqlFile)
 \seealso{
 \code{\link{getTaxonomy}}, \code{\link{read.accession2taxid}}
 }
-

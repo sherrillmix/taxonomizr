@@ -94,4 +94,3 @@ getTaxonomy(c(9606,9605),taxaNodes,taxaNames,mc.cores=1)
 \seealso{
 \code{\link{read.nodes}}, \code{\link{read.names}}
 }
-

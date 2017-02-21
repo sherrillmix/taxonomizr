@@ -29,4 +29,3 @@ Download a taxdump.tar.gz file from NCBI servers and extract the names.dmp and n
 \seealso{
 \code{\link{read.nodes}}, \code{\link{read.names}}
 }
-

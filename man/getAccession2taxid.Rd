@@ -29,4 +29,3 @@ Download a nucl_xxx.accession2taxid.gz from NCBI servers. These can then be used
 \seealso{
 \code{\link{read.accession2taxid}}
 }
-

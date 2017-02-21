@@ -35,4 +35,3 @@ getId('Multi',names)
 \seealso{
 \code{\link{read.names}}
 }
-

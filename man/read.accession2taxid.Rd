@@ -42,4 +42,3 @@ RSQLite::dbGetQuery(db,'SELECT * FROM accessionTaxa')
 \seealso{
 \code{\link{read.nodes}}, \code{\link{read.names}}
 }
-

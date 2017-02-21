@@ -22,4 +22,3 @@ taxas<-matrix(c(
 ),nrow=2,byrow=TRUE)
 condenseTaxa(taxas)
 }
-

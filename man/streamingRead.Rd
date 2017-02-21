@@ -31,4 +31,3 @@ writeLines(letters,temp)
 streamingRead(temp,2,paste,collapse='',vocal=TRUE)
 unlist(streamingRead(temp,2,sample,1))
 }
-
