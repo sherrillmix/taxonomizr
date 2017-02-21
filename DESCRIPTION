@@ -1,13 +1,15 @@
 Package: taxonomizr
-Maintainer: Scott Sherrill-Mix <R@sherrillmix.com>
+Maintainer: Maintainer: Scott Sherrill-Mix <shescott@upenn.edu>
 License: GPL-2
 Title: Simple functions to work with NCBI taxonomy
 Type: Package
 LazyLoad: yes
 Author: Scott Sherrill-Mix
+Authors@R: c(person("Scott", "Sherrill-Mix", role = c("aut", "cre"),
+                     email = "shescott@upenn.edu"))
 Description: A packages for assigning taxonomy to NCBI accession numbers based on NCBI's \code{accession2taxid} and {taxdump}.
 Version: 0.1.1
-Date: 2017-02-20
+Date: 2017-02-21
 Suggests:
     testthat
 Depends:
@@ -16,4 +18,4 @@ Imports:
     parallel,
     RSQLite,
     data.table
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1
