@@ -79,6 +79,10 @@
 <span class="kw"><a href="reference/getAccession2taxid.html">getAccession2taxid</a></span>()</code></pre></div>
 <pre><code>## [1] "./nucl_gb.accession2taxid.gz"  "./nucl_est.accession2taxid.gz"
 ## [3] "./nucl_gss.accession2taxid.gz" "./nucl_wgs.accession2taxid.gz"</code></pre>
+<p>If you would also like to identify protein accession numbers also download the prot file from NCBI (again this is a <em>big</em> download):</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#this is a big download</span>
+<span class="kw"><a href="reference/getAccession2taxid.html">getAccession2taxid</a></span>(<span class="dt">types=</span><span class="st">'prot'</span>)</code></pre></div>
+<pre><code>## [1] "./prot.accession2taxid.gz"</code></pre>
 <p>Then process the downloaded accession files into a more easily accessed form (this could take a while):</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="reference/read.accession2taxid.html">read.accession2taxid</a></span>(<span class="kw">list.files</span>(<span class="st">'.'</span>,<span class="st">'accession2taxid.gz$'</span>),<span class="st">'accessionTaxa.sql'</span>)</code></pre></div>
 <pre><code>## Reading nucl_est.accession2taxid.gz.</code></pre>
