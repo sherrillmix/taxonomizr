@@ -46,6 +46,18 @@ getAccession2taxid()
 ## [3] "./nucl_gss.accession2taxid.gz" "./nucl_wgs.accession2taxid.gz"
 ```
 
+If you would also like to identify protein accession numbers also download the prot file from NCBI (again this is a _big_ download):
+
+```r
+#this is a big download
+getAccession2taxid(types='prot')
+```
+
+```
+## [1] "./prot.accession2taxid.gz"
+```
+
+
 
 Then process the downloaded accession files into a more easily accessed form (this could take a while):
 
