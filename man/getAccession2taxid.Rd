@@ -6,14 +6,14 @@
 \usage{
 getAccession2taxid(outDir = ".",
   baseUrl = "ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/",
-  types = c("gb", "est", "gss", "wgs"))
+  types = c("nucl_gb", "nucl_est", "nucl_gss", "nucl_wgs"))
 }
 \arguments{
 \item{outDir}{the directory to put the accession2taxid.gz files in}
 
 \item{baseUrl}{the url of the directory where accession2taxid.gz files are located}
 
-\item{types}{the types if accession2taxid.gz files desired where type is the xxx in nucl_xxx.accession2taxid.gz}
+\item{types}{the types if accession2taxid.gz files desired where type is the prefix of xxx.accession2taxid.gz. The default is to download all nucl_ accessions. For protein accessions, try \code{types=c('prot')}.}
 }
 \value{
 a vector of file path strings of the locations of the output files

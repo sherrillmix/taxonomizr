@@ -228,7 +228,7 @@ test_that("Test getAccession2taxid",{
   sapply(targets,function(xx)writeLines('TEST',file.path(tmp,xx)))
   tmp2<-tempfile()
   dir.create(tmp2)
-  expect_error(getAccession2taxid(tmp2,baseUrl=sprintf('file://%s',tmp),types=c('XxXx','XyXyX')),NA)
+  expect_error(getAccession2taxid(tmp2,baseUrl=sprintf('file://%s',tmp),types=c('nucl_XxXx','nucl_XyXyX')),NA)
   expect_equal(sort(list.files(tmp2,'accession2taxid.gz$')),sort(targets))
 })
 

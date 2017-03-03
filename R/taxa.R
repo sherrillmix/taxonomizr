@@ -389,7 +389,7 @@ getNamesAndNodes<-function(outDir='.',url='ftp://ftp.ncbi.nih.gov/pub/taxonomy/t
 #'
 #' @param outDir the directory to put the accession2taxid.gz files in
 #' @param baseUrl the url of the directory where accession2taxid.gz files are located
-#' @param types the types if accession2taxid.gz files desired where type is the xxx in nucl_xxx.accession2taxid.gz
+#' @param types the types if accession2taxid.gz files desired where type is the prefix of xxx.accession2taxid.gz. The default is to download all nucl_ accessions. For protein accessions, try \code{types=c('prot')}.
 #' @return a vector of file path strings of the locations of the output files
 #' @seealso \code{\link{read.accession2taxid}}
 #' @export
@@ -397,8 +397,8 @@ getNamesAndNodes<-function(outDir='.',url='ftp://ftp.ncbi.nih.gov/pub/taxonomy/t
 #' \dontrun{
 #'   getAccession2taxid()
 #' }
-getAccession2taxid<-function(outDir='.',baseUrl='ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/',types=c('gb','est','gss','wgs')){
-  fileNames<-sprintf('nucl_%s.accession2taxid.gz',types)
+getAccession2taxid<-function(outDir='.',baseUrl='ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/',types=c('nucl_gb','nucl_est','nucl_gss','nucl_wgs')){
+  fileNames<-sprintf('%s.accession2taxid.gz',types)
   outFiles<-file.path(outDir,fileNames)
   if(all(file.exists(outFiles))){
     message(paste(outFiles,collapse=', '),' already exist. Delete to redownload')

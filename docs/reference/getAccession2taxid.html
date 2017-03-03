@@ -75,7 +75,7 @@
 
     <pre><span class='fu'>getAccession2taxid</span>(<span class='kw'>outDir</span> <span class='kw'>=</span> <span class='st'>"."</span>,
   <span class='kw'>baseUrl</span> <span class='kw'>=</span> <span class='st'>"ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/"</span>,
-  <span class='kw'>types</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"gb"</span>, <span class='st'>"est"</span>, <span class='st'>"gss"</span>, <span class='st'>"wgs"</span>))</pre>
+  <span class='kw'>types</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"nucl_gb"</span>, <span class='st'>"nucl_est"</span>, <span class='st'>"nucl_gss"</span>, <span class='st'>"nucl_wgs"</span>))</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <dl class="dl-horizontal">
@@ -84,7 +84,7 @@
       <dt>baseUrl</dt>
       <dd>the url of the directory where accession2taxid.gz files are located</dd>
       <dt>types</dt>
-      <dd>the types if accession2taxid.gz files desired where type is the xxx in nucl_xxx.accession2taxid.gz</dd>
+      <dd>the types if accession2taxid.gz files desired where type is the prefix of xxx.accession2taxid.gz. The default is to download all nucl_ accessions. For protein accessions, try <code>types=c(&#39;prot&#39;)</code>.</dd>
     </dl>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
