@@ -9,7 +9,7 @@ Authors@R: c(person("Scott", "Sherrill-Mix", role = c("aut", "cre"),
                      email = "shescott@upenn.edu"))
 Description: A packages for assigning taxonomy to NCBI accession numbers based on NCBI's \code{accession2taxid} and {taxdump}.
 Version: 0.1.2
-Date: 2017-03-06
+Date: 2017-03-07
 Suggests:
     testthat
 Depends:
@@ -17,5 +17,6 @@ Depends:
 Imports:
     parallel,
     RSQLite,
-    data.table
+    data.table,
+    R.utils
 RoxygenNote: 6.0.1
