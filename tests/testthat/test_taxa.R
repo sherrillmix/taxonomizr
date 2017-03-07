@@ -77,6 +77,9 @@ test_that("Test trimTaxa",{
   expect_equal(readLines(tmp2),c('2\t3','3\t4','4\t5'))
   writeLines(c(out,'1\t2\t3\t4\t5'),tmp)
   expect_error(trimTaxa(tmp,tmp2),"line")
+  writeLines(out,gzfile(tmp))
+  expect_error(trimTaxa(tmp,tmp2),NA)
+  expect_equal(readLines(tmp2),c('2\t3','3\t4','4\t5'))
 })
 
 test_that("Test read.accession2taxid",{
@@ -99,9 +102,11 @@ test_that("Test read.accession2taxid",{
   file.remove(outFile)
   expect_error(read.accession2taxid(inFile,outFile,extraSqlCommand='pragma temp_store = 2;'),NA)
   file.remove(outFile)
-  #travis-ci throws a basic_string::resize error here that I can't replicate. Accept that also for now
-  expect_error(read.accession2taxid(inFile,outFile,extraSqlCommand='DROP TABLE NOTEXISTXYZ;'),'NOTEXISTXYZ')
-  expect_false(file.exists(outFile))
+  if(.Platform$OS.type == "unix"){
+    #windows sqlite apparently doesn't catch this error
+    expect_error(read.accession2taxid(inFile,outFile,extraSqlCommand='DROP TABLE NOTEXISTXYZ;'),'NOTEXISTXYZ')
+    expect_false(file.exists(outFile))
+  }
 })
 
 test_that("Test getTaxonomy",{
