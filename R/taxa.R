@@ -121,13 +121,12 @@ trimTaxa<-function(inFile,outFile){
     tmp<-tempfile()
     R.utils::gunzip(inFile,tmp,remove=FALSE)
     inFile<-tmp
+    on.exit(file.remove(tmp))
   }
   #too much memory
   #out<-data.table::fread(sprintf('gzip -dcf %s',inFile),select=c(2,3))
   #write.table(out,outFile,row.names=FALSE,col.names=FALSE)
   .C('taxaTrim',c(inFile,outFile),PACKAGE='taxonomizr')
-  #careful with remove here
-  if(isCompressed)file.remove(inFile)
 }
 
 #' Read NCBI accession2taxid files

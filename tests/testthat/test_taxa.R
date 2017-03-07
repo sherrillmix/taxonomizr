@@ -162,7 +162,8 @@ test_that("Test getTaxonomy",{
   expect_output(getTaxonomy(9606,taxaNodes,taxaNames,mc.cores=1,debug=TRUE),'\\\\t')
   expect_equal(getTaxonomy(9606,taxaNodes,taxaNames,mc.cores=1,desiredTaxa='NOTREAL'),matrix(as.character(NA),dimnames=list(9606,'NOTREAL')))
   expect_equal(getTaxonomy(9999999,taxaNodes,taxaNames,mc.cores=1,desiredTaxa='class'),matrix(as.character(NA),dimnames=list(9999999,'class')))
-  expect_equal(getTaxonomy(c(9605,9606,9605),taxaNodes,taxaNames,mc.cores=2,desiredTaxa=desiredTaxa),out[c(2,1,2),])
+  #causes error on Windows
+  if(.Platform$OS.type == "unix")expect_equal(getTaxonomy(c(9605,9606,9605),taxaNodes,taxaNames,mc.cores=2,desiredTaxa=desiredTaxa),out[c(2,1,2),])
   expect_equal(getTaxonomy(c(),taxaNodes,taxaNames,mc.cores=1,desiredTaxa=desiredTaxa),NULL)
   naDf<-out
   naDf[,]<-NA
