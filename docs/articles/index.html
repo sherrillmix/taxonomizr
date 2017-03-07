@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Condense a taxa table for a single read — condenseTaxa • taxonomizr</title>
+<title>Articles • taxonomizr</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -34,7 +34,7 @@
   </head>
 
   <body>
-    <div class="container template-reference-topic">
+    <div class="container template-vignette-index">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -66,46 +66,21 @@
       
       </header>
 
-      <div class="row">
-  <div class="col-md-9 contents">
-    <div class="page-header">
-    <h1>Condense a taxa table for a single read</h1>
+      <div class="page-header">
+  <h1>Vignette reference <small>version&nbsp;0.2.0</small></h1>
+</div>
+
+<div class="row">
+  <div class="col-md-9">
+    <div class="section ">
+      <h3>All vignettes</h3>
+      <p class="section-desc"></p>
+
+      <ul>
+        <li><a href="my-vignette.html">Vignette Title</a></li>
+        <li><a href="usage.html">taxonomizr usage</a></li>
+      </ul>
     </div>
-
-    
-    <p>Take a table of taxonomic assignments from hits to a single read and condense it to a single vector with NAs where there are disagreements between the hits</p>
-    
-
-    <pre><span class='fu'>condenseTaxa</span>(<span class='no'>taxaTable</span>)</pre>
-    
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
-    <dl class="dl-horizontal">
-      <dt>taxaTable</dt>
-      <dd>a matrix or data.frame with hits on the rows and various levels of taxonomy in the columns</dd>
-    </dl>
-    
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>a vector of length <code>ncol(taxaTable)</code> with NAs where the is not complete agreement</p>
-    
-
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>taxas</span><span class='kw'>&lt;-</span><span class='fu'>matrix</span>(<span class='fu'>c</span>(
- <span class='st'>'a'</span>,<span class='st'>'b'</span>,<span class='st'>'c'</span>,<span class='st'>'e'</span>,
- <span class='st'>'a'</span>,<span class='st'>'b'</span>,<span class='st'>'d'</span>,<span class='st'>'e'</span>
-),<span class='kw'>nrow</span><span class='kw'>=</span><span class='fl'>2</span>,<span class='kw'>byrow</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
-<span class='fu'>condenseTaxa</span>(<span class='no'>taxas</span>)</div><div class='output co'>#&gt; [1] &quot;a&quot; &quot;b&quot; NA  NA </div></pre>
-  </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      
-      <li><a href="#value">Value</a></li>
-      
-      <li><a href="#examples">Examples</a></li>
-    </ul>
-
   </div>
 </div>
 

@@ -51,6 +51,9 @@
         <li>
   <a href="../reference/index.html">Reference</a>
 </li>
+<li>
+  <a href="../articles/index.html">Articles</a>
+</li>
       </ul>
       
       <ul class="nav navbar-nav navbar-right">
@@ -111,7 +114,7 @@
 <span class='no'>inFile</span><span class='kw'>&lt;-</span><span class='fu'>tempfile</span>()
 <span class='no'>outFile</span><span class='kw'>&lt;-</span><span class='fu'>tempfile</span>()
 <span class='fu'>writeLines</span>(<span class='no'>taxa</span>,<span class='no'>inFile</span>)
-<span class='fu'>read.accession2taxid</span>(<span class='no'>inFile</span>,<span class='no'>outFile</span>)</div><div class='output co'>#&gt; <span class='message'>Reading /tmp/RtmpcbfWrZ/file5c322fad287d.</span></div><div class='output co'>#&gt; <span class='message'>Reading in values. This may take a while.</span></div><div class='output co'>#&gt; <span class='message'>Adding index. This may also take a while.</span></div><div class='output co'>#&gt; [1] TRUE</div><div class='input'><span class='no'>db</span><span class='kw'>&lt;-</span><span class='kw'>RSQLite</span><span class='kw'>::</span><span class='fu'>dbConnect</span>(<span class='kw'>RSQLite</span><span class='kw'>::</span><span class='fu'>SQLite</span>(),<span class='kw'>dbname</span><span class='kw'>=</span><span class='no'>outFile</span>)
+<span class='fu'>read.accession2taxid</span>(<span class='no'>inFile</span>,<span class='no'>outFile</span>)</div><div class='output co'>#&gt; <span class='message'>Reading /tmp/RtmpVgl4zX/file7315ef1a8a0.</span></div><div class='output co'>#&gt; <span class='message'>Reading in values. This may take a while.</span></div><div class='output co'>#&gt; <span class='message'>Adding index. This may also take a while.</span></div><div class='output co'>#&gt; [1] TRUE</div><div class='input'><span class='no'>db</span><span class='kw'>&lt;-</span><span class='kw'>RSQLite</span><span class='kw'>::</span><span class='fu'>dbConnect</span>(<span class='kw'>RSQLite</span><span class='kw'>::</span><span class='fu'>SQLite</span>(),<span class='kw'>dbname</span><span class='kw'>=</span><span class='no'>outFile</span>)
 <span class='kw'>RSQLite</span><span class='kw'>::</span><span class='fu'>dbGetQuery</span>(<span class='no'>db</span>,<span class='st'>'SELECT * FROM accessionTaxa'</span>)</div><div class='output co'>#&gt;   accession taxa
 #&gt; 1  Z17427.1 3702
 #&gt; 2  Z17428.1 3702

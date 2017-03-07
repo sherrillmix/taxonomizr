@@ -1,0 +1,11 @@
+---
+title: "taxonomizr usage"
+author: "Scott Sherrill-Mix"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{taxonomizr usage}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+

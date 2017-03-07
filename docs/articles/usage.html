@@ -5,11 +5,11 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Functions to Work with NCBI Accessions and Taxonomy • taxonomizr</title>
+<title>taxonomizr usage • taxonomizr</title>
 <!-- jquery --><script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script><!-- Font Awesome icons --><link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
-<!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
-<script src="jquery.sticky-kit.min.js"></script><script src="pkgdown.js"></script><!-- mathjax --><script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--[if lt IE 9]>
+<!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
+<script src="../jquery.sticky-kit.min.js"></script><script src="../pkgdown.js"></script><!-- mathjax --><script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
@@ -24,15 +24,15 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="index.html">taxonomizr</a>
+      <a class="navbar-brand" href="../index.html">taxonomizr</a>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
-  <a href="reference/index.html">Reference</a>
+  <a href="../reference/index.html">Reference</a>
 </li>
 <li>
-  <a href="articles/index.html">Articles</a>
+  <a href="../articles/index.html">Articles</a>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right"></ul>
@@ -46,48 +46,48 @@
       
       </header><div class="row">
   <div class="col-md-9">
-    
+    <div class="page-header toc-ignore">
+      <h1>taxonomizr usage</h1>
+                        <h4 class="author">Scott Sherrill-Mix</h4>
+            
+          </div>
 
     
     
 <div class="contents">
-<div id="convert-accession-numbers-to-taxonomy" class="section level1">
-<div class="page-header"><h1 class="hasAnchor">
-<a href="#convert-accession-numbers-to-taxonomy" class="anchor"> </a>Convert accession numbers to taxonomy</h1></div>
-
 <div id="introduction" class="section level2">
 <h2 class="hasAnchor">
-<a href="#introduction" class="anchor"> </a>Introduction</h2>
+<html><body><a href="#introduction" class="anchor"> </a></body></html>Introduction</h2>
 <p><code>taxonomizr</code> provides a some simple functions to parse NCBI taxonomy and accession dumps and use them to assign taxonomy to accession numbers.</p>
 </div>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
-<a href="#installation" class="anchor"> </a>Installation</h2>
+<html><body><a href="#installation" class="anchor"> </a></body></html>Installation</h2>
 <p>To install directly from github, use the <a href="https://github.com/hadley/devtools"><code>devtools</code></a> library and run:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">devtools::<span class="kw">install_github</span>(<span class="st">"sherrillmix/taxonomizr"</span>)</code></pre></div>
 </div>
 <div id="examples" class="section level2">
 <h2 class="hasAnchor">
-<a href="#examples" class="anchor"> </a>Examples</h2>
+<html><body><a href="#examples" class="anchor"> </a></body></html>Examples</h2>
 <div id="preparation" class="section level3">
 <h3 class="hasAnchor">
-<a href="#preparation" class="anchor"> </a>Preparation</h3>
+<html><body><a href="#preparation" class="anchor"> </a></body></html>Preparation</h3>
 <p>To use the library, include it in R:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(taxonomizr)</code></pre></div>
 <p>Then download the necessary names and nodes files from NCBI:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="reference/getNamesAndNodes.html">getNamesAndNodes</a></span>()</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/getNamesAndNodes.html">getNamesAndNodes</a></span>()</code></pre></div>
 <pre><code>## [1] "./names.dmp" "./nodes.dmp"</code></pre>
 <p>And download accession to taxa id conversion files from NCBI (this is a <em>big</em> download):</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#this is a big download</span>
-<span class="kw"><a href="reference/getAccession2taxid.html">getAccession2taxid</a></span>()</code></pre></div>
+<span class="kw"><a href="../reference/getAccession2taxid.html">getAccession2taxid</a></span>()</code></pre></div>
 <pre><code>## [1] "./nucl_gb.accession2taxid.gz"  "./nucl_est.accession2taxid.gz"
 ## [3] "./nucl_gss.accession2taxid.gz" "./nucl_wgs.accession2taxid.gz"</code></pre>
 <p>If you would also like to identify protein accession numbers also download the prot file from NCBI (again this is a <em>big</em> download):</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#this is a big download</span>
-<span class="kw"><a href="reference/getAccession2taxid.html">getAccession2taxid</a></span>(<span class="dt">types=</span><span class="st">'prot'</span>)</code></pre></div>
+<span class="kw"><a href="../reference/getAccession2taxid.html">getAccession2taxid</a></span>(<span class="dt">types=</span><span class="st">'prot'</span>)</code></pre></div>
 <pre><code>## [1] "./prot.accession2taxid.gz"</code></pre>
 <p>Then process the downloaded accession files into a more easily accessed form (this could take a while):</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="reference/read.accession2taxid.html">read.accession2taxid</a></span>(<span class="kw">list.files</span>(<span class="st">'.'</span>,<span class="st">'accession2taxid.gz$'</span>),<span class="st">'accessionTaxa.sql'</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/read.accession2taxid.html">read.accession2taxid</a></span>(<span class="kw">list.files</span>(<span class="st">'.'</span>,<span class="st">'accession2taxid.gz$'</span>),<span class="st">'accessionTaxa.sql'</span>)</code></pre></div>
 <pre><code>## Reading nucl_est.accession2taxid.gz.</code></pre>
 <pre><code>## Reading nucl_gb.accession2taxid.gz.</code></pre>
 <pre><code>## Reading nucl_gss.accession2taxid.gz.</code></pre>
@@ -99,16 +99,16 @@
 </div>
 <div id="finding-taxonomy-for-ncbi-accession-numbers" class="section level3">
 <h3 class="hasAnchor">
-<a href="#finding-taxonomy-for-ncbi-accession-numbers" class="anchor"> </a>Finding taxonomy for NCBI accession numbers</h3>
+<html><body><a href="#finding-taxonomy-for-ncbi-accession-numbers" class="anchor"> </a></body></html>Finding taxonomy for NCBI accession numbers</h3>
 <p>First, load the nodes and names files into memory:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">taxaNodes&lt;-<span class="kw"><a href="reference/read.nodes.html">read.nodes</a></span>(<span class="st">'nodes.dmp'</span>)
-taxaNames&lt;-<span class="kw"><a href="reference/read.names.html">read.names</a></span>(<span class="st">'names.dmp'</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">taxaNodes&lt;-<span class="kw"><a href="../reference/read.nodes.html">read.nodes</a></span>(<span class="st">'nodes.dmp'</span>)
+taxaNames&lt;-<span class="kw"><a href="../reference/read.names.html">read.names</a></span>(<span class="st">'names.dmp'</span>)</code></pre></div>
 <p>Then we are ready to convert NCBI accession numbers to taxonomic IDs. For example, to find the taxonomic IDs associated with NCBI accession numbers “LN847353.1” and “AL079352.3”:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">taxaId&lt;-<span class="kw"><a href="reference/accessionToTaxa.html">accessionToTaxa</a></span>(<span class="kw">c</span>(<span class="st">"LN847353.1"</span>,<span class="st">"AL079352.3"</span>),<span class="st">"accessionTaxa.sql"</span>)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">taxaId&lt;-<span class="kw"><a href="../reference/accessionToTaxa.html">accessionToTaxa</a></span>(<span class="kw">c</span>(<span class="st">"LN847353.1"</span>,<span class="st">"AL079352.3"</span>),<span class="st">"accessionTaxa.sql"</span>)
 <span class="kw">print</span>(taxaId)</code></pre></div>
 <pre><code>## [1] 1313 9606</code></pre>
 <p>And to get the taxonomy for those IDs:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="reference/getTaxonomy.html">getTaxonomy</a></span>(taxaId,taxaNodes,taxaNames)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/getTaxonomy.html">getTaxonomy</a></span>(taxaId,taxaNodes,taxaNames)</code></pre></div>
 <pre><code>##      superkingdom phylum       class      order            
 ## 1313 "Bacteria"   "Firmicutes" "Bacilli"  "Lactobacillales"
 ## 9606 "Eukaryota"  "Chordata"   "Mammalia" "Primates"       
@@ -118,13 +118,13 @@ taxaNames&lt;-<span class="kw"><a href="reference/read.names.html">read.names</a
 </div>
 <div id="finding-taxonomy-for-taxonomic-names" class="section level3">
 <h3 class="hasAnchor">
-<a href="#finding-taxonomy-for-taxonomic-names" class="anchor"> </a>Finding taxonomy for taxonomic names</h3>
+<html><body><a href="#finding-taxonomy-for-taxonomic-names" class="anchor"> </a></body></html>Finding taxonomy for taxonomic names</h3>
 <p>If you’d like to find IDs for taxonomic names then you can do something like:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">taxaId&lt;-<span class="kw"><a href="reference/getId.html">getId</a></span>(<span class="kw">c</span>(<span class="st">'Homo sapiens'</span>,<span class="st">'Bos taurus'</span>,<span class="st">'Homo'</span>),taxaNames)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">taxaId&lt;-<span class="kw"><a href="../reference/getId.html">getId</a></span>(<span class="kw">c</span>(<span class="st">'Homo sapiens'</span>,<span class="st">'Bos taurus'</span>,<span class="st">'Homo'</span>),taxaNames)
 <span class="kw">print</span>(taxaId)</code></pre></div>
 <pre><code>## [1] "9606" "9913" "9605"</code></pre>
 <p>And again to get the taxonomy for those IDs use <code>getTaxonomy</code>:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="reference/getTaxonomy.html">getTaxonomy</a></span>(taxaId,taxaNodes,taxaNames)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/getTaxonomy.html">getTaxonomy</a></span>(taxaId,taxaNodes,taxaNames)</code></pre></div>
 <pre><code>##      superkingdom phylum     class      order      family      genus 
 ## 9606 "Eukaryota"  "Chordata" "Mammalia" "Primates" "Hominidae" "Homo"
 ## 9913 "Eukaryota"  "Chordata" "Mammalia" NA         "Bovidae"   "Bos" 
@@ -136,24 +136,18 @@ taxaNames&lt;-<span class="kw"><a href="reference/read.names.html">read.names</a
 </div>
 </div>
 </div>
-</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>License</h2>
-<p><a href="https://www.r-project.org/Licenses/GPL-2">GPL-2</a></p>
-<h2>Developers</h2>
-<ul class="list-unstyled">
-<li>Scott Sherrill-Mix <br><small class="roles"> Author, maintainer </small> </li>
-</ul>
-<html><body>
-<h2>Dev status</h2>
-<ul class="list-unstyled">
-<li><a href="https://travis-ci.org/sherrillmix/taxonomizr"><img src="https://travis-ci.org/sherrillmix/taxonomizr.svg?branch=master" alt="Build Status"></a></li>
-<li><a href="https://codecov.io/github/sherrillmix/taxonomizr?branch=master"><img src="https://codecov.io/github/sherrillmix/dnaplotr/taxonomizr.svg?branch=master" alt="codecov.io"></a></li>
-</ul>
-</body></html>
+        <div id="tocnav">
+      <h2>Contents</h2>
+      <ul class="nav nav-pills nav-stacked">
+<li><a href="#introduction">Introduction</a></li>
+      <li><a href="#installation">Installation</a></li>
+      <li><a href="#examples">Examples</a></li>
+      </ul>
 </div>
+      </div>
 
 </div>
 
