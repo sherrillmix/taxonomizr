@@ -207,7 +207,12 @@ hr {
 
 <h2>Installation</h2>
 
-<p>To install directly from github, use the <a href="https://github.com/hadley/devtools"><code>devtools</code></a> library and run:</p>
+<p>Once the package is on CRAN, it should install with a simple:</p>
+
+<pre><code class="r">install.packages(&quot;taxonomizr&quot;)
+</code></pre>
+
+<p>To install the development version directly from github, use the <a href="https://github.com/hadley/devtools"><code>devtools</code></a> library and run:</p>
 
 <pre><code class="r">devtools::install_github(&quot;sherrillmix/taxonomizr&quot;)
 </code></pre>
@@ -221,7 +226,7 @@ hr {
 <pre><code class="r">library(taxonomizr)
 </code></pre>
 
-<p>Then download the necessary names and nodes files from NCBI:</p>
+<p>Then download the necessary names and nodes files from <a href="ftp://ftp.ncbi.nih.gov/pub/taxonomy/">NCBI</a>:</p>
 
 <pre><code class="r">getNamesAndNodes()
 </code></pre>
@@ -229,7 +234,7 @@ hr {
 <pre><code>## [1] &quot;./names.dmp&quot; &quot;./nodes.dmp&quot;
 </code></pre>
 
-<p>And download accession to taxa id conversion files from NCBI (this is a <em>big</em> download):</p>
+<p>And download accession to taxa id conversion files from <a href="ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/">NCBI</a>. <strong>Note:</strong> this is a pretty <em>big</em> download (several gigabytes):</p>
 
 <pre><code class="r">#this is a big download
 getAccession2taxid()

@@ -8,7 +8,13 @@
 `taxonomizr` provides a some simple functions to parse NCBI taxonomy and accession dumps and use them to assign taxonomy to accession numbers.
 
 ## Installation
-To install directly from github, use the [<code>devtools</code>](https://github.com/hadley/devtools) library and run:
+Once the package is on CRAN, it should install with a simple:
+
+```r
+install.packages("taxonomizr")
+```
+
+To install the development version directly from github, use the [<code>devtools</code>](https://github.com/hadley/devtools) library and run:
 
 ```r
 devtools::install_github("sherrillmix/taxonomizr")
@@ -24,7 +30,7 @@ To use the library, include it in R:
 library(taxonomizr)
 ```
 
-Then download the necessary names and nodes files from NCBI:
+Then download the necessary names and nodes files from [NCBI](ftp://ftp.ncbi.nih.gov/pub/taxonomy/):
 
 ```r
 getNamesAndNodes()
@@ -34,7 +40,7 @@ getNamesAndNodes()
 ## [1] "./names.dmp" "./nodes.dmp"
 ```
 
-And download accession to taxa id conversion files from NCBI (this is a _big_ download):
+And download accession to taxa id conversion files from [NCBI](ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/). **Note:** this is a pretty _big_ download (several gigabytes):
 
 ```r
 #this is a big download

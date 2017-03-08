@@ -63,7 +63,9 @@
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <html><body><a href="#installation" class="anchor"> </a></body></html>Installation</h2>
-<p>To install directly from github, use the <a href="https://github.com/hadley/devtools"><code>devtools</code></a> library and run:</p>
+<p>Once the package is on CRAN, it should install with a simple:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">"taxonomizr"</span>)</code></pre></div>
+<p>To install the development version directly from github, use the <a href="https://github.com/hadley/devtools"><code>devtools</code></a> library and run:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">devtools::<span class="kw">install_github</span>(<span class="st">"sherrillmix/taxonomizr"</span>)</code></pre></div>
 </div>
 <div id="examples" class="section level2">
@@ -74,10 +76,10 @@
 <html><body><a href="#preparation" class="anchor"> </a></body></html>Preparation</h3>
 <p>To use the library, include it in R:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(taxonomizr)</code></pre></div>
-<p>Then download the necessary names and nodes files from NCBI:</p>
+<p>Then download the necessary names and nodes files from <a href="ftp://ftp.ncbi.nih.gov/pub/taxonomy/">NCBI</a>:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/getNamesAndNodes.html">getNamesAndNodes</a></span>()</code></pre></div>
 <pre><code>## [1] "./names.dmp" "./nodes.dmp"</code></pre>
-<p>And download accession to taxa id conversion files from NCBI (this is a <em>big</em> download):</p>
+<p>And download accession to taxa id conversion files from <a href="ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/">NCBI</a>. <strong>Note:</strong> this is a pretty <em>big</em> download (several gigabytes):</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#this is a big download</span>
 <span class="kw"><a href="../reference/getAccession2taxid.html">getAccession2taxid</a></span>()</code></pre></div>
 <pre><code>## [1] "./nucl_gb.accession2taxid.gz"  "./nucl_est.accession2taxid.gz"

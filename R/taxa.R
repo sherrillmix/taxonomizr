@@ -408,6 +408,7 @@ getNamesAndNodes<-function(outDir='.',url='ftp://ftp.ncbi.nih.gov/pub/taxonomy/t
 #'   getAccession2taxid()
 #' }
 getAccession2taxid<-function(outDir='.',baseUrl='ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/',types=c('nucl_gb','nucl_est','nucl_gss','nucl_wgs')){
+  message('This can be a big (several gigabytes) download. Please be patient and use a fast connection.')
   fileNames<-sprintf('%s.accession2taxid.gz',types)
   outFiles<-file.path(outDir,fileNames)
   if(all(file.exists(outFiles))){
