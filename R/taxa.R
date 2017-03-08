@@ -370,6 +370,7 @@ condenseTaxa<-function(taxaTable){
 #' @param fileNames the filenames desired from the tar.gz file
 #' @return a vector of file path strings of the locations of the output files
 #' @seealso \code{\link{read.nodes}}, \code{\link{read.names}}
+#' @references \url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/}, \url{https://www.ncbi.nlm.nih.gov/Taxonomy/taxonomyhome.html/}
 #' @export
 #' @examples
 #' \dontrun{
@@ -402,6 +403,7 @@ getNamesAndNodes<-function(outDir='.',url='ftp://ftp.ncbi.nih.gov/pub/taxonomy/t
 #' @param types the types if accession2taxid.gz files desired where type is the prefix of xxx.accession2taxid.gz. The default is to download all nucl_ accessions. For protein accessions, try \code{types=c('prot')}.
 #' @return a vector of file path strings of the locations of the output files
 #' @seealso \code{\link{read.accession2taxid}}
+#' @references \url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/}, \url{https://www.ncbi.nlm.nih.gov/Sequin/acc.html}
 #' @export
 #' @examples
 #' \dontrun{

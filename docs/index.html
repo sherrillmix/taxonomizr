@@ -58,7 +58,7 @@
 <div id="introduction" class="section level2">
 <h2 class="hasAnchor">
 <a href="#introduction" class="anchor"> </a>Introduction</h2>
-<p><code>taxonomizr</code> provides a some simple functions to parse NCBI taxonomy and accession dumps and use them to assign taxonomy to accession numbers.</p>
+<p><code>taxonomizr</code> provides some simple functions to parse NCBI taxonomy files and accession dumps and efficiently use them to assign taxonomy to accession numbers or taxonomic IDs. This is useful e.g. to assign taxonomy to BLAST results. This is all done locally after downloading the appropriate files from NCBI using included functions (see <a href="#preparation">below</a>).</p>
 </div>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
@@ -67,18 +67,24 @@
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">"taxonomizr"</span>)</code></pre></div>
 <p>To install the development version directly from github, use the <a href="https://github.com/hadley/devtools"><code>devtools</code></a> library and run:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">devtools::<span class="kw">install_github</span>(<span class="st">"sherrillmix/taxonomizr"</span>)</code></pre></div>
-</div>
-<div id="examples" class="section level2">
-<h2 class="hasAnchor">
-<a href="#examples" class="anchor"> </a>Examples</h2>
-<div id="preparation" class="section level3">
-<h3 class="hasAnchor">
-<a href="#preparation" class="anchor"> </a>Preparation</h3>
-<p>To use the library, include it in R:</p>
+<p>To use the library, load it in R:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(taxonomizr)</code></pre></div>
+</div>
+<div id="preparation" class="section level2">
+<h2 class="hasAnchor">
+<a href="#preparation" class="anchor"> </a>Preparation<a name="preparation"></a>
+</h2>
+<p>In order to avoid constant internet access and slow APIs, the first step in using the package is to downloads all necessary files from NCBI. This uses a bit of disk space but makes future access reliable and fast. <strong>Note:</strong> It is not necessary to manually check for the presence of these files since the functions automatically check to see if their output is present and if so skip downloading/processing. Delete the local files if you would like to redownload or reprocess them.</p>
+<div id="download-names-and-nodes" class="section level3">
+<h3 class="hasAnchor">
+<a href="#download-names-and-nodes" class="anchor"> </a>Download names and nodes</h3>
 <p>Then download the necessary names and nodes files from <a href="ftp://ftp.ncbi.nih.gov/pub/taxonomy/">NCBI</a>:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="reference/getNamesAndNodes.html">getNamesAndNodes</a></span>()</code></pre></div>
 <pre><code>## [1] "./names.dmp" "./nodes.dmp"</code></pre>
+</div>
+<div id="download-accession-to-taxa-files" class="section level3">
+<h3 class="hasAnchor">
+<a href="#download-accession-to-taxa-files" class="anchor"> </a>Download accession to taxa files</h3>
 <p>And download accession to taxa id conversion files from <a href="ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/">NCBI</a>. <strong>Note:</strong> this is a pretty <em>big</em> download (several gigabytes):</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#this is a big download</span>
 <span class="kw"><a href="reference/getAccession2taxid.html">getAccession2taxid</a></span>()</code></pre></div>
@@ -88,6 +94,10 @@
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#this is a big download</span>
 <span class="kw"><a href="reference/getAccession2taxid.html">getAccession2taxid</a></span>(<span class="dt">types=</span><span class="st">'prot'</span>)</code></pre></div>
 <pre><code>## [1] "./prot.accession2taxid.gz"</code></pre>
+</div>
+<div id="convert-accessions-to-database" class="section level3">
+<h3 class="hasAnchor">
+<a href="#convert-accessions-to-database" class="anchor"> </a>Convert accessions to database</h3>
 <p>Then process the downloaded accession files into a more easily accessed form (this could take a while):</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="reference/read.accession2taxid.html">read.accession2taxid</a></span>(<span class="kw">list.files</span>(<span class="st">'.'</span>,<span class="st">'accession2taxid.gz$'</span>),<span class="st">'accessionTaxa.sql'</span>)</code></pre></div>
 <pre><code>## Reading nucl_est.accession2taxid.gz.</code></pre>
@@ -97,8 +107,12 @@
 <pre><code>## Reading in values. This may take a while.</code></pre>
 <pre><code>## Adding index. This may also take a while.</code></pre>
 <pre><code>## [1] TRUE</code></pre>
-<p>Now everything should be ready for processing. This should all be cached locally and so is not required every time. It is not necessary to manually check for the presence of these files since the functions automatically check to see if their output is present and if so skip downloading/processing. Delete the local files if you would like to redownload or reprocess them.</p>
+<p>Now everything should be ready for processing. All files are cached locally and so the preparation is only required once (or whenever you would like to update the data). It is not necessary to manually check for the presence of these files since the functions automatically check to see if their output is present and if so skip downloading/processing. Delete the local files if you would like to redownload or reprocess them.</p>
 </div>
+</div>
+<div id="examples" class="section level2">
+<h2 class="hasAnchor">
+<a href="#examples" class="anchor"> </a>Examples</h2>
 <div id="finding-taxonomy-for-ncbi-accession-numbers" class="section level3">
 <h3 class="hasAnchor">
 <a href="#finding-taxonomy-for-ncbi-accession-numbers" class="anchor"> </a>Finding taxonomy for NCBI accession numbers</h3>

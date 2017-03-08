@@ -26,6 +26,9 @@ Download a nucl_xxx.accession2taxid.gz from NCBI servers. These can then be used
   getAccession2taxid()
 }
 }
+\references{
+\url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/}, \url{https://www.ncbi.nlm.nih.gov/Sequin/acc.html}
+}
 \seealso{
 \code{\link{read.accession2taxid}}
 }

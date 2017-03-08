@@ -26,6 +26,9 @@ Download a taxdump.tar.gz file from NCBI servers and extract the names.dmp and n
   getNamesAndNodes()
 }
 }
+\references{
+\url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/}, \url{https://www.ncbi.nlm.nih.gov/Taxonomy/taxonomyhome.html/}
+}
 \seealso{
 \code{\link{read.nodes}}, \code{\link{read.names}}
 }

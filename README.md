@@ -5,7 +5,7 @@
 
 ## Introduction
 
-`taxonomizr` provides a some simple functions to parse NCBI taxonomy and accession dumps and use them to assign taxonomy to accession numbers.
+`taxonomizr` provides some simple functions to parse NCBI taxonomy files and accession dumps and efficiently use them to assign taxonomy to accession numbers or taxonomic IDs. This is useful e.g. to assign taxonomy to BLAST results. This is all done locally after downloading the appropriate files from NCBI using included functions (see [below](#preparation)). 
 
 ## Installation
 Once the package is on CRAN, it should install with a simple:
@@ -20,16 +20,18 @@ To install the development version directly from github, use the [<code>devtools
 devtools::install_github("sherrillmix/taxonomizr")
 ```
 
-## Examples
-
-### Preparation
-
-To use the library, include it in R:
+To use the library, load it in R:
 
 ```r
 library(taxonomizr)
 ```
 
+
+
+## Preparation<a name="preparation"></a>
+In order to avoid constant internet access and slow APIs, the first step in using the package is to downloads all necessary files from NCBI. This uses a bit of disk space but makes future access reliable and fast. **Note:** It is not necessary to manually check for the presence of these files since the functions automatically check to see if their output is present and if so skip downloading/processing. Delete the local files if you would like to redownload or reprocess them.
+
+### Download names and nodes
 Then download the necessary names and nodes files from [NCBI](ftp://ftp.ncbi.nih.gov/pub/taxonomy/):
 
 ```r
@@ -39,6 +41,8 @@ getNamesAndNodes()
 ```
 ## [1] "./names.dmp" "./nodes.dmp"
 ```
+
+### Download accession to taxa files
 
 And download accession to taxa id conversion files from [NCBI](ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/). **Note:** this is a pretty _big_ download (several gigabytes):
 
@@ -63,7 +67,7 @@ getAccession2taxid(types='prot')
 ## [1] "./prot.accession2taxid.gz"
 ```
 
-
+### Convert accessions to database
 
 Then process the downloaded accession files into a more easily accessed form (this could take a while):
 
@@ -100,8 +104,9 @@ read.accession2taxid(list.files('.','accession2taxid.gz$'),'accessionTaxa.sql')
 ## [1] TRUE
 ```
 
+Now everything should be ready for processing. All files are cached locally and so the preparation is only required once (or whenever you would like to update the data). It is not necessary to manually check for the presence of these files since the functions automatically check to see if their output is present and if so skip downloading/processing. Delete the local files if you would like to redownload or reprocess them.
 
-Now everything should be ready for processing. This should all be cached locally and so is not required every time. It is not necessary to manually check for the presence of these files since the functions automatically check to see if their output is present and if so skip downloading/processing. Delete the local files if you would like to redownload or reprocess them.
+## Examples
 
 ### Finding taxonomy for NCBI accession numbers
 
