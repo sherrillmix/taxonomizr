@@ -111,7 +111,7 @@ streamingRead<-function(bigFile,n=1e6,FUN=function(xx)sub(',.*','',xx),...,vocal
 #' @param inFile a single string giving the 4 column tab separated file to read from
 #' @param outFile a single string giving the file path to write to
 #'
-#' @useDynLib taxonomizr taxaTrim
+#' @useDynLib taxonomizr, .registration=TRUE
 trimTaxa<-function(inFile,outFile){
   inFile<-as.character(inFile)
   outFile<-as.character(outFile)
