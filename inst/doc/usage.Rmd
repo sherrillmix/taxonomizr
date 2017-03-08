@@ -11,7 +11,7 @@ vignette: >
 
 ## Introduction
 
-`taxonomizr` provides some simple functions to parse NCBI taxonomy files and accession dumps and efficiently use them to assign taxonomy to accession numbers or taxonomic IDs. This is useful e.g. to assign taxonomy to BLAST results. This is all done locally after downloading the appropriate files from NCBI using included functions (see [below](#preparation)). 
+`taxonomizr` provides some simple functions to parse NCBI taxonomy files and accession dumps and efficiently use them to assign [taxonomy](https://www.ncbi.nlm.nih.gov/Taxonomy/taxonomyhome.html/) to accession numbers or taxonomic IDs. This is useful for example to assign taxonomy to BLAST results. This is all done locally after downloading the appropriate files from NCBI using included functions (see [below](#preparation)). 
 
 ## Installation
 Once the package is on CRAN, it should install with a simple:
@@ -32,10 +32,12 @@ library(taxonomizr)
 
 
 ## Preparation<a name="preparation"></a>
-In order to avoid constant internet access and slow APIs, the first step in using the package is to downloads all necessary files from NCBI. This uses a bit of disk space but makes future access reliable and fast. **Note:** It is not necessary to manually check for the presence of these files since the functions automatically check to see if their output is present and if so skip downloading/processing. Delete the local files if you would like to redownload or reprocess them.
+In order to avoid constant internet access and slow APIs, the first step in using the package is to downloads all necessary files from NCBI. This uses a bit of disk space but makes future access reliable and fast.
+
+**Note:** It is not necessary to manually check for the presence of these files since the functions automatically check to see if their output is present and if so skip downloading/processing. Delete the local files if you would like to redownload or reprocess them.
 
 ### Download names and nodes
-Then download the necessary names and nodes files from [NCBI](ftp://ftp.ncbi.nih.gov/pub/taxonomy/):
+First, download the necessary names and nodes files from [NCBI](ftp://ftp.ncbi.nih.gov/pub/taxonomy/):
 ```{r,eval=FALSE}
 getNamesAndNodes()
 ```
@@ -46,7 +48,7 @@ getNamesAndNodes()
 
 ### Download accession to taxa files
 
-And download accession to taxa id conversion files from [NCBI](ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/). **Note:** this is a pretty _big_ download (several gigabytes):
+Then download accession to taxa id conversion files from [NCBI](ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/). **Note:** this is a pretty _big_ download (several gigabytes):
 ```{r,eval=FALSE}
 #this is a big download
 getAccession2taxid()
@@ -57,7 +59,7 @@ getAccession2taxid()
 ## [3] "./nucl_gss.accession2taxid.gz" "./nucl_wgs.accession2taxid.gz"
 ```
 
-If you would also like to identify protein accession numbers also download the prot file from NCBI (again this is a _big_ download):
+If you would also like to identify protein accession numbers, also download the prot file from NCBI (again this is a _big_ download):
 ```{r,eval=FALSE}
 #this is a big download
 getAccession2taxid(types='prot')

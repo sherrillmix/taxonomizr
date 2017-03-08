@@ -58,7 +58,7 @@
 <div id="introduction" class="section level2">
 <h2 class="hasAnchor">
 <html><body><a href="#introduction" class="anchor"> </a></body></html>Introduction</h2>
-<p><code>taxonomizr</code> provides some simple functions to parse NCBI taxonomy files and accession dumps and efficiently use them to assign taxonomy to accession numbers or taxonomic IDs. This is useful e.g. to assign taxonomy to BLAST results. This is all done locally after downloading the appropriate files from NCBI using included functions (see <a href="#preparation">below</a>).</p>
+<p><code>taxonomizr</code> provides some simple functions to parse NCBI taxonomy files and accession dumps and efficiently use them to assign <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/taxonomyhome.html/">taxonomy</a> to accession numbers or taxonomic IDs. This is useful for example to assign taxonomy to BLAST results. This is all done locally after downloading the appropriate files from NCBI using included functions (see <a href="#preparation">below</a>).</p>
 </div>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
@@ -74,23 +74,24 @@
 <h2 class="hasAnchor">
 <html><body><a href="#preparation" class="anchor"> </a></body></html>Preparation<a name="preparation"></a>
 </h2>
-<p>In order to avoid constant internet access and slow APIs, the first step in using the package is to downloads all necessary files from NCBI. This uses a bit of disk space but makes future access reliable and fast. <strong>Note:</strong> It is not necessary to manually check for the presence of these files since the functions automatically check to see if their output is present and if so skip downloading/processing. Delete the local files if you would like to redownload or reprocess them.</p>
+<p>In order to avoid constant internet access and slow APIs, the first step in using the package is to downloads all necessary files from NCBI. This uses a bit of disk space but makes future access reliable and fast.</p>
+<p><strong>Note:</strong> It is not necessary to manually check for the presence of these files since the functions automatically check to see if their output is present and if so skip downloading/processing. Delete the local files if you would like to redownload or reprocess them.</p>
 <div id="download-names-and-nodes" class="section level3">
 <h3 class="hasAnchor">
 <html><body><a href="#download-names-and-nodes" class="anchor"> </a></body></html>Download names and nodes</h3>
-<p>Then download the necessary names and nodes files from <a href="ftp://ftp.ncbi.nih.gov/pub/taxonomy/">NCBI</a>:</p>
+<p>First, download the necessary names and nodes files from <a href="ftp://ftp.ncbi.nih.gov/pub/taxonomy/">NCBI</a>:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/getNamesAndNodes.html">getNamesAndNodes</a></span>()</code></pre></div>
 <pre><code>## [1] "./names.dmp" "./nodes.dmp"</code></pre>
 </div>
 <div id="download-accession-to-taxa-files" class="section level3">
 <h3 class="hasAnchor">
 <html><body><a href="#download-accession-to-taxa-files" class="anchor"> </a></body></html>Download accession to taxa files</h3>
-<p>And download accession to taxa id conversion files from <a href="ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/">NCBI</a>. <strong>Note:</strong> this is a pretty <em>big</em> download (several gigabytes):</p>
+<p>Then download accession to taxa id conversion files from <a href="ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/">NCBI</a>. <strong>Note:</strong> this is a pretty <em>big</em> download (several gigabytes):</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#this is a big download</span>
 <span class="kw"><a href="../reference/getAccession2taxid.html">getAccession2taxid</a></span>()</code></pre></div>
 <pre><code>## [1] "./nucl_gb.accession2taxid.gz"  "./nucl_est.accession2taxid.gz"
 ## [3] "./nucl_gss.accession2taxid.gz" "./nucl_wgs.accession2taxid.gz"</code></pre>
-<p>If you would also like to identify protein accession numbers also download the prot file from NCBI (again this is a <em>big</em> download):</p>
+<p>If you would also like to identify protein accession numbers, also download the prot file from NCBI (again this is a <em>big</em> download):</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#this is a big download</span>
 <span class="kw"><a href="../reference/getAccession2taxid.html">getAccession2taxid</a></span>(<span class="dt">types=</span><span class="st">'prot'</span>)</code></pre></div>
 <pre><code>## [1] "./prot.accession2taxid.gz"</code></pre>
