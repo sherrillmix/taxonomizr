@@ -1,7 +1,6 @@
 
 #include <R.h> //for errors
 #include <R_ext/Utils.h> //for interrupt
-#include "taxaTrim.h"
 
 void taxaTrim(char **files){
   unsigned int nTabs=0;
