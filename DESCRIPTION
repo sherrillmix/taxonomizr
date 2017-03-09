@@ -9,7 +9,7 @@ Authors@R: c(person("Scott", "Sherrill-Mix", role = c("aut", "cre"),
                      email = "shescott@upenn.edu"))
 Description: Functions for assigning taxonomy to NCBI accession numbers and taxon IDs based on NCBI's accession2taxid and taxdump files. This package allows the user to downloads NCBI data dumps and create a local database for fast and local taxonomic assignment.
 Version: 0.2.2
-Date: 2017-03-08
+Date: 2017-03-09
 Suggests:
     testthat,
     knitr,

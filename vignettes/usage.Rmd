@@ -14,12 +14,12 @@ vignette: >
 `taxonomizr` provides some simple functions to parse NCBI taxonomy files and accession dumps and efficiently use them to assign [taxonomy](https://www.ncbi.nlm.nih.gov/Taxonomy/taxonomyhome.html/) to accession numbers or taxonomic IDs. This is useful for example to assign taxonomy to BLAST results. This is all done locally after downloading the appropriate files from NCBI using included functions (see [below](#preparation)). 
 
 ## Installation
-Once the package is on CRAN, it should install with a simple:
+The package is on CRAN, so it should install with a simple:
 ```{r, eval=FALSE}
 install.packages("taxonomizr")
 ```
 
-To install the development version directly from github, use the [<code>devtools</code>](https://github.com/hadley/devtools) library and run:
+If you want the development version directly from github, use the [<code>devtools</code>](https://github.com/hadley/devtools) library and run:
 ```{r, eval=FALSE}
 devtools::install_github("sherrillmix/taxonomizr")
 ```

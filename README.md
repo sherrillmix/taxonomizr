@@ -2,19 +2,20 @@
 
 [![Build Status](https://travis-ci.org/sherrillmix/taxonomizr.svg?branch=master)](https://travis-ci.org/sherrillmix/taxonomizr)
 [![codecov.io](https://codecov.io/github/sherrillmix/dnaplotr/taxonomizr.svg?branch=master)](https://codecov.io/github/sherrillmix/taxonomizr?branch=master)
+[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/taxonomizr)](https://cran.r-project.org/package=taxonomizr)
 
 ## Introduction
 
 `taxonomizr` provides some simple functions to parse NCBI taxonomy files and accession dumps and efficiently use them to assign [taxonomy](https://www.ncbi.nlm.nih.gov/Taxonomy/taxonomyhome.html/) to accession numbers or taxonomic IDs. This is useful for example to assign taxonomy to BLAST results. This is all done locally after downloading the appropriate files from NCBI using included functions (see [below](#preparation)). 
 
 ## Installation
-Once the package is on CRAN, it should install with a simple:
+The package is on CRAN, so it should install with a simple:
 
 ```r
 install.packages("taxonomizr")
 ```
 
-To install the development version directly from github, use the [<code>devtools</code>](https://github.com/hadley/devtools) library and run:
+If you want the development version directly from github, use the [<code>devtools</code>](https://github.com/hadley/devtools) library and run:
 
 ```r
 devtools::install_github("sherrillmix/taxonomizr")
