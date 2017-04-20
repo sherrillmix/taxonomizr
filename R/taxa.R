@@ -28,6 +28,25 @@ read.names<-function(nameFile,onlyScientific=TRUE){
   return(out)
 }
 
+read.names2<-function(nameFile,sqlFile='nameNode.sqlite'){
+  if(file.exists(sqlFile)){
+    db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
+    if('names' %in% dbListTables(db)){
+      message(sqlFile,' already contains table names. Delete file (or table) to reload')
+      return(invisible(sqlFile))
+    }
+  }
+  splitLines<-do.call(rbind,strsplit(readLines(nameFile),'\\s*\\|\\s*'))
+  if(onlyScientific)splitLines<-splitLines[splitLines[,4]=='scientific name',]
+  splitLines<-splitLines[,-(3:4)]
+  colnames(splitLines)<-c('id','name')
+  splitLines<-data.frame('id'=as.numeric(splitLines[,'id']),'name'=splitLines[,'name'],stringsAsFactors=FALSE)
+  db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
+  RSQLite::dbWriteTable(conn = db, name = "names", value=splitLines)
+  RSQLite::dbGetQuery(db,"CREATE INDEX index_id ON names (id)")
+  return(invisible(sqlFile))
+}
+
 #' Read NCBI nodes file
 #'
 #' Take an NCBI nodes file and convert it to a data.table
@@ -54,14 +73,40 @@ read.nodes<-function(nodeFile){
   return(out)
 }
 
+#' Read NCBI nodes file
+#'
+#' Take an NCBI nodes file and convert it to a data.table
+#'
+#' @param nodeFile string giving the path to an NCBI node file to read from (both gzipped or uncompressed files are ok)
+#' @return a data.table with columns id, parent and rank with a key on id
+#' @references \url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/}
+#' @seealso \code{\link{read.names}}
+#' @export
+#' @examples
+#' nodes<-c(
+#'  "1\t|\t1\t|\tno rank\t|\t\t|\t8\t|\t0\t|\t1\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
+#'  "2\t|\t131567\t|\tsuperkingdom\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
+#'  "6\t|\t335928\t|\tgenus\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\t\t|",
+#'  "7\t|\t6\t|\tspecies\t|\tAC\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|",
+#'  "9\t|\t32199\t|\tspecies\t|\tBA\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|"
+#' )
+#' tmp<-tempfile()
+#' read.nodes2(textConnection(nodes),tmp)
 read.nodes2<-function(nodeFile,sqlFile='nameNode.sqlite'){
+  if(file.exists(sqlFile)){
+    db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
+    if('nodes' %in% dbListTables(db)){
+      message(sqlFile,' already contains table nodes. Delete file (or table) to reload')
+      return(invisible(sqlFile))
+    }
+  }
   splitLines<-do.call(rbind,lapply(strsplit(readLines(nodeFile),'\\s*\\|\\s*'),'[',1:3))
   colnames(splitLines)<-c('id','parent','rank')
   splitLines<-data.frame('id'=as.numeric(splitLines[,'id']),'rank'=splitLines[,'rank'],'parent'=as.numeric(splitLines[,'parent']),stringsAsFactors=FALSE)
   db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
-  #if(extraSqlCommand!='')RSQLite::dbGetQuery(db,extraSqlCommand)
   RSQLite::dbWriteTable(conn = db, name = "nodes", value =splitLines)
   RSQLite::dbGetQuery(db,"CREATE INDEX index_id ON nodes (id)")
+  return(invisible(sqlFile))
 }
 
 #' Return last not NA value

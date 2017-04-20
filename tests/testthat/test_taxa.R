@@ -27,6 +27,24 @@ test_that("Test read.nodes",{
   expect_equal(read.nodes(textConnection(nodes)),out)
 })
 
+test_that("Test read.nodes2",{
+  nodes<-c(
+    "1\t|\t1\t|\tno rank\t|\t\t|\t8\t|\t0\t|\t1\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
+    "2\t|\t131567\t|\tsuperkingdom\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
+    "6\t|\t335928\t|\tgenus\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\t\t|",
+    "7\t|\t6\t|\tspecies\t|\tAC\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|",
+    "9\t|\t32199\t|\tspecies\t|\tBA\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|"
+  )
+  tmp<-tempfile()
+  out<-data.frame('id'=c(1:2,6:7,9),'rank'=c('no rank','superkingdom','genus','species','species'),'parent'=c(1,131567,335928,6,32199),stringsAsFactors=FALSE)
+  expect_equal(read.nodes2(textConnection(nodes),tmp),tmp)
+  expect_true(file.exists(tmp))
+  expect_message(read.nodes2(textConnection(nodes),tmp),'contains')
+  expect_equal(read.nodes2(textConnection(nodes),tmp),tmp)
+  expect_error(db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=tmp),NA)
+  expect_equal(RSQLite::dbGetQuery(db,"SELECT * FROM nodes"),out)
+})
+
 test_that("Test lastNotNa",{
   expect_equal(lastNotNa(1:100),100)
   expect_equal(lastNotNa(c(1:100,rep(NA,50))),100)
@@ -109,6 +127,7 @@ test_that("Test read.accession2taxid",{
   }
 })
 
+
 test_that("Test getTaxonomy",{
   namesText<-c(
     "1\t|\tall\t|\t\t|\tsynonym\t|",
@@ -178,6 +197,35 @@ test_that("Test getTaxonomy",{
   expect_equal(getTaxonomy('9605',taxaNodes,taxaNames),getTaxonomy(9605,taxaNodes,taxaNames))
   expect_warning(getTaxonomy('9605,123',taxaNodes,taxaNames),'coercion')
 })
+
+test_that("Test getParentNodes",{
+  nodesText<-c(
+   "1\t|\t1\t|\tno rank\t|\t\t|\t8\t|\t0\t|\t1\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
+    "2\t|\t131567\t|\tsuperkingdom\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
+    "6\t|\t335928\t|\tgenus\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\t\t|",
+    "7\t|\t6\t|\tspecies\t|\tAC\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|",
+    "9\t|\t32199\t|\tspecies\t|\tBA\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|",
+    "9606\t|\t9605\t|\tspecies", "9605\t|\t207598\t|\tgenus", "207598\t|\t9604\t|\tsubfamily",
+    "9604\t|\t314295\t|\tfamily", "314295\t|\t9526\t|\tsuperfamily",
+    "9526\t|\t314293\t|\tparvorder", "314293\t|\t376913\t|\tinfraorder",
+    "376913\t|\t9443\t|\tsuborder", "9443\t|\t314146\t|\torder",
+    "314146\t|\t1437010\t|\tsuperorder", "1437010\t|\t9347\t|\tno rank",
+    "9347\t|\t32525\t|\tno rank", "32525\t|\t40674\t|\tno rank",
+    "40674\t|\t32524\t|\tclass", "32524\t|\t32523\t|\tno rank", "32523\t|\t1338369\t|\tno rank",
+    "1338369\t|\t8287\t|\tno rank", "8287\t|\t117571\t|\tno rank",
+    "117571\t|\t117570\t|\tno rank", "117570\t|\t7776\t|\tno rank",
+    "7776\t|\t7742\t|\tno rank", "7742\t|\t89593\t|\tno rank", "89593\t|\t7711\t|\tsubphylum",
+    "7711\t|\t33511\t|\tphylum", "33511\t|\t33213\t|\tno rank", "33213\t|\t6072\t|\tno rank",
+    "6072\t|\t33208\t|\tno rank", "33208\t|\t33154\t|\tkingdom",
+    "33154\t|\t2759\t|\tno rank", "2759\t|\t131567\t|\tsuperkingdom",
+    "131567\t|\t1\t|\tno rank"
+  )
+  tmp<-tempfile()
+  read.nodes2(textConnection(nodesText),tmp)
+  expect_equal(getParentNodes(c(9606,9605),tmp),data.frame('parent'=c(9605,207598),'rank'=c('species','genus'),stringsAsFactors=FALSE))
+  expect_equal(getParentNodes(c(NA,9606,9999999,9606),tmp),data.frame('parent'=c(NA,9605,NA,9605),'rank'=c(NA,'species',NA,'species'),stringsAsFactors=FALSE))
+})
+
 
 test_that("Test accessionToTaxa",{
   taxa<-c(
