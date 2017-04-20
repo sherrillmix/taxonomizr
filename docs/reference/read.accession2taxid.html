@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Read NCBI accession2taxid files — read.accession2taxid • taxonomizr</title>
+<title>Read NCBI accession2taxid files <U+2014> read.accession2taxid <e2><80><a2> taxonomizr</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -31,6 +31,8 @@
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
+
+
   </head>
 
   <body>
@@ -81,13 +83,13 @@
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <dl class="dl-horizontal">
       <dt>taxaFiles</dt>
-      <dd>a string or vector of strings giving the path(s) to files to be read in</dd>
+      <dd><p>a string or vector of strings giving the path(s) to files to be read in</p></dd>
       <dt>sqlFile</dt>
-      <dd>a string giving the path where the output sqlite file should be saved</dd>
+      <dd><p>a string giving the path where the output sqlite file should be saved</p></dd>
       <dt>vocal</dt>
-      <dd>if TRUE output status messages</dd>
+      <dd><p>if TRUE output status messages</p></dd>
       <dt>extraSqlCommand</dt>
-      <dd>for advanced use. A string giving a command to be called on the sqlite databse before loading data e.g. &quot;pragma temp_store = 2;&quot; to keep all temp files in memory (don&#39;t do this unless you have a lot (&gt;100 Gb) of RAM)</dd>
+      <dd><p>for advanced use. A string giving a command to be called on the sqlite databse before loading data e.g. "pragma temp_store = 2;" to keep all temp files in memory (don't do this unless you have a lot (&gt;100 Gb) of RAM)</p></dd>
     </dl>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -114,7 +116,7 @@
 <span class='no'>inFile</span><span class='kw'>&lt;-</span><span class='fu'>tempfile</span>()
 <span class='no'>outFile</span><span class='kw'>&lt;-</span><span class='fu'>tempfile</span>()
 <span class='fu'>writeLines</span>(<span class='no'>taxa</span>,<span class='no'>inFile</span>)
-<span class='fu'>read.accession2taxid</span>(<span class='no'>inFile</span>,<span class='no'>outFile</span>)</div><div class='output co'>#&gt; <span class='message'>Reading /tmp/RtmppaRqPT/file626f64bc6a8.</span></div><div class='output co'>#&gt; <span class='message'>Reading in values. This may take a while.</span></div><div class='output co'>#&gt; <span class='message'>Adding index. This may also take a while.</span></div><div class='output co'>#&gt; [1] TRUE</div><div class='input'><span class='no'>db</span><span class='kw'>&lt;-</span><span class='kw'>RSQLite</span><span class='kw'>::</span><span class='fu'>dbConnect</span>(<span class='kw'>RSQLite</span><span class='kw'>::</span><span class='fu'>SQLite</span>(),<span class='kw'>dbname</span><span class='kw'>=</span><span class='no'>outFile</span>)
+<span class='fu'>read.accession2taxid</span>(<span class='no'>inFile</span>,<span class='no'>outFile</span>)</div><div class='output co'>#&gt; <span class='message'>Reading /tmp/RtmpDIXYuo/file7abd1af1850f.</span></div><div class='output co'>#&gt; <span class='message'>Reading in values. This may take a while.</span></div><div class='output co'>#&gt; <span class='message'>Adding index. This may also take a while.</span></div><div class='output co'>#&gt; [1] TRUE</div><div class='input'><span class='no'>db</span><span class='kw'>&lt;-</span><span class='kw'>RSQLite</span><span class='kw'>::</span><span class='fu'>dbConnect</span>(<span class='kw'>RSQLite</span><span class='kw'>::</span><span class='fu'>SQLite</span>(),<span class='kw'>dbname</span><span class='kw'>=</span><span class='no'>outFile</span>)
 <span class='kw'>RSQLite</span><span class='kw'>::</span><span class='fu'>dbGetQuery</span>(<span class='no'>db</span>,<span class='st'>'SELECT * FROM accessionTaxa'</span>)</div><div class='output co'>#&gt;   accession taxa
 #&gt; 1  Z17427.1 3702
 #&gt; 2  Z17428.1 3702

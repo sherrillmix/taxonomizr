@@ -305,7 +305,9 @@ getTaxonomy<-function (ids,taxaNodes ,taxaNames, desiredTaxa=c('superkingdom','p
 
 
 getParentNodes<-function(ids,taxaNodes,sqlFile='nameNode.sqlite'){
+  ids<-as.numeric(ids)
   tmp<-tempfile()
+  on.exit(file.remove(tmp))
   tmpDb <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=tmp)
   RSQLite::dbWriteTable(tmpDb,'query',data.frame('id'=ids),overwrite=TRUE)
   RSQLite::dbDisconnect(tmpDb)
@@ -316,8 +318,8 @@ getParentNodes<-function(ids,taxaNodes,sqlFile='nameNode.sqlite'){
   RSQLite::dbGetQuery(db,'DROP TABLE tmp.query')
   RSQLite::dbGetQuery(db,'DETACH tmp')
   RSQLite::dbDisconnect(db)
-  print(taxaDf)
-  file.remove(tmp)
+  if(!identical(taxaDf$id,ids))stop(simpleError('Problem finding ids'))
+  return(taxaDf[,c('parent','rank')])
 }
 
 getTaxonomy2<-function (ids,taxaNodes ,taxaNames, desiredTaxa=c('superkingdom','phylum','class','order','family','genus','species'),mc.cores=1,debug=FALSE){

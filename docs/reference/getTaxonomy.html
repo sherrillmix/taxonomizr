@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Get taxonomic ranks for a taxa — getTaxonomy • taxonomizr</title>
+<title>Get taxonomic ranks for a taxa <U+2014> getTaxonomy <e2><80><a2> taxonomizr</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -31,6 +31,8 @@
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
+
+
   </head>
 
   <body>
@@ -83,17 +85,17 @@
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <dl class="dl-horizontal">
       <dt>ids</dt>
-      <dd>a vector of ids to find taxonomy for</dd>
+      <dd><p>a vector of ids to find taxonomy for</p></dd>
       <dt>taxaNodes</dt>
-      <dd>a nodes data.table from <code><a href='read.nodes.html'>read.nodes</a></code></dd>
+      <dd><p>a nodes data.table from <code><a href='read.nodes.html'>read.nodes</a></code></p></dd>
       <dt>taxaNames</dt>
-      <dd>a names data.table from <code><a href='read.names.html'>read.names</a></code></dd>
+      <dd><p>a names data.table from <code><a href='read.names.html'>read.names</a></code></p></dd>
       <dt>desiredTaxa</dt>
-      <dd>a vector of strings giving the desired taxa levels</dd>
+      <dd><p>a vector of strings giving the desired taxa levels</p></dd>
       <dt>mc.cores</dt>
-      <dd>the number of cores to use when processing</dd>
+      <dd><p>the number of cores to use when processing</p></dd>
       <dt>debug</dt>
-      <dd>if TRUE output node and name vectors with dput for each id (probably useful only for development)</dd>
+      <dd><p>if TRUE output node and name vectors with dput for each id (probably useful only for development)</p></dd>
     </dl>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -168,10 +170,10 @@
 )
 <span class='no'>taxaNodes</span><span class='kw'>&lt;-</span><span class='fu'><a href='read.nodes.html'>read.nodes</a></span>(<span class='fu'>textConnection</span>(<span class='no'>nodesText</span>))
 <span class='fu'>getTaxonomy</span>(<span class='fu'>c</span>(<span class='fl'>9606</span>,<span class='fl'>9605</span>),<span class='no'>taxaNodes</span>,<span class='no'>taxaNames</span>,<span class='kw'>mc.cores</span><span class='kw'>=</span><span class='fl'>1</span>)</div><div class='output co'>#&gt;      superkingdom phylum     class      order      family      genus 
-#&gt; 9606 &quot;Eukaryota&quot;  &quot;Chordata&quot; &quot;Mammalia&quot; &quot;Primates&quot; &quot;Hominidae&quot; &quot;Homo&quot;
-#&gt; 9605 &quot;Eukaryota&quot;  &quot;Chordata&quot; &quot;Mammalia&quot; &quot;Primates&quot; &quot;Hominidae&quot; &quot;Homo&quot;
+#&gt; 9606 "Eukaryota"  "Chordata" "Mammalia" "Primates" "Hominidae" "Homo"
+#&gt; 9605 "Eukaryota"  "Chordata" "Mammalia" "Primates" "Hominidae" "Homo"
 #&gt;      species       
-#&gt; 9606 &quot;Homo sapiens&quot;
+#&gt; 9606 "Homo sapiens"
 #&gt; 9605 NA            </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

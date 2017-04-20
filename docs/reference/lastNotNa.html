@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Return last not NA value — lastNotNa • taxonomizr</title>
+<title>Return last not NA value <U+2014> lastNotNa <e2><80><a2> taxonomizr</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -31,6 +31,8 @@
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
+
+
   </head>
 
   <body>
@@ -81,9 +83,9 @@
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <dl class="dl-horizontal">
       <dt>x</dt>
-      <dd>a vector to look for the last value in</dd>
+      <dd><p>a vector to look for the last value in</p></dd>
       <dt>default</dt>
-      <dd>a default value to use when all values are NA in a vector</dd>
+      <dd><p>a default value to use when all values are NA in a vector</p></dd>
     </dl>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -92,7 +94,7 @@
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>lastNotNa</span>(<span class='fu'>c</span>(<span class='fl'>1</span>:<span class='fl'>4</span>,<span class='fl'>NA</span>,<span class='fl'>NA</span>))</div><div class='output co'>#&gt; [1] 4</div><div class='input'><span class='fu'>lastNotNa</span>(<span class='fu'>c</span>(<span class='no'>letters</span>[<span class='fl'>1</span>:<span class='fl'>4</span>],<span class='fl'>NA</span>,<span class='st'>'z'</span>,<span class='fl'>NA</span>))</div><div class='output co'>#&gt; [1] &quot;z&quot;</div><div class='input'><span class='fu'>lastNotNa</span>(<span class='fu'>c</span>(<span class='fl'>NA</span>,<span class='fl'>NA</span>))</div><div class='output co'>#&gt; [1] &quot;Unknown&quot;</div></pre>
+    <pre class="examples"><div class='input'><span class='fu'>lastNotNa</span>(<span class='fu'>c</span>(<span class='fl'>1</span>:<span class='fl'>4</span>,<span class='fl'>NA</span>,<span class='fl'>NA</span>))</div><div class='output co'>#&gt; [1] 4</div><div class='input'><span class='fu'>lastNotNa</span>(<span class='fu'>c</span>(<span class='no'>letters</span>[<span class='fl'>1</span>:<span class='fl'>4</span>],<span class='fl'>NA</span>,<span class='st'>'z'</span>,<span class='fl'>NA</span>))</div><div class='output co'>#&gt; [1] "z"</div><div class='input'><span class='fu'>lastNotNa</span>(<span class='fu'>c</span>(<span class='fl'>NA</span>,<span class='fl'>NA</span>))</div><div class='output co'>#&gt; [1] "Unknown"</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
