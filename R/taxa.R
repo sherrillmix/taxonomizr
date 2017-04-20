@@ -54,6 +54,16 @@ read.nodes<-function(nodeFile){
   return(out)
 }
 
+read.nodes2<-function(nodeFile,sqlFile='nameNode.sqlite'){
+  splitLines<-do.call(rbind,lapply(strsplit(readLines(nodeFile),'\\s*\\|\\s*'),'[',1:3))
+  colnames(splitLines)<-c('id','parent','rank')
+  splitLines<-data.frame('id'=as.numeric(splitLines[,'id']),'rank'=splitLines[,'rank'],'parent'=as.numeric(splitLines[,'parent']),stringsAsFactors=FALSE)
+  db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
+  #if(extraSqlCommand!='')RSQLite::dbGetQuery(db,extraSqlCommand)
+  RSQLite::dbWriteTable(conn = db, name = "nodes", value =splitLines)
+  RSQLite::dbGetQuery(db,"CREATE INDEX index_id ON nodes (id)")
+}
+
 #' Return last not NA value
 #'
 #' A convenience function to return the last value which is not NA in a vector
@@ -293,6 +303,57 @@ getTaxonomy<-function (ids,taxaNodes ,taxaNames, desiredTaxa=c('superkingdom','p
   return(out)
 }
 
+
+getParentNodes<-function(ids,taxaNodes,sqlFile='nameNode.sqlite'){
+  tmp<-tempfile()
+  tmpDb <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=tmp)
+  RSQLite::dbWriteTable(tmpDb,'query',data.frame('id'=ids),overwrite=TRUE)
+  RSQLite::dbDisconnect(tmpDb)
+  #attach the temp table
+  db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
+  RSQLite::dbGetQuery(db, sprintf("ATTACH '%s' AS tmp",tmp))
+  taxaDf<-RSQLite::dbGetQuery(db,'SELECT tmp.query.id, parent, rank FROM tmp.query LEFT OUTER JOIN nodes ON tmp.query.id=nodes.id')
+  RSQLite::dbGetQuery(db,'DROP TABLE tmp.query')
+  RSQLite::dbGetQuery(db,'DETACH tmp')
+  RSQLite::dbDisconnect(db)
+  print(taxaDf)
+  file.remove(tmp)
+}
+
+getTaxonomy2<-function (ids,taxaNodes ,taxaNames, desiredTaxa=c('superkingdom','phylum','class','order','family','genus','species'),mc.cores=1,debug=FALSE){
+  ids<-as.numeric(ids)
+  if(length(ids)==0)return(NULL)
+  uniqIds<-unique(ids)
+
+
+  taxa<-do.call(rbind,parallel::mclapply(uniqIds,function(id){
+      out<-structure(rep(as.character(NA),length(desiredTaxa)),names=desiredTaxa)
+      if(is.na(id))return(out)
+      thisId<-id
+      if(debug){
+        tmp<-c()
+        tmp2<-c()
+      }
+      while(thisId!=1){
+        thisNode<-taxaNodes[list(thisId),]
+        if(debug){
+          tmp<-c(tmp,sprintf('%d\t|\t%d\t|\t%s',thisNode$id,thisNode$parent,thisNode$rank))
+          tmp2<-c(tmp2,sprintf('%d\t|\t%s\t|\t\t|\tscientific name',taxaNames[list(thisId),]$id,taxaNames[list(thisId),]$name))
+        }
+        if(is.na(thisNode$parent))break() #unknown taxa
+        if(thisNode$rank %in% desiredTaxa)out[thisNode$rank]<-taxaNames[list(thisId),]$name
+        thisId<-thisNode$parent
+      }
+      if(debug){
+        dput(tmp)
+        dput(tmp2)
+      }
+      return(out)
+  },mc.cores=mc.cores))
+  rownames(taxa)<-format(uniqIds,scientific=FALSE)
+  out<-taxa[format(ids,scientific=FALSE),,drop=FALSE]
+  return(out)
+}
 #' Convert accessions to taxa
 #'
 #' Convert a vector of NCBI accession numbers to their assigned taxonomy
