@@ -27,6 +27,30 @@ test_that("Test read.nodes",{
   expect_equal(read.nodes(textConnection(nodes)),out)
 })
 
+test_that("Test read.names2",{
+  names<-c(
+    "1\t|\tall\t|\t\t|\tsynonym\t|",
+    "1\t|\troot\t|\t\t|\tscientific name\t|",
+    "2\t|\tBacteria\t|\tBacteria <prokaryotes>\t|\tscientific name\t|",
+    "2\t|\tMonera\t|\tMonera <Bacteria>\t|\tin-part\t|",
+    "2\t|\tProcaryotae\t|\tProcaryotae <Bacteria>\t|\tin-part\t|"
+  )
+  tmp<-tempfile()
+  out<-data.frame('id'=1:2,'name'=c('root','Bacteria'),stringsAsFactors=FALSE)
+  expect_equal(read.names2(textConnection(names),tmp),tmp)
+  expect_true(file.exists(tmp))
+  expect_message(read.names2(textConnection(names),tmp),'contains')
+  expect_error(db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=tmp),NA)
+  expect_equal(RSQLite::dbGetQuery(db,"SELECT * FROM names"),out)
+  dbDisconnect(db)
+  file.remove(tmp)
+  out<-data.frame('id'=rep(1:2,2:3),'name'=c('all','root','Bacteria','Monera','Procaryotae'),stringsAsFactors=FALSE)
+  expect_equal(read.names2(textConnection(names),tmp,FALSE),tmp)
+  expect_error(db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=tmp),NA)
+  expect_equal(RSQLite::dbGetQuery(db,"SELECT * FROM names"),out)
+  dbDisconnect(db)
+})
+
 test_that("Test read.nodes2",{
   nodes<-c(
     "1\t|\t1\t|\tno rank\t|\t\t|\t8\t|\t0\t|\t1\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
@@ -43,6 +67,7 @@ test_that("Test read.nodes2",{
   expect_equal(read.nodes2(textConnection(nodes),tmp),tmp)
   expect_error(db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=tmp),NA)
   expect_equal(RSQLite::dbGetQuery(db,"SELECT * FROM nodes"),out)
+  dbDisconnect(db)
 })
 
 test_that("Test lastNotNa",{
