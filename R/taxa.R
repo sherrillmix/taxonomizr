@@ -318,8 +318,8 @@ getTaxonomy<-function (ids,taxaNodes ,taxaNames, desiredTaxa=c('superkingdom','p
 #' read.accession2taxid(inFile,sqlFile)
 #' accessionToTaxa(c("Z17430.1","Z17429.1","X62402.1",'NOTREAL'),sqlFile)
 accessionToTaxa<-function(accessions,sqlFile){
-  if(length(accessions)==0)return(c())
   if(!file.exists(sqlFile))stop(sqlFile,' does not exist.')
+  if(length(accessions)==0)return(c())
   tmp<-tempfile()
   #set up a new table of accessions in a temp db (avoiding concurrency issues)
   #some trouble with dbWriteTable writing to "tmp.xxx" in the main database if we do this inside the attach

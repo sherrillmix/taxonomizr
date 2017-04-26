@@ -191,7 +191,10 @@ test_that("Test accessionToTaxa",{
   inFile<-tempfile()
   sqlFile<-tempfile()
   #not created yet
+  expect_error(accessionToTaxa("Z17430.1",notARealVariable),"found")
   expect_error(accessionToTaxa("Z17430.1",sqlFile),"exist")
+  expect_error(accessionToTaxa(c(),notARealVariable),"found")
+  expect_error(accessionToTaxa(c(),sqlFile),"exist")
   writeLines(taxa,inFile)
   read.accession2taxid(inFile,sqlFile)
   expect_equal(accessionToTaxa(c("Z17430.1","Z17429.1","X62402.1"),sqlFile),c(3702,3702,9606))
