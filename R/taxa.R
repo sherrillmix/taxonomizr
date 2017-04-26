@@ -28,7 +28,7 @@ read.names<-function(nameFile,onlyScientific=TRUE){
   return(out)
 }
 
-read.names2<-function(nameFile,sqlFile='nameNode.sqlite'){
+read.names2<-function(nameFile,sqlFile='nameNode.sqlite',onlyScientific=TRUE){
   if(file.exists(sqlFile)){
     db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
     if('names' %in% dbListTables(db)){
@@ -349,7 +349,7 @@ getTaxonomy<-function (ids,taxaNodes ,taxaNames, desiredTaxa=c('superkingdom','p
 }
 
 
-getParentNodes<-function(ids,taxaNodes,sqlFile='nameNode.sqlite'){
+getParentNodes<-function(ids,sqlFile='nameNode.sqlite'){
   ids<-as.numeric(ids)
   tmp<-tempfile()
   on.exit(file.remove(tmp))
@@ -367,10 +367,22 @@ getParentNodes<-function(ids,taxaNodes,sqlFile='nameNode.sqlite'){
   return(taxaDf[,c('parent','rank')])
 }
 
-getTaxonomy2<-function (ids,taxaNodes ,taxaNames, desiredTaxa=c('superkingdom','phylum','class','order','family','genus','species'),mc.cores=1,debug=FALSE){
+getTaxonomy2<-function (ids,sqlFile='nameNode.sqlite', desiredTaxa=c('superkingdom','phylum','class','order','family','genus','species'),mc.cores=1,debug=FALSE){
   ids<-as.numeric(ids)
   if(length(ids)==0)return(NULL)
   uniqIds<-unique(ids)
+  taxa<-matrix(NA,ncol=length(desiredTaxa),nrow=length(ids))
+  rep<-0
+  currentId<-ids
+  while(any(currentIds!=1)){
+    parents<-getParentNodes(currentIds[currentIds!=1],sqlFile)
+    for(ii in desiredTaxa){
+      taxa[currentIds!=1,][parents[,'rank']==ii,ii]<-currentIds[parents[,'rank']==ii,]
+    }
+    rep<-rep+1 
+    currentIds[currentIds!=1]<-parents$parent
+    if(rep>1000)stop('Found cycle in taxonomy')
+  }
 
 
   taxa<-do.call(rbind,parallel::mclapply(uniqIds,function(id){
@@ -401,6 +413,7 @@ getTaxonomy2<-function (ids,taxaNodes ,taxaNames, desiredTaxa=c('superkingdom','
   out<-taxa[format(ids,scientific=FALSE),,drop=FALSE]
   return(out)
 }
+
 #' Convert accessions to taxa
 #'
 #' Convert a vector of NCBI accession numbers to their assigned taxonomy
