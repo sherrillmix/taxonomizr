@@ -31,7 +31,7 @@ read.names<-function(nameFile,onlyScientific=TRUE){
 read.names2<-function(nameFile,sqlFile='nameNode.sqlite',onlyScientific=TRUE){
   if(file.exists(sqlFile)){
     db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
-    if('names' %in% dbListTables(db)){
+    if('names' %in% RSQLite::dbListTables(db)){
       message(sqlFile,' already contains table names. Delete file (or table) to reload')
       return(invisible(sqlFile))
     }
@@ -42,8 +42,10 @@ read.names2<-function(nameFile,sqlFile='nameNode.sqlite',onlyScientific=TRUE){
   colnames(splitLines)<-c('id','name')
   splitLines<-data.frame('id'=as.numeric(splitLines[,'id']),'name'=splitLines[,'name'],stringsAsFactors=FALSE)
   db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
+  on.exit(dbDisconnect(db))
   RSQLite::dbWriteTable(conn = db, name = "names", value=splitLines)
-  RSQLite::dbGetQuery(db,"CREATE INDEX index_id ON names (id)")
+  RSQLite::dbGetQuery(db,"CREATE INDEX index_names_id ON names (id)")
+  RSQLite::dbGetQuery(db,"CREATE INDEX index_names_name ON names (name)")
   return(invisible(sqlFile))
 }
 
@@ -95,7 +97,7 @@ read.nodes<-function(nodeFile){
 read.nodes2<-function(nodeFile,sqlFile='nameNode.sqlite'){
   if(file.exists(sqlFile)){
     db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
-    if('nodes' %in% dbListTables(db)){
+    if('nodes' %in% RSQLite::dbListTables(db)){
       message(sqlFile,' already contains table nodes. Delete file (or table) to reload')
       return(invisible(sqlFile))
     }
@@ -104,8 +106,9 @@ read.nodes2<-function(nodeFile,sqlFile='nameNode.sqlite'){
   colnames(splitLines)<-c('id','parent','rank')
   splitLines<-data.frame('id'=as.numeric(splitLines[,'id']),'rank'=splitLines[,'rank'],'parent'=as.numeric(splitLines[,'parent']),stringsAsFactors=FALSE)
   db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
+  on.exit(dbDisconnect(db))
   RSQLite::dbWriteTable(conn = db, name = "nodes", value =splitLines)
-  RSQLite::dbGetQuery(db,"CREATE INDEX index_id ON nodes (id)")
+  RSQLite::dbGetQuery(db,"CREATE INDEX index_nodes_id ON nodes (id)")
   return(invisible(sqlFile))
 }
 
@@ -315,7 +318,7 @@ read.accession2taxid<-function(taxaFiles,sqlFile,vocal=TRUE,extraSqlCommand=''){
 #' )
 #' taxaNodes<-read.nodes(textConnection(nodesText))
 #' getTaxonomy(c(9606,9605),taxaNodes,taxaNames,mc.cores=1)
-getTaxonomy<-function (ids,taxaNodes ,taxaNames, desiredTaxa=c('superkingdom','phylum','class','order','family','genus','species'),mc.cores=1,debug=FALSE){
+getTaxonomy<-function(ids,taxaNodes ,taxaNames, desiredTaxa=c('superkingdom','phylum','class','order','family','genus','species'),mc.cores=1,debug=FALSE){
   ids<-as.numeric(ids)
   if(length(ids)==0)return(NULL)
   uniqIds<-unique(ids)
@@ -359,57 +362,31 @@ getParentNodes<-function(ids,sqlFile='nameNode.sqlite'){
   #attach the temp table
   db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
   RSQLite::dbGetQuery(db, sprintf("ATTACH '%s' AS tmp",tmp))
-  taxaDf<-RSQLite::dbGetQuery(db,'SELECT tmp.query.id, parent, rank FROM tmp.query LEFT OUTER JOIN nodes ON tmp.query.id=nodes.id')
-  RSQLite::dbGetQuery(db,'DROP TABLE tmp.query')
-  RSQLite::dbGetQuery(db,'DETACH tmp')
-  RSQLite::dbDisconnect(db)
+  on.exit(RSQLite::dbGetQuery(db,'DROP TABLE tmp.query'),add=TRUE)
+  on.exit(RSQLite::dbGetQuery(db,'DETACH tmp'),add=TRUE)
+  on.exit(RSQLite::dbDisconnect(db),add=TRUE)
+  taxaDf<-RSQLite::dbGetQuery(db,'SELECT tmp.query.id, name,parent, rank FROM tmp.query LEFT OUTER JOIN nodes ON tmp.query.id=nodes.id LEFT OUTER JOIN names ON tmp.query.id=names.id')
   if(!identical(taxaDf$id,ids))stop(simpleError('Problem finding ids'))
-  return(taxaDf[,c('parent','rank')])
+  return(taxaDf[,c('name','parent','rank')])
 }
 
-getTaxonomy2<-function (ids,sqlFile='nameNode.sqlite', desiredTaxa=c('superkingdom','phylum','class','order','family','genus','species'),mc.cores=1,debug=FALSE){
+getTaxonomy2<-function (ids,sqlFile='nameNode.sqlite', desiredTaxa=c('superkingdom','phylum','class','order','family','genus','species')){
   ids<-as.numeric(ids)
   if(length(ids)==0)return(NULL)
   uniqIds<-unique(ids)
-  taxa<-matrix(NA,ncol=length(desiredTaxa),nrow=length(ids))
+  taxa<-matrix(NA,ncol=length(desiredTaxa),nrow=length(ids),dimnames=list(format(uniqIds,scientific=FALSE),desiredTaxa))
   rep<-0
-  currentId<-ids
-  while(any(currentIds!=1)){
-    parents<-getParentNodes(currentIds[currentIds!=1],sqlFile)
-    for(ii in desiredTaxa){
-      taxa[currentIds!=1,][parents[,'rank']==ii,ii]<-currentIds[parents[,'rank']==ii,]
+  currentIds<-ids
+  while(any(stillWorking<-!is.na(currentIds)&currentIds!=1)){
+    parents<-getParentNodes(currentIds[stillWorking],sqlFile)
+    for(ii in desiredTaxa[desiredTaxa %in% parents$rank]){
+      selector<-parents[,'rank']==ii&!is.na(parents[,'rank'])
+      taxa[which(stillWorking)[selector],ii]<-parents[selector,'name']
     }
     rep<-rep+1 
-    currentIds[currentIds!=1]<-parents$parent
+    currentIds[stillWorking]<-parents$parent
     if(rep>1000)stop('Found cycle in taxonomy')
   }
-
-
-  taxa<-do.call(rbind,parallel::mclapply(uniqIds,function(id){
-      out<-structure(rep(as.character(NA),length(desiredTaxa)),names=desiredTaxa)
-      if(is.na(id))return(out)
-      thisId<-id
-      if(debug){
-        tmp<-c()
-        tmp2<-c()
-      }
-      while(thisId!=1){
-        thisNode<-taxaNodes[list(thisId),]
-        if(debug){
-          tmp<-c(tmp,sprintf('%d\t|\t%d\t|\t%s',thisNode$id,thisNode$parent,thisNode$rank))
-          tmp2<-c(tmp2,sprintf('%d\t|\t%s\t|\t\t|\tscientific name',taxaNames[list(thisId),]$id,taxaNames[list(thisId),]$name))
-        }
-        if(is.na(thisNode$parent))break() #unknown taxa
-        if(thisNode$rank %in% desiredTaxa)out[thisNode$rank]<-taxaNames[list(thisId),]$name
-        thisId<-thisNode$parent
-      }
-      if(debug){
-        dput(tmp)
-        dput(tmp2)
-      }
-      return(out)
-  },mc.cores=mc.cores))
-  rownames(taxa)<-format(uniqIds,scientific=FALSE)
   out<-taxa[format(ids,scientific=FALSE),,drop=FALSE]
   return(out)
 }
@@ -581,3 +558,20 @@ getId<-function(taxa,taxaNames){
   return(unname(out[taxa]))
 }
 
+getId2<-function(taxa,sqlFile='inst/extdata/nameNode.sqlite'){
+  tmp<-tempfile()
+  on.exit(file.remove(tmp))
+  uniqTaxa<-unique(taxa)
+  tmpDb <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=tmp)
+  RSQLite::dbWriteTable(tmpDb,'query',data.frame('taxa'=uniqTaxa,stringsAsFactors=FALSE),overwrite=TRUE)
+  RSQLite::dbDisconnect(tmpDb)
+  db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
+  taxaDf<-RSQLite::dbGetQuery(db,'SELECT tmp.query.taxa, id FROM tmp.query LEFT OUTER JOIN names ON tmp.query.taxa=names.taxa')
+  RSQLite::dbDisconnect(db)
+  taxaN<-ave(taxaDf$id,taxaDf$taxa,length)
+  if(any(taxaN>1)){
+    warning('Multiple taxa ids found for ',paste(names(taxaN)[taxaN>1],collapse=', '),'. Collapsing with commas')
+  }
+  out<-ave(taxaDf$id,taxaDf$taxa,FUN=function(xx)paste(xx,collapse=' '))
+  return(unname(out[taxa]))
+}
