@@ -28,10 +28,10 @@ read.names<-function(nameFile,onlyScientific=TRUE){
   return(out)
 }
 
-read.names2<-function(nameFile,sqlFile='nameNode.sqlite',onlyScientific=TRUE){
+read.names2<-function(nameFile,sqlFile='nameNode.sqlite',onlyScientific=TRUE,overwrite=FALSE){
   if(file.exists(sqlFile)){
     db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
-    if('names' %in% RSQLite::dbListTables(db)){
+    if('names' %in% RSQLite::dbListTables(db) & !overwrite){
       message(sqlFile,' already contains table names. Delete file (or table) to reload')
       return(invisible(sqlFile))
     }
@@ -106,7 +106,7 @@ read.nodes2<-function(nodeFile,sqlFile='nameNode.sqlite'){
   colnames(splitLines)<-c('id','parent','rank')
   splitLines<-data.frame('id'=as.numeric(splitLines[,'id']),'rank'=splitLines[,'rank'],'parent'=as.numeric(splitLines[,'parent']),stringsAsFactors=FALSE)
   db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
-  on.exit(dbDisconnect(db))
+  on.exit(RSQLite::dbDisconnect(db))
   RSQLite::dbWriteTable(conn = db, name = "nodes", value =splitLines)
   RSQLite::dbGetQuery(db,"CREATE INDEX index_nodes_id ON nodes (id)")
   return(invisible(sqlFile))
@@ -361,10 +361,8 @@ getParentNodes<-function(ids,sqlFile='nameNode.sqlite'){
   RSQLite::dbDisconnect(tmpDb)
   #attach the temp table
   db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
-  RSQLite::dbGetQuery(db, sprintf("ATTACH '%s' AS tmp",tmp))
-  on.exit(RSQLite::dbGetQuery(db,'DROP TABLE tmp.query'),add=TRUE)
-  on.exit(RSQLite::dbGetQuery(db,'DETACH tmp'),add=TRUE)
   on.exit(RSQLite::dbDisconnect(db),add=TRUE)
+  RSQLite::dbGetQuery(db, sprintf("ATTACH '%s' AS tmp",tmp))
   taxaDf<-RSQLite::dbGetQuery(db,'SELECT tmp.query.id, name,parent, rank FROM tmp.query LEFT OUTER JOIN nodes ON tmp.query.id=nodes.id LEFT OUTER JOIN names ON tmp.query.id=names.id')
   if(!identical(taxaDf$id,ids))stop(simpleError('Problem finding ids'))
   return(taxaDf[,c('name','parent','rank')])
@@ -419,6 +417,7 @@ accessionToTaxa<-function(accessions,sqlFile){
   if(length(accessions)==0)return(c())
   if(!file.exists(sqlFile))stop(sqlFile,' does not exist.')
   tmp<-tempfile()
+  on.exit(file.remove(tmp))
   #set up a new table of accessions in a temp db (avoiding concurrency issues)
   #some trouble with dbWriteTable writing to "tmp.xxx" in the main database if we do this inside the attach
   tmpDb <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=tmp)
@@ -429,10 +428,7 @@ accessionToTaxa<-function(accessions,sqlFile){
   #attach the temp table
   RSQLite::dbGetQuery(db, sprintf("ATTACH '%s' AS tmp",tmp))
   taxaDf<-RSQLite::dbGetQuery(db,'SELECT tmp.query.accession, taxa FROM tmp.query LEFT OUTER JOIN accessionTaxa ON tmp.query.accession=accessionTaxa.accession')
-  RSQLite::dbGetQuery(db,'DROP TABLE tmp.query')
-  RSQLite::dbGetQuery(db,'DETACH tmp')
   RSQLite::dbDisconnect(db)
-  file.remove(tmp)
   if(any(taxaDf$accession!=accessions))stop(simpleError('Query and SQL mismatch'))
   return(taxaDf$taxa)
 }
@@ -563,15 +559,17 @@ getId2<-function(taxa,sqlFile='inst/extdata/nameNode.sqlite'){
   on.exit(file.remove(tmp))
   uniqTaxa<-unique(taxa)
   tmpDb <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=tmp)
-  RSQLite::dbWriteTable(tmpDb,'query',data.frame('taxa'=uniqTaxa,stringsAsFactors=FALSE),overwrite=TRUE)
+  RSQLite::dbWriteTable(tmpDb,'query',data.frame('name'=uniqTaxa,stringsAsFactors=FALSE),overwrite=TRUE)
   RSQLite::dbDisconnect(tmpDb)
   db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
-  taxaDf<-RSQLite::dbGetQuery(db,'SELECT tmp.query.taxa, id FROM tmp.query LEFT OUTER JOIN names ON tmp.query.taxa=names.taxa')
+  RSQLite::dbGetQuery(db, sprintf("ATTACH '%s' AS tmp",tmp))
+  taxaDf<-RSQLite::dbGetQuery(db,'SELECT tmp.query.name, id FROM tmp.query LEFT OUTER JOIN names ON tmp.query.name=names.name')
   RSQLite::dbDisconnect(db)
-  taxaN<-ave(taxaDf$id,taxaDf$taxa,length)
+  taxaN<-ave(taxaDf$id,taxaDf$name,FUN=length)
+  print(taxaDf)
   if(any(taxaN>1)){
     warning('Multiple taxa ids found for ',paste(names(taxaN)[taxaN>1],collapse=', '),'. Collapsing with commas')
   }
-  out<-ave(taxaDf$id,taxaDf$taxa,FUN=function(xx)paste(xx,collapse=' '))
+  out<-tapply(taxaDf$id,taxaDf$name,FUN=function(xx)paste(xx,collapse=', '))
   return(unname(out[taxa]))
 }
