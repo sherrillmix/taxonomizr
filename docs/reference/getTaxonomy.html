@@ -25,7 +25,7 @@
 <script src="../pkgdown.js"></script>
 
 <!-- mathjax -->
-<script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+<script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
 <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -78,25 +78,38 @@
     <p>Take NCBI taxa IDs and get the corresponding taxa ranks from name and node data.tables</p>
     
 
-    <pre><span class='fu'>getTaxonomy</span>(<span class='no'>ids</span>, <span class='no'>taxaNodes</span>, <span class='no'>taxaNames</span>, <span class='kw'>desiredTaxa</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"superkingdom"</span>,
+    <pre class="usage"><span class='fu'>getTaxonomy</span>(<span class='no'>ids</span>, <span class='no'>taxaNodes</span>, <span class='no'>taxaNames</span>, <span class='kw'>desiredTaxa</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"superkingdom"</span>,
   <span class='st'>"phylum"</span>, <span class='st'>"class"</span>, <span class='st'>"order"</span>, <span class='st'>"family"</span>, <span class='st'>"genus"</span>, <span class='st'>"species"</span>), <span class='kw'>mc.cores</span> <span class='kw'>=</span> <span class='fl'>1</span>,
   <span class='kw'>debug</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
-    <dl class="dl-horizontal">
-      <dt>ids</dt>
-      <dd><p>a vector of ids to find taxonomy for</p></dd>
-      <dt>taxaNodes</dt>
-      <dd><p>a nodes data.table from <code><a href='read.nodes.html'>read.nodes</a></code></p></dd>
-      <dt>taxaNames</dt>
-      <dd><p>a names data.table from <code><a href='read.names.html'>read.names</a></code></p></dd>
-      <dt>desiredTaxa</dt>
-      <dd><p>a vector of strings giving the desired taxa levels</p></dd>
-      <dt>mc.cores</dt>
-      <dd><p>the number of cores to use when processing</p></dd>
-      <dt>debug</dt>
-      <dd><p>if TRUE output node and name vectors with dput for each id (probably useful only for development)</p></dd>
-    </dl>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>ids</th>
+      <td><p>a vector of ids to find taxonomy for</p></td>
+    </tr>
+    <tr>
+      <th>taxaNodes</th>
+      <td><p>a nodes data.table from <code><a href='read.nodes.html'>read.nodes</a></code></p></td>
+    </tr>
+    <tr>
+      <th>taxaNames</th>
+      <td><p>a names data.table from <code><a href='read.names.html'>read.names</a></code></p></td>
+    </tr>
+    <tr>
+      <th>desiredTaxa</th>
+      <td><p>a vector of strings giving the desired taxa levels</p></td>
+    </tr>
+    <tr>
+      <th>mc.cores</th>
+      <td><p>the number of cores to use when processing</p></td>
+    </tr>
+    <tr>
+      <th>debug</th>
+      <td><p>if TRUE output node and name vectors with dput for each id (probably useful only for development)</p></td>
+    </tr>
+    </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 

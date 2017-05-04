@@ -31,9 +31,15 @@ read.names<-function(nameFile,onlyScientific=TRUE){
 read.names2<-function(nameFile,sqlFile='nameNode.sqlite',onlyScientific=TRUE,overwrite=FALSE){
   if(file.exists(sqlFile)){
     db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
-    if('names' %in% RSQLite::dbListTables(db) & !overwrite){
-      message(sqlFile,' already contains table names. Delete file (or table) to reload')
-      return(invisible(sqlFile))
+    if('names' %in% RSQLite::dbListTables(db)){
+      if(overwrite){
+        RSQLite::dbGetQuery(db,'DROP TABLE names')
+        RSQLite::dbDisconnect(db)
+      }else{
+        RSQLite::dbDisconnect(db)
+        message(sqlFile,' already contains table names. Delete file or set overwrite=TRUE to reload')
+        return(invisible(sqlFile))
+      }
     }
   }
   splitLines<-do.call(rbind,strsplit(readLines(nameFile),'\\s*\\|\\s*'))
@@ -42,7 +48,7 @@ read.names2<-function(nameFile,sqlFile='nameNode.sqlite',onlyScientific=TRUE,ove
   colnames(splitLines)<-c('id','name')
   splitLines<-data.frame('id'=as.numeric(splitLines[,'id']),'name'=splitLines[,'name'],stringsAsFactors=FALSE)
   db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
-  on.exit(dbDisconnect(db))
+  on.exit(RSQLite::dbDisconnect(db))
   RSQLite::dbWriteTable(conn = db, name = "names", value=splitLines)
   RSQLite::dbGetQuery(db,"CREATE INDEX index_names_id ON names (id)")
   RSQLite::dbGetQuery(db,"CREATE INDEX index_names_name ON names (name)")
@@ -80,6 +86,7 @@ read.nodes<-function(nodeFile){
 #' Take an NCBI nodes file and convert it to a data.table
 #'
 #' @param nodeFile string giving the path to an NCBI node file to read from (both gzipped or uncompressed files are ok)
+#' @param sqlFile a string giving the path where the output sqlite file should be saved
 #' @return a data.table with columns id, parent and rank with a key on id
 #' @references \url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/}
 #' @seealso \code{\link{read.names}}
@@ -565,8 +572,7 @@ getId2<-function(taxa,sqlFile='inst/extdata/nameNode.sqlite'){
   RSQLite::dbGetQuery(db, sprintf("ATTACH '%s' AS tmp",tmp))
   taxaDf<-RSQLite::dbGetQuery(db,'SELECT tmp.query.name, id FROM tmp.query LEFT OUTER JOIN names ON tmp.query.name=names.name')
   RSQLite::dbDisconnect(db)
-  taxaN<-ave(taxaDf$id,taxaDf$name,FUN=length)
-  print(taxaDf)
+  taxaN<-stats::ave(taxaDf$id,taxaDf$name,FUN=length)
   if(any(taxaN>1)){
     warning('Multiple taxa ids found for ',paste(names(taxaN)[taxaN>1],collapse=', '),'. Collapsing with commas')
   }

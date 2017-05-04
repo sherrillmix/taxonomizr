@@ -25,7 +25,7 @@
 <script src="../pkgdown.js"></script>
 
 <!-- mathjax -->
-<script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+<script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
 <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -78,22 +78,33 @@
     <p>A convenience function to read in a large file piece by piece, process it (hopefully reducing the size either by summarizing or removing extra rows or columns) and return the output</p>
     
 
-    <pre><span class='fu'>streamingRead</span>(<span class='no'>bigFile</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>1e+06</span>, <span class='kw'>FUN</span> <span class='kw'>=</span> <span class='kw'>function</span>(<span class='no'>xx</span>) <span class='fu'>sub</span>(<span class='st'>",.*"</span>, <span class='st'>""</span>, <span class='no'>xx</span>),
+    <pre class="usage"><span class='fu'>streamingRead</span>(<span class='no'>bigFile</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>1e+06</span>, <span class='kw'>FUN</span> <span class='kw'>=</span> <span class='kw'>function</span>(<span class='no'>xx</span>) <span class='fu'>sub</span>(<span class='st'>",.*"</span>, <span class='st'>""</span>, <span class='no'>xx</span>),
   <span class='no'>...</span>, <span class='kw'>vocal</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
-    <dl class="dl-horizontal">
-      <dt>bigFile</dt>
-      <dd><p>a string giving the path to a file to be read in or a connection opened with "r" mode</p></dd>
-      <dt>n</dt>
-      <dd><p>number of lines to read per chuck</p></dd>
-      <dt>FUN</dt>
-      <dd><p>a function taking the unparsed lines from a chunk of the bigfile as a single argument and returning the desired output</p></dd>
-      <dt>...</dt>
-      <dd><p>any additional arguments to FUN</p></dd>
-      <dt>vocal</dt>
-      <dd><p>if TRUE cat a "." as each chunk is processed</p></dd>
-    </dl>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>bigFile</th>
+      <td><p>a string giving the path to a file to be read in or a connection opened with "r" mode</p></td>
+    </tr>
+    <tr>
+      <th>n</th>
+      <td><p>number of lines to read per chuck</p></td>
+    </tr>
+    <tr>
+      <th>FUN</th>
+      <td><p>a function taking the unparsed lines from a chunk of the bigfile as a single argument and returning the desired output</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>any additional arguments to FUN</p></td>
+    </tr>
+    <tr>
+      <th>vocal</th>
+      <td><p>if TRUE cat a "." as each chunk is processed</p></td>
+    </tr>
+    </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 

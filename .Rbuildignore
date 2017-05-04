@@ -2,6 +2,7 @@
 ^makefile$
 ^.travis.yml$
 ^README.Rmd$
+^README.html$
 ^docs/
 ^usage.template$
 ^inst/extdata/*

@@ -245,10 +245,34 @@ test_that("Test getParentNodes",{
     "33154\t|\t2759\t|\tno rank", "2759\t|\t131567\t|\tsuperkingdom",
     "131567\t|\t1\t|\tno rank"
   )
+  namesText<-c(
+    "1\t|\tall\t|\t\t|\tsynonym\t|",
+    "1\t|\troot\t|\t\t|\tscientific name\t|",
+    "2\t|\tBacteria\t|\tBacteria <prokaryotes>\t|\tscientific name\t|",
+    "2\t|\tMonera\t|\tMonera <Bacteria>\t|\tin-part\t|",
+    "2\t|\tProcaryotae\t|\tProcaryotae <Bacteria>\t|\tin-part\t|",
+    "9606\t|\tHomo sapiens\t|\t\t|\tscientific name", "9605\t|\tHomo\t|\t\t|\tscientific name",
+    "207598\t|\tHomininae\t|\t\t|\tscientific name", "9604\t|\tHominidae\t|\t\t|\tscientific name",
+    "314295\t|\tHominoidea\t|\t\t|\tscientific name", "9526\t|\tCatarrhini\t|\t\t|\tscientific name",
+    "314293\t|\tSimiiformes\t|\t\t|\tscientific name", "376913\t|\tHaplorrhini\t|\t\t|\tscientific name",
+    "9443\t|\tPrimates\t|\t\t|\tscientific name", "314146\t|\tEuarchontoglires\t|\t\t|\tscientific name",
+    "1437010\t|\tBoreoeutheria\t|\t\t|\tscientific name", "9347\t|\tEutheria\t|\t\t|\tscientific name",
+    "32525\t|\tTheria\t|\t\t|\tscientific name", "40674\t|\tMammalia\t|\t\t|\tscientific name",
+    "32524\t|\tAmniota\t|\t\t|\tscientific name", "32523\t|\tTetrapoda\t|\t\t|\tscientific name",
+    "1338369\t|\tDipnotetrapodomorpha\t|\t\t|\tscientific name",
+    "8287\t|\tSarcopterygii\t|\t\t|\tscientific name", "117571\t|\tEuteleostomi\t|\t\t|\tscientific name",
+    "117570\t|\tTeleostomi\t|\t\t|\tscientific name", "7776\t|\tGnathostomata\t|\t\t|\tscientific name",
+    "7742\t|\tVertebrata\t|\t\t|\tscientific name", "89593\t|\tCraniata\t|\t\t|\tscientific name",
+    "7711\t|\tChordata\t|\t\t|\tscientific name", "33511\t|\tDeuterostomia\t|\t\t|\tscientific name",
+    "33213\t|\tBilateria\t|\t\t|\tscientific name", "6072\t|\tEumetazoa\t|\t\t|\tscientific name",
+    "33208\t|\tMetazoa\t|\t\t|\tscientific name", "33154\t|\tOpisthokonta\t|\t\t|\tscientific name",
+    "2759\t|\tEukaryota\t|\t\t|\tscientific name", "131567\t|\tcellular organisms\t|\t\t|\tscientific name"
+  )
   tmp<-tempfile()
   read.nodes2(textConnection(nodesText),tmp)
-  expect_equal(getParentNodes(c(9606,9605),tmp),data.frame('parent'=c(9605,207598),'rank'=c('species','genus'),stringsAsFactors=FALSE))
-  expect_equal(getParentNodes(c(NA,9606,9999999,9606),tmp),data.frame('parent'=c(NA,9605,NA,9605),'rank'=c(NA,'species',NA,'species'),stringsAsFactors=FALSE))
+  read.names2(textConnection(namesText),tmp)
+  expect_equal(getParentNodes(c(9606,9605),tmp),data.frame('name'=c('Homo sapiens','Homo'),'parent'=c(9605,207598),'rank'=c('species','genus'),stringsAsFactors=FALSE))
+  expect_equal(getParentNodes(c(NA,9606,9999999,9606),tmp),data.frame('name'=c(NA,'Homo sapiens',NA,'Homo sapiens'),'parent'=c(NA,9605,NA,9605),'rank'=c(NA,'species',NA,'species'),stringsAsFactors=FALSE))
 })
 
 
