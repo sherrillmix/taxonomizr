@@ -552,6 +552,8 @@ accessionToTaxa<-function(accessions,sqlFile){
 #' condenseTaxa2(taxas)
 condenseTaxa2<-function(taxaTable,groupings=rep(1,nrow(taxaTable))){
   tmp<-tempfile()
+  #mask commas if present
+  taxaTable<-sub(',','_!_!_',taxaTable)
   on.exit(file.remove(tmp))
   tmpDb <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=tmp)
   if(is.null(colnames(taxaTable)))colnames(taxaTable)<-sprintf("V%d",1:ncol(taxaTable))
@@ -567,6 +569,8 @@ condenseTaxa2<-function(taxaTable,groupings=rep(1,nrow(taxaTable))){
     if(firstDisagree<=length(xx))xx[firstDisagree:length(xx)]<-NA
     return(xx)
   }))
+  #turn commas back
+  out[,colnames(out)!='id']<-sub('_!_!_',',',out[,colnames(out)!='id'])
   return(out)
 }
 
