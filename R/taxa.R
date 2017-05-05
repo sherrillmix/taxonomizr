@@ -536,6 +536,40 @@ accessionToTaxa<-function(accessions,sqlFile){
   return(taxaDf$taxa)
 }
 
+#' Condense a taxa table for a single read
+#'
+#' Take a table of taxonomic assignments from hits to a single read and condense it to a single vector with NAs where there are disagreements between the hits
+#'
+#' @param taxaTable a matrix or data.frame with hits on the rows and various levels of taxonomy in the columns
+#' @param groupings a vector of groups e.g. read queries to condense taxa within
+#' @return a vector of length \code{ncol(taxaTable)} with NAs where the is not complete agreement
+#' @export
+#' @examples
+#' taxas<-matrix(c(
+#'  'a','b','c','e',
+#'  'a','b','d','e'
+#' ),nrow=2,byrow=TRUE)
+#' condenseTaxa2(taxas)
+condenseTaxa2<-function(taxaTable,groupings=rep(1,nrow(taxaTable))){
+  tmp<-tempfile()
+  on.exit(file.remove(tmp))
+  tmpDb <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=tmp)
+  if(is.null(colnames(taxaTable)))colnames(taxaTable)<-sprintf("V%d",1:ncol(taxaTable))
+  RSQLite::dbWriteTable(tmpDb,'tmp',cbind(as.data.frame(taxaTable,stringsAsFactors=FALSE),'id'=groupings),overwrite=TRUE)
+  RSQLite::dbGetQuery(tmpDb,"CREATE INDEX index_id ON tmp (id)")
+  print(RSQLite::dbGetQuery(tmpDb,"SELECT * FROM tmp"))
+  colSelects<-sprintf('GROUP_CONCAT(DISTINCT(%s)) AS %s',colnames(taxaTable),colnames(taxaTable))
+  query<-sprintf("SELECT id, %s FROM tmp GROUP BY id",paste(colSelects,collapse=', '))
+  out<-RSQLite::dbGetQuery(tmpDb,query)
+  out<-t(apply(out,1,function(xx){
+    isBad<-grepl(',',xx)
+    firstDisagree<-min(c(Inf,which(isBad)))
+    if(firstDisagree<=length(xx))xx[firstDisagree:length(xx)]<-NA
+    return(xx)
+  }))
+  return(out)
+}
+
 
 #' Condense a taxa table for a single read
 #'
