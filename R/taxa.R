@@ -555,6 +555,7 @@ condenseTaxa2<-function(taxaTable,groupings=rep(1,nrow(taxaTable))){
   on.exit(file.remove(tmp))
   tmpDb <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=tmp)
   if(is.null(colnames(taxaTable)))colnames(taxaTable)<-sprintf("V%d",1:ncol(taxaTable))
+  rownames(taxaTable)<-NULL
   RSQLite::dbWriteTable(tmpDb,'tmp',cbind(as.data.frame(taxaTable,stringsAsFactors=FALSE),'id'=groupings),overwrite=TRUE)
   RSQLite::dbGetQuery(tmpDb,"CREATE INDEX index_id ON tmp (id)")
   colSelects<-sprintf('GROUP_CONCAT(DISTINCT(`%s`)) AS `%s`',colnames(taxaTable),colnames(taxaTable))
