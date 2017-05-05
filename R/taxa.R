@@ -477,7 +477,7 @@ getTaxonomy2<-function (ids,sqlFile='nameNode.sqlite', desiredTaxa=c('superkingd
   uniqIds<-unique(ids)
   taxa<-matrix(NA,ncol=length(desiredTaxa),nrow=length(uniqIds),dimnames=list(format(uniqIds,scientific=FALSE),desiredTaxa))
   rep<-0
-  currentIds<-ids
+  currentIds<-uniqIds
   while(any(stillWorking<-!is.na(currentIds)&currentIds!=1)){
     parents<-getParentNodes(currentIds[stillWorking],sqlFile)
     for(ii in desiredTaxa[desiredTaxa %in% parents$rank]){
