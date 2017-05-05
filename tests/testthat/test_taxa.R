@@ -37,6 +37,7 @@ test_that("Test read.names2",{
   )
   tmp<-tempfile()
   out<-data.frame('id'=1:2,'name'=c('root','Bacteria'),stringsAsFactors=FALSE)
+  expect_warning(expect_error(read.names2('____NOT_A_REAL____.FILE'),'cannot open'),'cannot open')
   expect_equal(read.names2(textConnection(names),tmp),tmp)
   expect_true(file.exists(tmp))
   expect_message(read.names2(textConnection(names),tmp),'contains')
