@@ -475,7 +475,7 @@ getTaxonomy2<-function (ids,sqlFile='nameNode.sqlite', desiredTaxa=c('superkingd
   ids<-as.numeric(ids)
   if(length(ids)==0)return(NULL)
   uniqIds<-unique(ids)
-  taxa<-matrix(NA,ncol=length(desiredTaxa),nrow=length(ids),dimnames=list(format(uniqIds,scientific=FALSE),desiredTaxa))
+  taxa<-matrix(NA,ncol=length(desiredTaxa),nrow=length(uniqIds),dimnames=list(format(uniqIds,scientific=FALSE),desiredTaxa))
   rep<-0
   currentIds<-ids
   while(any(stillWorking<-!is.na(currentIds)&currentIds!=1)){
