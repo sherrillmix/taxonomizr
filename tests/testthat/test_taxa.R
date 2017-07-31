@@ -137,8 +137,12 @@ test_that("Test read.accession2taxid",{
   outFile<-tempfile()
   inFile<-tempfile()
   writeLines(taxa,inFile)
+  file.create(outFile) 
   expect_error(read.accession2taxid(inFile,outFile),NA)
-  expect_message(read.accession2taxid(inFile,outFile),'exists')
+  file.remove(outFile)
+  expect_error(read.accession2taxid(inFile,outFile),NA)
+  expect_message(read.accession2taxid(inFile,outFile),'contains')
+  expect_error(read.accession2taxid(inFile,outFile,overwrite=TRUE),NA)
   db<-RSQLite::dbConnect(RSQLite::SQLite(),dbname=outFile)
   result<-data.frame('accession'=c('Z17427.1','Z17428.1','Z17429.1','Z17430.1'),taxa=3702,stringsAsFactors=FALSE)
   expect_true(file.exists(outFile))
@@ -149,7 +153,8 @@ test_that("Test read.accession2taxid",{
   if(.Platform$OS.type == "unix"){
     #windows sqlite apparently doesn't catch this error
     expect_error(read.accession2taxid(inFile,outFile,extraSqlCommand='DROP TABLE NOTEXISTXYZ;'),'NOTEXISTXYZ')
-    expect_false(file.exists(outFile))
+    #don't delete now
+    expect_true(file.exists(outFile))
   }
 })
 

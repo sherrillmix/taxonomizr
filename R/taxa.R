@@ -223,6 +223,7 @@ trimTaxa<-function(inFile,outFile){
 #' @param sqlFile a string giving the path where the output sqlite file should be saved
 #' @param vocal if TRUE output status messages
 #' @param extraSqlCommand for advanced use. A string giving a command to be called on the sqlite databse before loading data e.g. "pragma temp_store = 2;" to keep all temp files in memory (don't do this unless you have a lot (>100 Gb) of RAM)
+#' @param overwrite If TRUE, delete accessionTaxa table in database if present and regenerate
 #' @return TRUE if sucessful
 #' @export
 #' @references \url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid}
@@ -242,32 +243,33 @@ trimTaxa<-function(inFile,outFile){
 #' db<-RSQLite::dbConnect(RSQLite::SQLite(),dbname=outFile)
 #' RSQLite::dbGetQuery(db,'SELECT * FROM accessionTaxa')
 #' RSQLite::dbDisconnect(db)
-read.accession2taxid<-function(taxaFiles,sqlFile,vocal=TRUE,extraSqlCommand=''){
+read.accession2taxid<-function(taxaFiles,sqlFile,vocal=TRUE,extraSqlCommand='',overwrite=FALSE){
   if(file.exists(sqlFile)){
-    message(sqlFile,' already exists. Delete to reprocess data')
-    return(TRUE)
-  }
-  tryCatch({
-    tmp<-tempfile()
-    writeLines('accession\ttaxa',tmp)
-    for(ii in taxaFiles){
-      if(vocal)message('Reading ',ii,'.')
-      trimTaxa(ii,tmp)
+    dbTest <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
+    on.exit(RSQLite::dbDisconnect(dbTest))
+    if('accessionTaxa' %in% RSQLite::dbListTables(dbTest)){
+      if(overwrite){
+        RSQLite::dbExecute(dbTest,'DROP TABLE accessionTaxa')
+      }else{
+        message(sqlFile,' already contains table accessionTaxa. Delete file or set overwrite=TRUE to reload')
+        return(invisible(sqlFile))
+      }
     }
-    db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
-    if(extraSqlCommand!='')RSQLite::dbExecute(db,extraSqlCommand)
-    if(vocal)message('Reading in values. This may take a while.')
-    RSQLite::dbWriteTable(conn = db, name = "accessionTaxa", value =tmp, row.names = FALSE, header = TRUE,sep='\t')
-    if(vocal)message('Adding index. This may also take a while.')
-    RSQLite::dbExecute(db,"CREATE INDEX index_accession ON accessionTaxa (accession)")
-    RSQLite::dbDisconnect(db)
-  },error=function(e){
-    message('Error: Problem creating sql file. Deleting.')
-    file.remove(sqlFile)
-    stop(e)
   }
-  )
-  return(TRUE)
+  tmp<-tempfile()
+  writeLines('accession\ttaxa',tmp)
+  for(ii in taxaFiles){
+    if(vocal)message('Reading ',ii,'.')
+    trimTaxa(ii,tmp)
+  }
+  db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
+  on.exit(RSQLite::dbDisconnect(db))
+  if(extraSqlCommand!='')RSQLite::dbExecute(db,extraSqlCommand)
+  if(vocal)message('Reading in values. This may take a while.')
+  RSQLite::dbWriteTable(conn = db, name = "accessionTaxa", value =tmp, row.names = FALSE, header = TRUE,sep='\t')
+  if(vocal)message('Adding index. This may also take a while.')
+  RSQLite::dbExecute(db,"CREATE INDEX index_accession ON accessionTaxa (accession)")
+  return(invisible(sqlFile))
 }
 
 #' Get taxonomic ranks for a taxa
