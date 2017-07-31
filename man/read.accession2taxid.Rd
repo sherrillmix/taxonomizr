@@ -35,6 +35,7 @@ writeLines(taxa,inFile)
 read.accession2taxid(inFile,outFile)
 db<-RSQLite::dbConnect(RSQLite::SQLite(),dbname=outFile)
 RSQLite::dbGetQuery(db,'SELECT * FROM accessionTaxa')
+RSQLite::dbDisconnect(db)
 }
 \references{
 \url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid}
