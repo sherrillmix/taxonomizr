@@ -55,7 +55,7 @@ read.names2<-function(nameFile,sqlFile='nameNode.sqlite',onlyScientific=TRUE,ove
     on.exit(RSQLite::dbDisconnect(dbTest))
     if('names' %in% RSQLite::dbListTables(dbTest)){
       if(overwrite){
-        RSQLite::dbSendQuery(dbTest,'DROP TABLE names')
+        RSQLite::dbExecute(dbTest,'DROP TABLE names')
       }else{
         message(sqlFile,' already contains table names. Delete file or set overwrite=TRUE to reload')
         return(invisible(sqlFile))
@@ -70,8 +70,8 @@ read.names2<-function(nameFile,sqlFile='nameNode.sqlite',onlyScientific=TRUE,ove
   db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
   on.exit(RSQLite::dbDisconnect(db),add=TRUE)
   RSQLite::dbWriteTable(conn = db, name = "names", value=splitLines)
-  RSQLite::dbSendQuery(db,"CREATE INDEX index_names_id ON names (id)")
-  RSQLite::dbSendQuery(db,"CREATE INDEX index_names_name ON names (name)")
+  RSQLite::dbExecute(db,"CREATE INDEX index_names_id ON names (id)")
+  RSQLite::dbExecute(db,"CREATE INDEX index_names_name ON names (name)")
   return(invisible(sqlFile))
 }
 
@@ -136,7 +136,7 @@ read.nodes2<-function(nodeFile,sqlFile='nameNode.sqlite'){
   db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
   on.exit(RSQLite::dbDisconnect(db),add=TRUE)
   RSQLite::dbWriteTable(conn = db, name = "nodes", value =splitLines)
-  RSQLite::dbSendQuery(db,"CREATE INDEX index_nodes_id ON nodes (id)")
+  RSQLite::dbExecute(db,"CREATE INDEX index_nodes_id ON nodes (id)")
   return(invisible(sqlFile))
 }
 
@@ -255,11 +255,11 @@ read.accession2taxid<-function(taxaFiles,sqlFile,vocal=TRUE,extraSqlCommand=''){
       trimTaxa(ii,tmp)
     }
     db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
-    if(extraSqlCommand!='')RSQLite::dbSendQuery(db,extraSqlCommand)
+    if(extraSqlCommand!='')RSQLite::dbExecute(db,extraSqlCommand)
     if(vocal)message('Reading in values. This may take a while.')
     RSQLite::dbWriteTable(conn = db, name = "accessionTaxa", value =tmp, row.names = FALSE, header = TRUE,sep='\t')
     if(vocal)message('Adding index. This may also take a while.')
-    RSQLite::dbSendQuery(db,"CREATE INDEX index_accession ON accessionTaxa (accession)")
+    RSQLite::dbExecute(db,"CREATE INDEX index_accession ON accessionTaxa (accession)")
     RSQLite::dbDisconnect(db)
   },error=function(e){
     message('Error: Problem creating sql file. Deleting.')
@@ -391,7 +391,7 @@ getParentNodes<-function(ids,sqlFile='nameNode.sqlite'){
   #attach the temp table
   db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
   on.exit(RSQLite::dbDisconnect(db),add=TRUE)
-  RSQLite::dbSendQuery(db, sprintf("ATTACH '%s' AS tmp",tmp))
+  RSQLite::dbExecute(db, sprintf("ATTACH '%s' AS tmp",tmp))
   taxaDf<-RSQLite::dbGetQuery(db,'SELECT tmp.query.id, name,parent, rank FROM tmp.query LEFT OUTER JOIN nodes ON tmp.query.id=nodes.id LEFT OUTER JOIN names ON tmp.query.id=names.id')
   if(!identical(taxaDf$id,ids))stop(simpleError('Problem finding ids'))
   return(taxaDf[,c('name','parent','rank')])
@@ -530,7 +530,7 @@ accessionToTaxa<-function(accessions,sqlFile){
   #load the big sql
   db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
   #attach the temp table
-  RSQLite::dbSendQuery(db, sprintf("ATTACH '%s' AS tmp",tmp))
+  RSQLite::dbExecute(db, sprintf("ATTACH '%s' AS tmp",tmp))
   taxaDf<-RSQLite::dbGetQuery(db,'SELECT tmp.query.accession, taxa FROM tmp.query LEFT OUTER JOIN accessionTaxa ON tmp.query.accession=accessionTaxa.accession')
   RSQLite::dbDisconnect(db)
   if(any(taxaDf$accession!=accessions))stop(simpleError('Query and SQL mismatch'))
@@ -561,7 +561,7 @@ condenseTaxa2<-function(taxaTable,groupings=rep(1,nrow(taxaTable))){
   if(is.null(colnames(taxaTable)))colnames(taxaTable)<-sprintf("V%d",1:ncol(taxaTable))
   rownames(taxaTable)<-NULL
   RSQLite::dbWriteTable(tmpDb,'tmp',cbind(as.data.frame(taxaTable,stringsAsFactors=FALSE),'id'=groupings),overwrite=TRUE)
-  RSQLite::dbSendQuery(tmpDb,"CREATE INDEX index_id ON tmp (id)")
+  RSQLite::dbExecute(tmpDb,"CREATE INDEX index_id ON tmp (id)")
   colSelects<-sprintf('GROUP_CONCAT(DISTINCT(`%s`)) AS `%s`',colnames(taxaTable),colnames(taxaTable))
   query<-sprintf("SELECT id, %s FROM tmp GROUP BY id",paste(colSelects,collapse=', '))
   out<-RSQLite::dbGetQuery(tmpDb,query)
@@ -705,7 +705,7 @@ getId2<-function(taxa,sqlFile='inst/extdata/nameNode.sqlite'){
   RSQLite::dbWriteTable(tmpDb,'query',data.frame('name'=uniqTaxa,stringsAsFactors=FALSE),overwrite=TRUE)
   RSQLite::dbDisconnect(tmpDb)
   db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
-  RSQLite::dbSendQuery(db, sprintf("ATTACH '%s' AS tmp",tmp))
+  RSQLite::dbExecute(db, sprintf("ATTACH '%s' AS tmp",tmp))
   taxaDf<-RSQLite::dbGetQuery(db,'SELECT tmp.query.name, id FROM tmp.query LEFT OUTER JOIN names ON tmp.query.name=names.name')
   RSQLite::dbDisconnect(db)
   taxaN<-stats::ave(taxaDf$id,taxaDf$name,FUN=length)
