@@ -239,7 +239,7 @@ trimTaxa<-function(inFile,outFile){
 #' inFile<-tempfile()
 #' outFile<-tempfile()
 #' writeLines(taxa,inFile)
-#' read.accession2taxid(inFile,outFile)
+#' read.accession2taxid(inFile,outFile,vocal=FALSE)
 #' db<-RSQLite::dbConnect(RSQLite::SQLite(),dbname=outFile)
 #' RSQLite::dbGetQuery(db,'SELECT * FROM accessionTaxa')
 #' RSQLite::dbDisconnect(db)
@@ -517,7 +517,7 @@ getTaxonomy2<-function (ids,sqlFile='nameNode.sqlite', desiredTaxa=c('superkingd
 #' inFile<-tempfile()
 #' sqlFile<-tempfile()
 #' writeLines(taxa,inFile)
-#' read.accession2taxid(inFile,sqlFile)
+#' read.accession2taxid(inFile,sqlFile,vocal=FALSE)
 #' accessionToTaxa(c("Z17430.1","Z17429.1","X62402.1",'NOTREAL'),sqlFile)
 accessionToTaxa<-function(accessions,sqlFile){
   if(length(accessions)==0)return(c())
@@ -545,7 +545,7 @@ accessionToTaxa<-function(accessions,sqlFile){
 #'
 #' @param taxaTable a matrix or data.frame with hits on the rows and various levels of taxonomy in the columns
 #' @param groupings a vector of groups e.g. read queries to condense taxa within
-#' @return a vector of length \code{ncol(taxaTable)} with NAs where the is not complete agreement
+#' @return a matrix an id column plus \code{ncol(taxaTable)} taxonomy columns with a row for each unique id in groupings with NAs where there is not complete agreement for an id
 #' @export
 #' @examples
 #' taxas<-matrix(c(
@@ -553,14 +553,20 @@ accessionToTaxa<-function(accessions,sqlFile){
 #'  'a','b','d','e'
 #' ),nrow=2,byrow=TRUE)
 #' condenseTaxa2(taxas)
+#' condenseTaxa2(taxas[c(1,2,2),],c(1,1,2))
 condenseTaxa2<-function(taxaTable,groupings=rep(1,nrow(taxaTable))){
+  nCol<-ncol(taxaTable)
+  if(nrow(taxaTable)==0)return(NULL)
   tmp<-tempfile()
   #mask commas if present
-  taxaTable<-sub(',','_!_!_',taxaTable)
+  #matrix() to make sure it stays matrix if only a single row
+  taxaTable<-matrix(apply(taxaTable,2,function(xx)gsub(',','_!_!_',xx)),ncol=nCol,dimnames=dimnames(taxaTable))
+  #mask NAs if present (otherwise not counted in concatenate)
+  taxaTable[is.na(taxaTable)]<-'__NAFILLER__'
   on.exit(file.remove(tmp))
   tmpDb <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=tmp)
   on.exit(RSQLite::dbDisconnect(tmpDb),add=TRUE)
-  if(is.null(colnames(taxaTable)))colnames(taxaTable)<-sprintf("V%d",1:ncol(taxaTable))
+  if(is.null(colnames(taxaTable)))colnames(taxaTable)<-sprintf("V%d",1:nCol)
   rownames(taxaTable)<-NULL
   RSQLite::dbWriteTable(tmpDb,'tmp',cbind(as.data.frame(taxaTable,stringsAsFactors=FALSE),'id'=groupings),overwrite=TRUE)
   RSQLite::dbExecute(tmpDb,"CREATE INDEX index_id ON tmp (id)")
@@ -574,7 +580,11 @@ condenseTaxa2<-function(taxaTable,groupings=rep(1,nrow(taxaTable))){
     return(xx)
   }))
   #turn commas back
-  out[,colnames(out)!='id']<-sub('_!_!_',',',out[,colnames(out)!='id'])
+  out[,colnames(out)!='id']<-apply(out[,colnames(out)!='id',drop=FALSE],2,function(xx)gsub('_!_!_',',',xx))
+  #turn NAs back
+  out[out=='__NAFILLER__']<-NA
+  #remove extra spaces added by sqlite
+  out[,'id']<-trimws(out[,'id'])
   return(out)
 }
 

@@ -35,7 +35,7 @@ taxa<-c(
 inFile<-tempfile()
 outFile<-tempfile()
 writeLines(taxa,inFile)
-read.accession2taxid(inFile,outFile)
+read.accession2taxid(inFile,outFile,vocal=FALSE)
 db<-RSQLite::dbConnect(RSQLite::SQLite(),dbname=outFile)
 RSQLite::dbGetQuery(db,'SELECT * FROM accessionTaxa')
 RSQLite::dbDisconnect(db)

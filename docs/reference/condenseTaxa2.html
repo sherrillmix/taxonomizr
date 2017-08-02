@@ -111,7 +111,7 @@
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a vector of length <code>ncol(taxaTable)</code> with NAs where the is not complete agreement</p>
+    <p>a matrix an id column plus <code>ncol(taxaTable)</code> taxonomy columns with a row for each unique id in groupings with NAs where there is not complete agreement for an id</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
@@ -120,7 +120,9 @@
  <span class='st'>'a'</span>,<span class='st'>'b'</span>,<span class='st'>'d'</span>,<span class='st'>'e'</span>
 ),<span class='kw'>nrow</span><span class='kw'>=</span><span class='fl'>2</span>,<span class='kw'>byrow</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
 <span class='fu'>condenseTaxa2</span>(<span class='no'>taxas</span>)</div><div class='output co'>#&gt;      id  V1  V2  V3 V4
-#&gt; [1,] "1" "a" "b" NA NA</div></pre>
+#&gt; [1,] "1" "a" "b" NA NA</div><div class='input'><span class='fu'>condenseTaxa2</span>(<span class='no'>taxas</span>[<span class='fu'>c</span>(<span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fl'>2</span>),],<span class='fu'>c</span>(<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>2</span>))</div><div class='output co'>#&gt;      id  V1  V2  V3  V4 
+#&gt; [1,] "1" "a" "b" NA  NA 
+#&gt; [2,] "2" "a" "b" "d" "e"</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

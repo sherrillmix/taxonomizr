@@ -29,7 +29,7 @@ taxa<-c(
 inFile<-tempfile()
 sqlFile<-tempfile()
 writeLines(taxa,inFile)
-read.accession2taxid(inFile,sqlFile)
+read.accession2taxid(inFile,sqlFile,vocal=FALSE)
 accessionToTaxa(c("Z17430.1","Z17429.1","X62402.1",'NOTREAL'),sqlFile)
 }
 \references{
