@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Trim columns from taxa file <U+2014> trimTaxa <e2><80><a2> taxonomizr</title>
+<title>Trim columns from taxa file — trimTaxa • taxonomizr</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -25,14 +25,12 @@
 <script src="../pkgdown.js"></script>
 
 <!-- mathjax -->
-<script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+<script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
 <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
-
-
   </head>
 
   <body>
@@ -78,20 +76,15 @@
     <p>A simple script to delete the first row and then delete the first and fourth column of a four column tab delimited file and write to another file.</p>
     
 
-    <pre class="usage"><span class='fu'>trimTaxa</span>(<span class='no'>inFile</span>, <span class='no'>outFile</span>)</pre>
+    <pre><span class='fu'>trimTaxa</span>(<span class='no'>inFile</span>, <span class='no'>outFile</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>inFile</th>
-      <td><p>a single string giving the 4 column tab separated file to read from</p></td>
-    </tr>
-    <tr>
-      <th>outFile</th>
-      <td><p>a single string giving the file path to write to</p></td>
-    </tr>
-    </table>
+    <dl class="dl-horizontal">
+      <dt>inFile</dt>
+      <dd>a single string giving the 4 column tab separated file to read from</dd>
+      <dt>outFile</dt>
+      <dd>a single string giving the file path to write to</dd>
+    </dl>
     
 
   </div>

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Get taxonomic ranks for a taxa — getTaxonomy • taxonomizr</title>
+<title>Get taxonomic ranks for a taxa — getTaxonomy2 • taxonomizr</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -73,27 +73,21 @@
     </div>
 
     
-    <p>Take NCBI taxa IDs and get the corresponding taxa ranks from name and node data.tables</p>
+    <p>Take NCBI taxa IDs and get the corresponding taxa ranks from name and node sqlite database</p>
     
 
-    <pre><span class='fu'>getTaxonomy</span>(<span class='no'>ids</span>, <span class='no'>taxaNodes</span>, <span class='no'>taxaNames</span>, <span class='kw'>desiredTaxa</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"superkingdom"</span>,
-  <span class='st'>"phylum"</span>, <span class='st'>"class"</span>, <span class='st'>"order"</span>, <span class='st'>"family"</span>, <span class='st'>"genus"</span>, <span class='st'>"species"</span>), <span class='kw'>mc.cores</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>debug</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
+    <pre><span class='fu'>getTaxonomy2</span>(<span class='no'>ids</span>, <span class='kw'>sqlFile</span> <span class='kw'>=</span> <span class='st'>"nameNode.sqlite"</span>,
+  <span class='kw'>desiredTaxa</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"superkingdom"</span>, <span class='st'>"phylum"</span>, <span class='st'>"class"</span>, <span class='st'>"order"</span>, <span class='st'>"family"</span>,
+  <span class='st'>"genus"</span>, <span class='st'>"species"</span>))</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <dl class="dl-horizontal">
       <dt>ids</dt>
       <dd>a vector of ids to find taxonomy for</dd>
-      <dt>taxaNodes</dt>
-      <dd>a nodes data.table from <code><a href='read.nodes.html'>read.nodes</a></code></dd>
-      <dt>taxaNames</dt>
-      <dd>a names data.table from <code><a href='read.names.html'>read.names</a></code></dd>
+      <dt>sqlFile</dt>
+      <dd>a string giving the path to a sqlite file containing names and nodes tables</dd>
       <dt>desiredTaxa</dt>
       <dd>a vector of strings giving the desired taxa levels</dd>
-      <dt>mc.cores</dt>
-      <dd>the number of cores to use when processing</dd>
-      <dt>debug</dt>
-      <dd>if TRUE output node and name vectors with dput for each id (probably useful only for development)</dd>
     </dl>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -106,7 +100,8 @@
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>namesText</span><span class='kw'>&lt;-</span><span class='fu'>c</span>(
+    <pre class="examples"><div class='input'><span class='no'>sqlFile</span><span class='kw'>&lt;-</span><span class='fu'>tempfile</span>()
+<span class='no'>namesText</span><span class='kw'>&lt;-</span><span class='fu'>c</span>(
   <span class='st'>"1\t|\tall\t|\t\t|\tsynonym\t|"</span>,
   <span class='st'>"1\t|\troot\t|\t\t|\tscientific name\t|"</span>,
   <span class='st'>"2\t|\tBacteria\t|\tBacteria &lt;prokaryotes&gt;\t|\tscientific name\t|"</span>,
@@ -144,7 +139,7 @@
   <span class='st'>"2759\t|\tEukaryota\t|\t\t|\tscientific name"</span>,
   <span class='st'>"131567\t|\tcellular organisms\t|\t\t|\tscientific name"</span>
 )
-<span class='no'>taxaNames</span><span class='kw'>&lt;-</span><span class='fu'><a href='read.names.html'>read.names</a></span>(<span class='fu'>textConnection</span>(<span class='no'>namesText</span>))
+<span class='no'>taxaNames</span><span class='kw'>&lt;-</span><span class='fu'><a href='read.names2.html'>read.names2</a></span>(<span class='fu'>textConnection</span>(<span class='no'>namesText</span>),<span class='no'>sqlFile</span>)
 <span class='no'>nodesText</span><span class='kw'>&lt;-</span><span class='fu'>c</span>(
  <span class='st'>"1\t|\t1\t|\tno rank\t|\t\t|\t8\t|\t0\t|\t1\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|"</span>,
   <span class='st'>"2\t|\t131567\t|\tsuperkingdom\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|"</span>,
@@ -166,8 +161,8 @@
   <span class='st'>"33154\t|\t2759\t|\tno rank"</span>, <span class='st'>"2759\t|\t131567\t|\tsuperkingdom"</span>,
   <span class='st'>"131567\t|\t1\t|\tno rank"</span>
 )
-<span class='no'>taxaNodes</span><span class='kw'>&lt;-</span><span class='fu'><a href='read.nodes.html'>read.nodes</a></span>(<span class='fu'>textConnection</span>(<span class='no'>nodesText</span>))
-<span class='fu'>getTaxonomy</span>(<span class='fu'>c</span>(<span class='fl'>9606</span>,<span class='fl'>9605</span>),<span class='no'>taxaNodes</span>,<span class='no'>taxaNames</span>,<span class='kw'>mc.cores</span><span class='kw'>=</span><span class='fl'>1</span>)</div><div class='output co'>#&gt;      superkingdom phylum     class      order      family      genus 
+<span class='no'>taxaNodes</span><span class='kw'>&lt;-</span><span class='fu'><a href='read.nodes2.html'>read.nodes2</a></span>(<span class='fu'>textConnection</span>(<span class='no'>nodesText</span>),<span class='no'>sqlFile</span>)
+<span class='fu'>getTaxonomy2</span>(<span class='fu'>c</span>(<span class='fl'>9606</span>,<span class='fl'>9605</span>),<span class='no'>sqlFile</span>)</div><div class='output co'>#&gt;      superkingdom phylum     class      order      family      genus 
 #&gt; 9606 &quot;Eukaryota&quot;  &quot;Chordata&quot; &quot;Mammalia&quot; &quot;Primates&quot; &quot;Hominidae&quot; &quot;Homo&quot;
 #&gt; 9605 &quot;Eukaryota&quot;  &quot;Chordata&quot; &quot;Mammalia&quot; &quot;Primates&quot; &quot;Hominidae&quot; &quot;Homo&quot;
 #&gt;      species       

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Download names and nodes files from NCBI <U+2014> getNamesAndNodes <e2><80><a2> taxonomizr</title>
+<title>Download names and nodes files from NCBI — getNamesAndNodes • taxonomizr</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -25,14 +25,12 @@
 <script src="../pkgdown.js"></script>
 
 <!-- mathjax -->
-<script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+<script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
 <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
-
-
   </head>
 
   <body>
@@ -78,26 +76,19 @@
     <p>Download a taxdump.tar.gz file from NCBI servers and extract the names.dmp and nodes.dmp files from it. These can then be used to create data.tables with <code><a href='read.names.html'>read.names</a></code> and <code><a href='read.nodes.html'>read.nodes</a></code>. Note that if the files already exist in the target directory then this function will not redownload them. Delete the files if a fresh download is desired.</p>
     
 
-    <pre class="usage"><span class='fu'>getNamesAndNodes</span>(<span class='kw'>outDir</span> <span class='kw'>=</span> <span class='st'>"."</span>,
+    <pre><span class='fu'>getNamesAndNodes</span>(<span class='kw'>outDir</span> <span class='kw'>=</span> <span class='st'>"."</span>,
   <span class='kw'>url</span> <span class='kw'>=</span> <span class='st'>"ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz"</span>,
   <span class='kw'>fileNames</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"names.dmp"</span>, <span class='st'>"nodes.dmp"</span>))</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>outDir</th>
-      <td><p>the directory to put names.dmp and nodes.dmp in</p></td>
-    </tr>
-    <tr>
-      <th>url</th>
-      <td><p>the url where taxdump.tar.gz is located</p></td>
-    </tr>
-    <tr>
-      <th>fileNames</th>
-      <td><p>the filenames desired from the tar.gz file</p></td>
-    </tr>
-    </table>
+    <dl class="dl-horizontal">
+      <dt>outDir</dt>
+      <dd>the directory to put names.dmp and nodes.dmp in</dd>
+      <dt>url</dt>
+      <dd>the url where taxdump.tar.gz is located</dd>
+      <dt>fileNames</dt>
+      <dd>the filenames desired from the tar.gz file</dd>
+    </dl>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
@@ -113,9 +104,9 @@
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>not_run</span>({
-    <span class='fu'>getNamesAndNodes</span>()
-})</div></pre>
+    <pre class="examples"><div class='input'><span class='co'>## Not run: ------------------------------------</span>
+<span class='co'>#   getNamesAndNodes()</span>
+<span class='co'>## ---------------------------------------------</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

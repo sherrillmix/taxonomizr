@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Download accession2taxid files from NCBI <U+2014> getAccession2taxid <e2><80><a2> taxonomizr</title>
+<title>Download accession2taxid files from NCBI — getAccession2taxid • taxonomizr</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -25,14 +25,12 @@
 <script src="../pkgdown.js"></script>
 
 <!-- mathjax -->
-<script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+<script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
 <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
-
-
   </head>
 
   <body>
@@ -78,26 +76,19 @@
     <p>Download a nucl_xxx.accession2taxid.gz from NCBI servers. These can then be used to create a SQLite datanase with <code><a href='read.accession2taxid.html'>read.accession2taxid</a></code>. Note that if the files already exist in the target directory then this function will not redownload them. Delete the files if a fresh download is desired.</p>
     
 
-    <pre class="usage"><span class='fu'>getAccession2taxid</span>(<span class='kw'>outDir</span> <span class='kw'>=</span> <span class='st'>"."</span>,
+    <pre><span class='fu'>getAccession2taxid</span>(<span class='kw'>outDir</span> <span class='kw'>=</span> <span class='st'>"."</span>,
   <span class='kw'>baseUrl</span> <span class='kw'>=</span> <span class='st'>"ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/"</span>,
   <span class='kw'>types</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"nucl_gb"</span>, <span class='st'>"nucl_est"</span>, <span class='st'>"nucl_gss"</span>, <span class='st'>"nucl_wgs"</span>))</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>outDir</th>
-      <td><p>the directory to put the accession2taxid.gz files in</p></td>
-    </tr>
-    <tr>
-      <th>baseUrl</th>
-      <td><p>the url of the directory where accession2taxid.gz files are located</p></td>
-    </tr>
-    <tr>
-      <th>types</th>
-      <td><p>the types if accession2taxid.gz files desired where type is the prefix of xxx.accession2taxid.gz. The default is to download all nucl_ accessions. For protein accessions, try <code>types=c('prot')</code>.</p></td>
-    </tr>
-    </table>
+    <dl class="dl-horizontal">
+      <dt>outDir</dt>
+      <dd>the directory to put the accession2taxid.gz files in</dd>
+      <dt>baseUrl</dt>
+      <dd>the url of the directory where accession2taxid.gz files are located</dd>
+      <dt>types</dt>
+      <dd>the types if accession2taxid.gz files desired where type is the prefix of xxx.accession2taxid.gz. The default is to download all nucl_ accessions. For protein accessions, try <code>types=c(&#39;prot&#39;)</code>.</dd>
+    </dl>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
@@ -113,9 +104,9 @@
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>not_run</span>({
-    <span class='fu'>getAccession2taxid</span>()
-})</div></pre>
+    <pre class="examples"><div class='input'><span class='co'>## Not run: ------------------------------------</span>
+<span class='co'>#   getAccession2taxid()</span>
+<span class='co'>## ---------------------------------------------</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
