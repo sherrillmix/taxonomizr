@@ -23,14 +23,17 @@
 <link href="../pkgdown.css" rel="stylesheet">
 <script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-
+  
+  
 <!-- mathjax -->
-<script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+<script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
 <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
+
+
   </head>
 
   <body>
@@ -49,10 +52,25 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../reference/index.html">Reference</a>
+  <a href="..//index.html">
+    <span class="fa fa-home fa-lg"></span>
+     
+  </a>
 </li>
 <li>
-  <a href="../articles/index.html">Articles</a>
+  <a href="../reference/index.html">Reference</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/usage.html">taxonomizr usage</a>
+    </li>
+  </ul>
 </li>
       </ul>
       
@@ -76,19 +94,26 @@
     <p>Take NCBI taxa IDs and get the corresponding taxa ranks from name and node sqlite database</p>
     
 
-    <pre><span class='fu'>getTaxonomy2</span>(<span class='no'>ids</span>, <span class='kw'>sqlFile</span> <span class='kw'>=</span> <span class='st'>"nameNode.sqlite"</span>,
+    <pre class="usage"><span class='fu'>getTaxonomy2</span>(<span class='no'>ids</span>, <span class='kw'>sqlFile</span> <span class='kw'>=</span> <span class='st'>"nameNode.sqlite"</span>,
   <span class='kw'>desiredTaxa</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"superkingdom"</span>, <span class='st'>"phylum"</span>, <span class='st'>"class"</span>, <span class='st'>"order"</span>, <span class='st'>"family"</span>,
   <span class='st'>"genus"</span>, <span class='st'>"species"</span>))</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
-    <dl class="dl-horizontal">
-      <dt>ids</dt>
-      <dd>a vector of ids to find taxonomy for</dd>
-      <dt>sqlFile</dt>
-      <dd>a string giving the path to a sqlite file containing names and nodes tables</dd>
-      <dt>desiredTaxa</dt>
-      <dd>a vector of strings giving the desired taxa levels</dd>
-    </dl>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>ids</th>
+      <td><p>a vector of ids to find taxonomy for</p></td>
+    </tr>
+    <tr>
+      <th>sqlFile</th>
+      <td><p>a string giving the path to a sqlite file containing names and nodes tables</p></td>
+    </tr>
+    <tr>
+      <th>desiredTaxa</th>
+      <td><p>a vector of strings giving the desired taxa levels</p></td>
+    </tr>
+    </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
@@ -163,10 +188,10 @@
 )
 <span class='no'>taxaNodes</span><span class='kw'>&lt;-</span><span class='fu'><a href='read.nodes2.html'>read.nodes2</a></span>(<span class='fu'>textConnection</span>(<span class='no'>nodesText</span>),<span class='no'>sqlFile</span>)
 <span class='fu'>getTaxonomy2</span>(<span class='fu'>c</span>(<span class='fl'>9606</span>,<span class='fl'>9605</span>),<span class='no'>sqlFile</span>)</div><div class='output co'>#&gt;      superkingdom phylum     class      order      family      genus 
-#&gt; 9606 &quot;Eukaryota&quot;  &quot;Chordata&quot; &quot;Mammalia&quot; &quot;Primates&quot; &quot;Hominidae&quot; &quot;Homo&quot;
-#&gt; 9605 &quot;Eukaryota&quot;  &quot;Chordata&quot; &quot;Mammalia&quot; &quot;Primates&quot; &quot;Hominidae&quot; &quot;Homo&quot;
+#&gt; 9606 "Eukaryota"  "Chordata" "Mammalia" "Primates" "Hominidae" "Homo"
+#&gt; 9605 "Eukaryota"  "Chordata" "Mammalia" "Primates" "Hominidae" "Homo"
 #&gt;      species       
-#&gt; 9606 &quot;Homo sapiens&quot;
+#&gt; 9606 "Homo sapiens"
 #&gt; 9605 NA            </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

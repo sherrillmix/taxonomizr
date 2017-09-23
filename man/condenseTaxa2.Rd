@@ -12,7 +12,7 @@ condenseTaxa2(taxaTable, groupings = rep(1, nrow(taxaTable)))
 \item{groupings}{a vector of groups e.g. read queries to condense taxa within}
 }
 \value{
-a vector of length \code{ncol(taxaTable)} with NAs where the is not complete agreement
+a matrix an id column plus \code{ncol(taxaTable)} taxonomy columns with a row for each unique id in groupings with NAs where there is not complete agreement for an id
 }
 \description{
 Take a table of taxonomic assignments from hits to a single read and condense it to a single vector with NAs where there are disagreements between the hits
@@ -23,4 +23,5 @@ taxas<-matrix(c(
  'a','b','d','e'
 ),nrow=2,byrow=TRUE)
 condenseTaxa2(taxas)
+condenseTaxa2(taxas[c(1,2,2),],c(1,1,2))
 }

@@ -137,8 +137,12 @@ test_that("Test read.accession2taxid",{
   outFile<-tempfile()
   inFile<-tempfile()
   writeLines(taxa,inFile)
+  file.create(outFile) 
   expect_error(read.accession2taxid(inFile,outFile),NA)
-  expect_message(read.accession2taxid(inFile,outFile),'exists')
+  file.remove(outFile)
+  expect_error(read.accession2taxid(inFile,outFile),NA)
+  expect_message(read.accession2taxid(inFile,outFile),'contains')
+  expect_error(read.accession2taxid(inFile,outFile,overwrite=TRUE),NA)
   db<-RSQLite::dbConnect(RSQLite::SQLite(),dbname=outFile)
   result<-data.frame('accession'=c('Z17427.1','Z17428.1','Z17429.1','Z17430.1'),taxa=3702,stringsAsFactors=FALSE)
   expect_true(file.exists(outFile))
@@ -149,7 +153,8 @@ test_that("Test read.accession2taxid",{
   if(.Platform$OS.type == "unix"){
     #windows sqlite apparently doesn't catch this error
     expect_error(read.accession2taxid(inFile,outFile,extraSqlCommand='DROP TABLE NOTEXISTXYZ;'),'NOTEXISTXYZ')
-    expect_false(file.exists(outFile))
+    #don't delete now
+    expect_true(file.exists(outFile))
   }
 })
 
@@ -316,6 +321,37 @@ test_that("Test condenseTaxa",{
   expect_equal(condenseTaxa(taxas[1,,drop=FALSE]),c('a','b',NA,'e'))
   expect_equal(condenseTaxa(taxas[c(1,1,1),,drop=FALSE]),c('a','b',NA,'e'))
 })
+
+test_that("Test condenseTaxa2",{
+  taxas<-matrix(c(
+   'a','b','c','e',
+   'a','b','d','e'
+  ),nrow=2,byrow=TRUE)
+  expect_equal(condenseTaxa2(taxas),matrix(c('1','a','b',NA,NA),nrow=1,dimnames=list(NULL,c('id','V1','V2','V3','V4'))))
+  expect_equal(condenseTaxa2(taxas[c(1,1,1),]),matrix(c('1','a','b','c','e'),nrow=1,dimnames=list(NULL,c('id','V1','V2','V3','V4'))))
+  expect_equal(condenseTaxa2(taxas[1,,drop=FALSE]),matrix(c('1','a','b','c','e'),nrow=1,dimnames=list(NULL,c('id','V1','V2','V3','V4'))))
+  expect_equal(condenseTaxa2(taxas[,1,drop=FALSE]),matrix(c('1','a'),nrow=1,dimnames=list(NULL,c('id','V1'))))
+  expect_equal(condenseTaxa2(taxas[1,1,drop=FALSE]),matrix(c('1','a'),nrow=1,dimnames=list(NULL,c('id','V1'))))
+  expect_equal(condenseTaxa2(taxas[c(1,1,1,2),]),matrix(c('1','a','b',NA,NA),nrow=1,dimnames=list(NULL,c('id','V1','V2','V3','V4'))))
+  expect_equal(condenseTaxa2(taxas[,3,drop=FALSE]),matrix(c('1',NA),nrow=1,dimnames=list(NULL,c('id','V1'))))
+  expect_equal(condenseTaxa2(taxas[,3,drop=FALSE],1:2),matrix(c('1','2','c','d'),nrow=2,dimnames=list(NULL,c('id','V1'))))
+  expect_equal(condenseTaxa2(taxas[0,]),NULL)
+  expect_equal(condenseTaxa2(taxas[c(1:2,1),],c(1,1,2)),matrix(c('1','2','a','a','b','b',NA,'c',NA,'e'),nrow=2,dimnames=list(NULL,c('id','V1','V2','V3','V4'))))
+  expect_equal(condenseTaxa2(taxas[c(1:2,rep(1,10)),],c(1,1,rep(2,10))),matrix(c('1','2','a','a','b','b',NA,'c',NA,'e'),nrow=2,dimnames=list(NULL,c('id','V1','V2','V3','V4'))))
+  taxas<-matrix(c(
+   'a','b',NA,'e',
+   'a','b','d','e'
+  ),nrow=2,byrow=TRUE,dimnames=list(NULL,c('a','b','c','d')))
+  expect_equal(condenseTaxa2(taxas),matrix(c('1','a','b',NA,NA),nrow=1,dimnames=list(NULL,c('id','a','b','c','d'))))
+  expect_equal(condenseTaxa2(taxas[1,,drop=FALSE]),matrix(c('1','a','b',NA,'e'),nrow=1,dimnames=list(NULL,c('id','a','b','c','d'))))
+  expect_equal(condenseTaxa2(taxas[c(1,1,1),,drop=FALSE]),matrix(c('1','a','b',NA,'e'),nrow=1,dimnames=list(NULL,c('id','a','b','c','d'))))
+  out<-matrix(c('1','a','b',NA,NA),byrow=TRUE,nrow=10,ncol=5,dimnames=list(NULL,c('id','a','b','c','d')))
+  out[,'id']<-1:10
+  expect_equal(condenseTaxa2(taxas[rep(1:2,each=10),,drop=FALSE],rep(1:10,2)),out)
+  out[,'id']<-letters[1:10]
+  expect_equal(condenseTaxa2(taxas[rep(1:2,each=10),,drop=FALSE],rep(letters[1:10],2)),out)
+})
+
 
 test_that("Test getNamesAndNodes",{
   tmp<-tempfile()
