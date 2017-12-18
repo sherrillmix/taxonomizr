@@ -753,3 +753,40 @@ getId<-function(taxa,sqlFile='nameNode.sqlite'){
   return(unname(out[taxa]))
 }
 
+
+#' Download data from NCBI and set up SQLite database
+#'
+#' Download names, nodes and accession2taxid data from NCBI and preprocess into a SQLite database for downstream use.
+#'
+#' @param sqlFile character string giving the file location to store the SQLite database
+#' @param tmpDir location for storing the downloaded files from NCBI. (Note that it may be useful to store these somewhere convenient to avoid redownloading)
+#' @param vocal if TRUE output messages describing progress
+#' @param ... additional arguments to getNamesAndNodes, getAccession2taxid or read.accession2taxid
+#' @return a vector of character string giving the path to the SQLite file
+#' @seealso \code{\link{getNamesAndNodes}}, \code{\link{getAccession2taxid}}, \code{\link{read.accession2taxid}}, \code{\link{read.nodes2}}, \code{\link{read.names2}}
+#' @export
+#' @examples
+#' \dontrun{prepareDatabase()}
+prepareDatabase<-function(sqlFile='nameNode.sqlite',tmpDir='.',vocal=TRUE,...){
+  if(file.exists(sqlFile)){
+    message('SQLite database ',sqlFile,' already exists. Delete to regenerate')
+    return(sqlFile)
+  }
+  argnames <- names(list(...))
+  if(vocal)message('Downloading names and nodes with getNamesAndNodes()')
+  args <- intersect(argnames, names(as.list(args(getNamesAndNodes))))
+  getNamesAndNodes(tmpDir,list(...)[args])
+  if(vocal)message('Downloading accession2taxid with getAccession2taxid()')
+  args <- intersect(argnames, names(as.list(args(getAccession2taxid))))
+  accessionFiles<-getAccession2taxid(tmpDir,list(...)[args])
+  nameFile<-file.path(tmpDir,'names.dmp')
+  if(vocal)message('Preprocessing names with read.names2()')
+  read.names2(nameFile,sqlFile=sqlFile)
+  if(vocal)message('Preprocessing nodes with read.nodes2()')
+  nodeFile<-file.path(tmpDir,'nodes.dmp')
+  read.nodes2<-function(nodeFile,sqlFile=sqlFile)
+  if(vocal)message('Preprocessing accession2taxid with read.accession2taxid()')
+  args <- intersect(argnames, names(as.list(args(read.accession2taxid))))
+  read.accession2taxid(accessionFiles,sqlFile,vocal=vocal,list(...)[args])
+  return(sqlFile)
+}
