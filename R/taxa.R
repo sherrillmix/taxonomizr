@@ -691,10 +691,11 @@ getAccession2taxid<-function(outDir='.',baseUrl='ftp://ftp.ncbi.nih.gov/pub/taxo
 #'   "2\t|\tProcaryotae\t|\tProcaryotae <Bacteria>\t|\tin-part\t|"
 #' )
 #' names<-read.names(textConnection(namesText))
-#' getId('Bacteria',names)
-#' getId('Not a real name',names)
-#' getId('Multi',names)
-getId<-function(taxa,taxaNames){
+#' getId2('Bacteria',names)
+#' getId2('Not a real name',names)
+#' getId2('Multi',names)
+getId2<-function(taxa,taxaNames){
+  .Deprecated('getId','taxonomizr',"taxonomizr is moving from data.table to sqlite databases to improve performance. This will require changing nodes and names processing. Please see http://github.com/sherrillmix/taxonomizr/")
   uniqTaxa<-unique(taxa)
   out<-lapply(uniqTaxa,function(xx){
     ids<-taxaNames[as.list(xx),on='name']$id
@@ -709,7 +710,31 @@ getId<-function(taxa,taxaNames){
   return(unname(out[taxa]))
 }
 
-getId2<-function(taxa,sqlFile='inst/extdata/nameNode.sqlite'){
+#' Find a given taxa by name
+#'
+#' Find a taxa by string in the NCBI taxonomy. Note that NCBI species are stored as Genus species e.g. "Bos taurus". Ambiguous taxa names will return a comma concatenated string e.g. "123,234" and generate a warning.
+#'
+#' @param taxa a vector of taxonomic names
+#' @param sqlFile a string giving the path to a sqlite file containing a names tables
+#' @return a vector of character strings giving taxa IDs (potentially comma concatenated for any taxa with ambiguous names)
+#' @seealso \code{\link{read.names}}
+#' @export
+#' @examples
+#' namesText<-c(
+#'   "1\t|\tall\t|\t\t|\tsynonym\t|",
+#'   "1\t|\troot\t|\t\t|\tscientific name\t|",
+#'   "3\t|\tMulti\t|\tBacteria <prokaryotes>\t|\tscientific name\t|",
+#'   "4\t|\tMulti\t|\tBacteria <prokaryotes>\t|\tscientific name\t|",
+#'   "2\t|\tBacteria\t|\tBacteria <prokaryotes>\t|\tscientific name\t|",
+#'   "2\t|\tMonera\t|\tMonera <Bacteria>\t|\tin-part\t|",
+#'   "2\t|\tProcaryotae\t|\tProcaryotae <Bacteria>\t|\tin-part\t|"
+#' )
+#' names<-read.names2(textConnection(namesText))
+#' getId('Bacteria',names)
+#' getId('Not a real name',names)
+#' getId('Multi',names)
+getId<-function(taxa,sqlFile='nameNode.sqlite'){
+  if('data.table' %in% class(sqlFile))return(getId2(taxa,sqlFile))
   tmp<-tempfile()
   on.exit(file.remove(tmp))
   uniqTaxa<-unique(taxa)
@@ -727,3 +752,4 @@ getId2<-function(taxa,sqlFile='inst/extdata/nameNode.sqlite'){
   out<-tapply(taxaDf$id,taxaDf$name,FUN=function(xx)paste(xx,collapse=', '))
   return(unname(out[taxa]))
 }
+

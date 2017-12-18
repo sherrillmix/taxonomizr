@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Find a given taxa by name — getId • taxonomizr</title>
+<title>Find a given taxa by name — getId2 • taxonomizr</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -94,7 +94,7 @@
     <p>Find a taxa by string in the NCBI taxonomy. Note that NCBI species are stored as Genus species e.g. "Bos taurus". Ambiguous taxa names will return a comma concatenated string e.g. "123,234" and generate a warning.</p>
     
 
-    <pre class="usage"><span class='fu'>getId</span>(<span class='no'>taxa</span>, <span class='kw'>sqlFile</span> <span class='kw'>=</span> <span class='st'>"nameNode.sqlite"</span>)</pre>
+    <pre class="usage"><span class='fu'>getId2</span>(<span class='no'>taxa</span>, <span class='no'>taxaNames</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
@@ -104,8 +104,8 @@
       <td><p>a vector of taxonomic names</p></td>
     </tr>
     <tr>
-      <th>sqlFile</th>
-      <td><p>a string giving the path to a sqlite file containing a names tables</p></td>
+      <th>taxaNames</th>
+      <td><p>a names data.table from <code><a href='read.names.html'>read.names</a></code></p></td>
     </tr>
     </table>
     
@@ -128,7 +128,8 @@
   <span class='st'>"2\t|\tMonera\t|\tMonera &lt;Bacteria&gt;\t|\tin-part\t|"</span>,
   <span class='st'>"2\t|\tProcaryotae\t|\tProcaryotae &lt;Bacteria&gt;\t|\tin-part\t|"</span>
 )
-<span class='no'>names</span><span class='kw'>&lt;-</span><span class='fu'><a href='read.names2.html'>read.names2</a></span>(<span class='fu'>textConnection</span>(<span class='no'>namesText</span>))</div><div class='output co'>#&gt; <span class='message'>nameNode.sqlite already contains table names. Delete file or set overwrite=TRUE to reload</span></div><div class='input'><span class='fu'>getId</span>(<span class='st'>'Bacteria'</span>,<span class='no'>names</span>)</div><div class='output co'>#&gt; [1] "2"</div><div class='input'><span class='fu'>getId</span>(<span class='st'>'Not a real name'</span>,<span class='no'>names</span>)</div><div class='output co'>#&gt; [1] "NA"</div><div class='input'><span class='fu'>getId</span>(<span class='st'>'Multi'</span>,<span class='no'>names</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Multiple taxa ids found for . Collapsing with commas</span></div><div class='output co'>#&gt; [1] "3, 4"</div></pre>
+<span class='no'>names</span><span class='kw'>&lt;-</span><span class='fu'><a href='read.names.html'>read.names</a></span>(<span class='fu'>textConnection</span>(<span class='no'>namesText</span>))
+<span class='fu'>getId2</span>(<span class='st'>'Bacteria'</span>,<span class='no'>names</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: taxonomizr is moving from data.table to sqlite databases to improve performance. This will require changing nodes and names processing. Please see http://github.com/sherrillmix/taxonomizr/</span></div><div class='output co'>#&gt; [1] "2"</div><div class='input'><span class='fu'>getId2</span>(<span class='st'>'Not a real name'</span>,<span class='no'>names</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: taxonomizr is moving from data.table to sqlite databases to improve performance. This will require changing nodes and names processing. Please see http://github.com/sherrillmix/taxonomizr/</span></div><div class='output co'>#&gt; [1] NA</div><div class='input'><span class='fu'>getId2</span>(<span class='st'>'Multi'</span>,<span class='no'>names</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: taxonomizr is moving from data.table to sqlite databases to improve performance. This will require changing nodes and names processing. Please see http://github.com/sherrillmix/taxonomizr/</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Multiple taxa ids found for Multi. Collapsing with commas</span></div><div class='output co'>#&gt; [1] "3,4"</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
