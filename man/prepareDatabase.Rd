@@ -23,7 +23,9 @@ a vector of character string giving the path to the SQLite file
 Download names, nodes and accession2taxid data from NCBI and preprocess into a SQLite database for downstream use.
 }
 \examples{
-\dontrun{prepareDatabase()}
+\dontrun{
+prepareDatabase()
+}
 }
 \seealso{
 \code{\link{getNamesAndNodes}}, \code{\link{getAccession2taxid}}, \code{\link{read.accession2taxid}}, \code{\link{read.nodes2}}, \code{\link{read.names2}}

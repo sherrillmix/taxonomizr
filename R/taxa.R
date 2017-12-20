@@ -539,9 +539,9 @@ accessionToTaxa<-function(accessions,sqlFile){
   return(taxaDf$taxa)
 }
 
-#' Condense a taxa table for a single read
+#' Condense multiple taxonomic assignments to their most recent common branch
 #'
-#' Take a table of taxonomic assignments from hits to a single read and condense it to a single vector with NAs where there are disagreements between the hits
+#' Take a table of taxonomic assignments, e.g. assignments from hits to a read, and condense it to a single vector with NAs where there are disagreements between the hits.
 #'
 #' @param taxaTable a matrix or data.frame with hits on the rows and various levels of taxonomy in the columns
 #' @param groupings a vector of groups e.g. read queries to condense taxa within
@@ -554,7 +554,7 @@ accessionToTaxa<-function(accessions,sqlFile){
 #' ),nrow=2,byrow=TRUE)
 #' condenseTaxa2(taxas)
 #' condenseTaxa2(taxas[c(1,2,2),],c(1,1,2))
-condenseTaxa2<-function(taxaTable,groupings=rep(1,nrow(taxaTable))){
+condenseTaxa<-function(taxaTable,groupings=rep(1,nrow(taxaTable))){
   nCol<-ncol(taxaTable)
   if(nrow(taxaTable)==0)return(NULL)
   tmp<-tempfile()
@@ -589,26 +589,6 @@ condenseTaxa2<-function(taxaTable,groupings=rep(1,nrow(taxaTable))){
 }
 
 
-#' Condense a taxa table for a single read
-#'
-#' Take a table of taxonomic assignments from hits to a single read and condense it to a single vector with NAs where there are disagreements between the hits
-#'
-#' @param taxaTable a matrix or data.frame with hits on the rows and various levels of taxonomy in the columns
-#' @return a vector of length \code{ncol(taxaTable)} with NAs where the is not complete agreement
-#' @export
-#' @examples
-#' taxas<-matrix(c(
-#'  'a','b','c','e',
-#'  'a','b','d','e'
-#' ),nrow=2,byrow=TRUE)
-#' condenseTaxa(taxas)
-condenseTaxa<-function(taxaTable){
-  nTaxa<-apply(taxaTable,2,function(x)length(unique(x)))
-  firstDisagree<-min(c(Inf,which(nTaxa!=1)))
-  out<-taxaTable[1,]
-  if(firstDisagree<=ncol(taxaTable))out[(firstDisagree):ncol(taxaTable)]<-NA
-  return(out)
-}
 
 #' Download names and nodes files from NCBI
 #'
@@ -766,7 +746,9 @@ getId<-function(taxa,sqlFile='nameNode.sqlite'){
 #' @seealso \code{\link{getNamesAndNodes}}, \code{\link{getAccession2taxid}}, \code{\link{read.accession2taxid}}, \code{\link{read.nodes2}}, \code{\link{read.names2}}
 #' @export
 #' @examples
-#' \dontrun{prepareDatabase()}
+#' \dontrun{
+#' prepareDatabase()
+#' }
 prepareDatabase<-function(sqlFile='nameNode.sqlite',tmpDir='.',vocal=TRUE,...){
   if(file.exists(sqlFile)){
     message('SQLite database ',sqlFile,' already exists. Delete to regenerate')
@@ -775,18 +757,18 @@ prepareDatabase<-function(sqlFile='nameNode.sqlite',tmpDir='.',vocal=TRUE,...){
   argnames <- names(list(...))
   if(vocal)message('Downloading names and nodes with getNamesAndNodes()')
   args <- intersect(argnames, names(as.list(args(getNamesAndNodes))))
-  getNamesAndNodes(tmpDir,list(...)[args])
+  do.call(getNamesAndNodes,c(list(tmpDir),list(...)[args]))
   if(vocal)message('Downloading accession2taxid with getAccession2taxid()')
   args <- intersect(argnames, names(as.list(args(getAccession2taxid))))
-  accessionFiles<-getAccession2taxid(tmpDir,list(...)[args])
+  accessionFiles<-do.call(getAccession2taxid,c(list(tmpDir),list(...)[args]))
   nameFile<-file.path(tmpDir,'names.dmp')
-  if(vocal)message('Preprocessing names with read.names2()')
+  if(vocal)message('Preprocessing names with read.names()')
   read.names2(nameFile,sqlFile=sqlFile)
-  if(vocal)message('Preprocessing nodes with read.nodes2()')
+  if(vocal)message('Preprocessing nodes with read.nodes()')
   nodeFile<-file.path(tmpDir,'nodes.dmp')
   read.nodes2<-function(nodeFile,sqlFile=sqlFile)
   if(vocal)message('Preprocessing accession2taxid with read.accession2taxid()')
   args <- intersect(argnames, names(as.list(args(read.accession2taxid))))
-  read.accession2taxid(accessionFiles,sqlFile,vocal=vocal,list(...)[args])
+  do.call(read.accession2taxid,c(list(accessionFiles,sqlFile,vocal=vocal),list(...)[args]))
   return(sqlFile)
 }

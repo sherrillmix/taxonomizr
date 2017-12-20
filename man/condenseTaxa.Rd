@@ -2,23 +2,26 @@
 % Please edit documentation in R/taxa.R
 \name{condenseTaxa}
 \alias{condenseTaxa}
-\title{Condense a taxa table for a single read}
+\title{Condense multiple taxonomic assignments to their most recent common branch}
 \usage{
-condenseTaxa(taxaTable)
+condenseTaxa(taxaTable, groupings = rep(1, nrow(taxaTable)))
 }
 \arguments{
 \item{taxaTable}{a matrix or data.frame with hits on the rows and various levels of taxonomy in the columns}
+
+\item{groupings}{a vector of groups e.g. read queries to condense taxa within}
 }
 \value{
-a vector of length \code{ncol(taxaTable)} with NAs where the is not complete agreement
+a matrix an id column plus \code{ncol(taxaTable)} taxonomy columns with a row for each unique id in groupings with NAs where there is not complete agreement for an id
 }
 \description{
-Take a table of taxonomic assignments from hits to a single read and condense it to a single vector with NAs where there are disagreements between the hits
+Take a table of taxonomic assignments, e.g. assignments from hits to a read, and condense it to a single vector with NAs where there are disagreements between the hits.
 }
 \examples{
 taxas<-matrix(c(
  'a','b','c','e',
  'a','b','d','e'
 ),nrow=2,byrow=TRUE)
-condenseTaxa(taxas)
+condenseTaxa2(taxas)
+condenseTaxa2(taxas[c(1,2,2),],c(1,1,2))
 }

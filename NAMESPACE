@@ -2,7 +2,6 @@
 
 export(accessionToTaxa)
 export(condenseTaxa)
-export(condenseTaxa2)
 export(getAccession2taxid)
 export(getId)
 export(getId2)
