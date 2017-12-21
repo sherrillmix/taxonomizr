@@ -766,7 +766,7 @@ prepareDatabase<-function(sqlFile='nameNode.sqlite',tmpDir='.',vocal=TRUE,...){
   read.names2(nameFile,sqlFile=sqlFile)
   if(vocal)message('Preprocessing nodes with read.nodes2()')
   nodeFile<-file.path(tmpDir,'nodes.dmp')
-  read.nodes(nodeFile,sqlFile=sqlFile)
+  read.nodes2(nodeFile,sqlFile=sqlFile)
   if(vocal)message('Preprocessing accession2taxid with read.accession2taxid()')
   args <- intersect(argnames, names(as.list(args(read.accession2taxid))))
   do.call(read.accession2taxid,c(list(accessionFiles,sqlFile,vocal=vocal),list(...)[args]))
