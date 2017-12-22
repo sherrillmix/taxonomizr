@@ -1,9 +1,10 @@
 language: r
-sudo: required
+sudo: false
 cache: packages
 
 
 r_packages:
+  - devtools
   - covr
 
 r:
