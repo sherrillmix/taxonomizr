@@ -22,6 +22,6 @@ taxas<-matrix(c(
  'a','b','c','e',
  'a','b','d','e'
 ),nrow=2,byrow=TRUE)
-condenseTaxa2(taxas)
-condenseTaxa2(taxas[c(1,2,2),],c(1,1,2))
+condenseTaxa(taxas)
+condenseTaxa(taxas[c(1,2,2),],c(1,1,2))
 }

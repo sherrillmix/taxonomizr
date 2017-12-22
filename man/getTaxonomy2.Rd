@@ -83,7 +83,7 @@ nodesText<-c(
   "33154\\t|\\t2759\\t|\\tno rank", "2759\\t|\\t131567\\t|\\tsuperkingdom",
   "131567\\t|\\t1\\t|\\tno rank"
 )
-taxaNodes<-read.nodes2(textConnection(nodesText),sqlFile)
+taxaNodes<-read.nodes.sql(textConnection(nodesText),sqlFile)
 getTaxonomy2(c(9606,9605),sqlFile)
 }
 \seealso{

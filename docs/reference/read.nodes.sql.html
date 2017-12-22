@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Condense multiple taxonomic assignments to their most recent common branch — condenseTaxa • taxonomizr</title>
+<title>Read NCBI nodes file — read.nodes.sql • taxonomizr</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -87,42 +87,51 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Condense multiple taxonomic assignments to their most recent common branch</h1>
+    <h1>Read NCBI nodes file</h1>
     </div>
 
     
-    <p>Take a table of taxonomic assignments, e.g. assignments from hits to a read, and condense it to a single vector with NAs where there are disagreements between the hits.</p>
+    <p>Take an NCBI nodes file and convert it to a data.table</p>
     
 
-    <pre class="usage"><span class='fu'>condenseTaxa</span>(<span class='no'>taxaTable</span>, <span class='kw'>groupings</span> <span class='kw'>=</span> <span class='fu'>rep</span>(<span class='fl'>1</span>, <span class='fu'>nrow</span>(<span class='no'>taxaTable</span>)))</pre>
+    <pre class="usage"><span class='fu'>read.nodes.sql</span>(<span class='no'>nodeFile</span>, <span class='kw'>sqlFile</span> <span class='kw'>=</span> <span class='st'>"nameNode.sqlite"</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>taxaTable</th>
-      <td><p>a matrix or data.frame with hits on the rows and various levels of taxonomy in the columns</p></td>
+      <th>nodeFile</th>
+      <td><p>string giving the path to an NCBI node file to read from (both gzipped or uncompressed files are ok)</p></td>
     </tr>
     <tr>
-      <th>groupings</th>
-      <td><p>a vector of groups e.g. read queries to condense taxa within</p></td>
+      <th>sqlFile</th>
+      <td><p>a string giving the path where the output sqlite file should be saved</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a matrix an id column plus <code>ncol(taxaTable)</code> taxonomy columns with a row for each unique id in groupings with NAs where there is not complete agreement for an id</p>
+    <p>a data.table with columns id, parent and rank with a key on id</p>
+    
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+
+    <p><a href='ftp://ftp.ncbi.nih.gov/pub/taxonomy/'>ftp://ftp.ncbi.nih.gov/pub/taxonomy/</a></p>
+    
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <p><code><a href='read.names.html'>read.names</a></code></p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>taxas</span><span class='kw'>&lt;-</span><span class='fu'>matrix</span>(<span class='fu'>c</span>(
- <span class='st'>'a'</span>,<span class='st'>'b'</span>,<span class='st'>'c'</span>,<span class='st'>'e'</span>,
- <span class='st'>'a'</span>,<span class='st'>'b'</span>,<span class='st'>'d'</span>,<span class='st'>'e'</span>
-),<span class='kw'>nrow</span><span class='kw'>=</span><span class='fl'>2</span>,<span class='kw'>byrow</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
-<span class='fu'>condenseTaxa</span>(<span class='no'>taxas</span>)</div><div class='output co'>#&gt;      id  V1  V2  V3 V4
-#&gt; [1,] "1" "a" "b" NA NA</div><div class='input'><span class='fu'>condenseTaxa</span>(<span class='no'>taxas</span>[<span class='fu'>c</span>(<span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fl'>2</span>),],<span class='fu'>c</span>(<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>2</span>))</div><div class='output co'>#&gt;      id  V1  V2  V3  V4 
-#&gt; [1,] "1" "a" "b" NA  NA 
-#&gt; [2,] "2" "a" "b" "d" "e"</div></pre>
+    <pre class="examples"><div class='input'><span class='no'>nodes</span><span class='kw'>&lt;-</span><span class='fu'>c</span>(
+ <span class='st'>"1\t|\t1\t|\tno rank\t|\t\t|\t8\t|\t0\t|\t1\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|"</span>,
+ <span class='st'>"2\t|\t131567\t|\tsuperkingdom\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|"</span>,
+ <span class='st'>"6\t|\t335928\t|\tgenus\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\t\t|"</span>,
+ <span class='st'>"7\t|\t6\t|\tspecies\t|\tAC\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|"</span>,
+ <span class='st'>"9\t|\t32199\t|\tspecies\t|\tBA\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|"</span>
+)
+<span class='no'>tmp</span><span class='kw'>&lt;-</span><span class='fu'>tempfile</span>()
+<span class='fu'>read.nodes.sql</span>(<span class='fu'>textConnection</span>(<span class='no'>nodes</span>),<span class='no'>tmp</span>)</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -130,6 +139,10 @@
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
+
+      <li><a href="#references">References</a></li>
+
+      <li><a href="#see-also">See also</a></li>
       
       <li><a href="#examples">Examples</a></li>
     </ul>

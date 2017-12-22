@@ -94,6 +94,7 @@ read.names2<-function(nameFile,sqlFile='nameNode.sqlite',onlyScientific=TRUE,ove
 #' )
 #' read.nodes(textConnection(nodes))
 read.nodes<-function(nodeFile){
+  .Deprecated('read.nodes.sql','taxonomizr',"taxonomizr is moving from data.table to sqlite databases to improve performance. This will require changing nodes and names processing. Please see http://github.com/sherrillmix/taxonomizr/")
   splitLines<-do.call(rbind,lapply(strsplit(readLines(nodeFile),'\\s*\\|\\s*'),'[',1:3))
   colnames(splitLines)<-c('id','parent','rank')
   splitLines<-data.frame('id'=as.numeric(splitLines[,'id']),'rank'=splitLines[,'rank'],'parent'=as.numeric(splitLines[,'parent']),stringsAsFactors=FALSE)
@@ -120,8 +121,8 @@ read.nodes<-function(nodeFile){
 #'  "9\t|\t32199\t|\tspecies\t|\tBA\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|"
 #' )
 #' tmp<-tempfile()
-#' read.nodes2(textConnection(nodes),tmp)
-read.nodes2<-function(nodeFile,sqlFile='nameNode.sqlite'){
+#' read.nodes.sql(textConnection(nodes),tmp)
+read.nodes.sql<-function(nodeFile,sqlFile='nameNode.sqlite'){
   if(file.exists(sqlFile)){
     dbTest <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
     on.exit(RSQLite::dbDisconnect(dbTest))
@@ -472,7 +473,7 @@ getParentNodes<-function(ids,sqlFile='nameNode.sqlite'){
 #'   "33154\t|\t2759\t|\tno rank", "2759\t|\t131567\t|\tsuperkingdom",
 #'   "131567\t|\t1\t|\tno rank"
 #' )
-#' taxaNodes<-read.nodes2(textConnection(nodesText),sqlFile)
+#' taxaNodes<-read.nodes.sql(textConnection(nodesText),sqlFile)
 #' getTaxonomy2(c(9606,9605),sqlFile)
 getTaxonomy2<-function (ids,sqlFile='nameNode.sqlite', desiredTaxa=c('superkingdom','phylum','class','order','family','genus','species')){
   ids<-as.numeric(ids)
@@ -552,8 +553,8 @@ accessionToTaxa<-function(accessions,sqlFile){
 #'  'a','b','c','e',
 #'  'a','b','d','e'
 #' ),nrow=2,byrow=TRUE)
-#' condenseTaxa2(taxas)
-#' condenseTaxa2(taxas[c(1,2,2),],c(1,1,2))
+#' condenseTaxa(taxas)
+#' condenseTaxa(taxas[c(1,2,2),],c(1,1,2))
 condenseTaxa<-function(taxaTable,groupings=rep(1,nrow(taxaTable))){
   nCol<-ncol(taxaTable)
   if(nrow(taxaTable)==0)return(NULL)
@@ -743,7 +744,7 @@ getId<-function(taxa,sqlFile='nameNode.sqlite'){
 #' @param vocal if TRUE output messages describing progress
 #' @param ... additional arguments to getNamesAndNodes, getAccession2taxid or read.accession2taxid
 #' @return a vector of character string giving the path to the SQLite file
-#' @seealso \code{\link{getNamesAndNodes}}, \code{\link{getAccession2taxid}}, \code{\link{read.accession2taxid}}, \code{\link{read.nodes2}}, \code{\link{read.names2}}
+#' @seealso \code{\link{getNamesAndNodes}}, \code{\link{getAccession2taxid}}, \code{\link{read.accession2taxid}}, \code{\link{read.nodes.sql}}, \code{\link{read.names2}}
 #' @export
 #' @examples
 #' \dontrun{
@@ -764,9 +765,9 @@ prepareDatabase<-function(sqlFile='nameNode.sqlite',tmpDir='.',vocal=TRUE,...){
   nameFile<-file.path(tmpDir,'names.dmp')
   if(vocal)message('Preprocessing names with read.names2()')
   read.names2(nameFile,sqlFile=sqlFile)
-  if(vocal)message('Preprocessing nodes with read.nodes2()')
+  if(vocal)message('Preprocessing nodes with read.nodes.sql()')
   nodeFile<-file.path(tmpDir,'nodes.dmp')
-  read.nodes2(nodeFile,sqlFile=sqlFile)
+  read.nodes.sql(nodeFile,sqlFile=sqlFile)
   if(vocal)message('Preprocessing accession2taxid with read.accession2taxid()')
   args <- intersect(argnames, names(as.list(args(read.accession2taxid))))
   do.call(read.accession2taxid,c(list(accessionFiles,sqlFile,vocal=vocal),list(...)[args]))

@@ -197,8 +197,7 @@
   <span class='st'>"33154\t|\t2759\t|\tno rank"</span>, <span class='st'>"2759\t|\t131567\t|\tsuperkingdom"</span>,
   <span class='st'>"131567\t|\t1\t|\tno rank"</span>
 )
-<span class='no'>taxaNodes</span><span class='kw'>&lt;-</span><span class='fu'><a href='read.nodes.html'>read.nodes</a></span>(<span class='fu'>textConnection</span>(<span class='no'>nodesText</span>))
-<span class='fu'>getTaxonomy</span>(<span class='fu'>c</span>(<span class='fl'>9606</span>,<span class='fl'>9605</span>),<span class='no'>taxaNodes</span>,<span class='no'>taxaNames</span>,<span class='kw'>mc.cores</span><span class='kw'>=</span><span class='fl'>1</span>)</div><div class='output co'>#&gt;      superkingdom phylum     class      order      family      genus 
+<span class='no'>taxaNodes</span><span class='kw'>&lt;-</span><span class='fu'><a href='read.nodes.html'>read.nodes</a></span>(<span class='fu'>textConnection</span>(<span class='no'>nodesText</span>))</div><div class='output co'>#&gt; <span class='warning'>Warning: taxonomizr is moving from data.table to sqlite databases to improve performance. This will require changing nodes and names processing. Please see http://github.com/sherrillmix/taxonomizr/</span></div><div class='input'><span class='fu'>getTaxonomy</span>(<span class='fu'>c</span>(<span class='fl'>9606</span>,<span class='fl'>9605</span>),<span class='no'>taxaNodes</span>,<span class='no'>taxaNames</span>,<span class='kw'>mc.cores</span><span class='kw'>=</span><span class='fl'>1</span>)</div><div class='output co'>#&gt;      superkingdom phylum     class      order      family      genus 
 #&gt; 9606 "Eukaryota"  "Chordata" "Mammalia" "Primates" "Hominidae" "Homo"
 #&gt; 9605 "Eukaryota"  "Chordata" "Mammalia" "Primates" "Hominidae" "Homo"
 #&gt;      species       

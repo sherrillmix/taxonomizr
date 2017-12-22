@@ -186,7 +186,7 @@
   <span class='st'>"33154\t|\t2759\t|\tno rank"</span>, <span class='st'>"2759\t|\t131567\t|\tsuperkingdom"</span>,
   <span class='st'>"131567\t|\t1\t|\tno rank"</span>
 )
-<span class='no'>taxaNodes</span><span class='kw'>&lt;-</span><span class='fu'><a href='read.nodes2.html'>read.nodes2</a></span>(<span class='fu'>textConnection</span>(<span class='no'>nodesText</span>),<span class='no'>sqlFile</span>)
+<span class='no'>taxaNodes</span><span class='kw'>&lt;-</span><span class='fu'><a href='read.nodes.sql.html'>read.nodes.sql</a></span>(<span class='fu'>textConnection</span>(<span class='no'>nodesText</span>),<span class='no'>sqlFile</span>)
 <span class='fu'>getTaxonomy2</span>(<span class='fu'>c</span>(<span class='fl'>9606</span>,<span class='fl'>9605</span>),<span class='no'>sqlFile</span>)</div><div class='output co'>#&gt;      superkingdom phylum     class      order      family      genus 
 #&gt; 9606 "Eukaryota"  "Chordata" "Mammalia" "Primates" "Hominidae" "Homo"
 #&gt; 9605 "Eukaryota"  "Chordata" "Mammalia" "Primates" "Hominidae" "Homo"
