@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Download data from NCBI and set up SQLite database — prepareDatabase • taxonomizr</title>
+<title>Read NCBI names file — read.names.sql • taxonomizr</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -87,50 +87,54 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Download data from NCBI and set up SQLite database</h1>
+    <h1>Read NCBI names file</h1>
     </div>
 
     
-    <p>Download names, nodes and accession2taxid data from NCBI and preprocess into a SQLite database for downstream use.</p>
+    <p>Take an NCBI names file, keep only scientific names and convert it to a SQLite table</p>
     
 
-    <pre class="usage"><span class='fu'>prepareDatabase</span>(<span class='kw'>sqlFile</span> <span class='kw'>=</span> <span class='st'>"nameNode.sqlite"</span>, <span class='kw'>tmpDir</span> <span class='kw'>=</span> <span class='st'>"."</span>, <span class='kw'>vocal</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>read.names.sql</span>(<span class='no'>nameFile</span>, <span class='kw'>sqlFile</span> <span class='kw'>=</span> <span class='st'>"nameNode.sqlite"</span>, <span class='kw'>overwrite</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
+      <th>nameFile</th>
+      <td><p>string giving the path to an NCBI name file to read from (both gzipped or uncompressed files are ok)</p></td>
+    </tr>
+    <tr>
       <th>sqlFile</th>
-      <td><p>character string giving the file location to store the SQLite database</p></td>
+      <td><p>a string giving the path where the output sqlite file should be saved</p></td>
     </tr>
     <tr>
-      <th>tmpDir</th>
-      <td><p>location for storing the downloaded files from NCBI. (Note that it may be useful to store these somewhere convenient to avoid redownloading)</p></td>
-    </tr>
-    <tr>
-      <th>vocal</th>
-      <td><p>if TRUE output messages describing progress</p></td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td><p>additional arguments to getNamesAndNodes, getAccession2taxid or read.accession2taxid</p></td>
+      <th>overwrite</th>
+      <td><p>If TRUE, delete names table in database if present and regenerate</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a vector of character string giving the path to the SQLite file</p>
+    <p>invisibly returns a string with path to sqlfile</p>
+    
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+
+    <p><a href='ftp://ftp.ncbi.nih.gov/pub/taxonomy/'>ftp://ftp.ncbi.nih.gov/pub/taxonomy/</a></p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <p><code><a href='getNamesAndNodes.html'>getNamesAndNodes</a></code>, <code><a href='getAccession2taxid.html'>getAccession2taxid</a></code>, <code><a href='read.accession2taxid.html'>read.accession2taxid</a></code>, <code><a href='read.nodes.sql.html'>read.nodes.sql</a></code>, <code><a href='read.names.sql.html'>read.names.sql</a></code></p>
+    <p><code><a href='read.nodes.html'>read.nodes</a></code></p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='co'># NOT RUN {</span>
-<span class='fu'>prepareDatabase</span>()
-<span class='co'># }</span></pre>
+    <pre class="examples"><div class='input'><span class='no'>namesText</span><span class='kw'>&lt;-</span><span class='fu'>c</span>(
+  <span class='st'>"1\t|\tall\t|\t\t|\tsynonym\t|"</span>,
+  <span class='st'>"1\t|\troot\t|\t\t|\tscientific name\t|"</span>,
+  <span class='st'>"2\t|\tBacteria\t|\tBacteria &lt;prokaryotes&gt;\t|\tscientific name\t|"</span>,
+  <span class='st'>"2\t|\tMonera\t|\tMonera &lt;Bacteria&gt;\t|\tin-part\t|"</span>,
+  <span class='st'>"2\t|\tProcaryotae\t|\tProcaryotae &lt;Bacteria&gt;\t|\tin-part\t|"</span>
+)
+<span class='fu'>read.names.sql</span>(<span class='fu'>textConnection</span>(<span class='no'>namesText</span>))</div><div class='output co'>#&gt; <span class='message'>nameNode.sqlite already contains table names. Delete file or set overwrite=TRUE to reload</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -138,6 +142,8 @@
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
+
+      <li><a href="#references">References</a></li>
 
       <li><a href="#see-also">See also</a></li>
       

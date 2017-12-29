@@ -28,5 +28,5 @@ prepareDatabase()
 }
 }
 \seealso{
-\code{\link{getNamesAndNodes}}, \code{\link{getAccession2taxid}}, \code{\link{read.accession2taxid}}, \code{\link{read.nodes.sql}}, \code{\link{read.names2}}
+\code{\link{getNamesAndNodes}}, \code{\link{getAccession2taxid}}, \code{\link{read.accession2taxid}}, \code{\link{read.nodes.sql}}, \code{\link{read.names.sql}}
 }

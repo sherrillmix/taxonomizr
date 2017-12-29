@@ -4,12 +4,14 @@
 \alias{getId}
 \title{Find a given taxa by name}
 \usage{
-getId(taxa, sqlFile = "nameNode.sqlite")
+getId(taxa, sqlFile = "nameNode.sqlite", onlyScientific = TRUE)
 }
 \arguments{
 \item{taxa}{a vector of taxonomic names}
 
 \item{sqlFile}{a string giving the path to a sqlite file containing a names tables}
+
+\item{onlyScientific}{If TRUE then only match to scientific names. If FALSE use all names in database for matching (potentially increasing ambiguous matches).}
 }
 \value{
 a vector of character strings giving taxa IDs (potentially comma concatenated for any taxa with ambiguous names)
@@ -27,7 +29,7 @@ namesText<-c(
   "2\\t|\\tMonera\\t|\\tMonera <Bacteria>\\t|\\tin-part\\t|",
   "2\\t|\\tProcaryotae\\t|\\tProcaryotae <Bacteria>\\t|\\tin-part\\t|"
 )
-names<-read.names2(textConnection(namesText))
+names<-read.names.sql(textConnection(namesText))
 getId('Bacteria',names)
 getId('Not a real name',names)
 getId('Multi',names)

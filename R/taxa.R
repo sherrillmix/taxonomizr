@@ -18,6 +18,7 @@
 #' )
 #' read.names(textConnection(namesText))
 read.names<-function(nameFile,onlyScientific=TRUE){
+  .Deprecated('read.names.sql','taxonomizr',"taxonomizr is moving from data.table to sqlite databases to improve performance. This will require changing nodes and names processing. Please see http://github.com/sherrillmix/taxonomizr/")
   splitLines<-do.call(rbind,strsplit(readLines(nameFile),'\\s*\\|\\s*'))
   if(onlyScientific)splitLines<-splitLines[splitLines[,4]=='scientific name',]
   splitLines<-splitLines[,-(3:4)]
@@ -33,7 +34,6 @@ read.names<-function(nameFile,onlyScientific=TRUE){
 #' Take an NCBI names file, keep only scientific names and convert it to a SQLite table
 #'
 #' @param nameFile string giving the path to an NCBI name file to read from (both gzipped or uncompressed files are ok)
-#' @param onlyScientific If TRUE, only store scientific names. If FALSE, synonyms and other types are included (increasing the potential for ambiguous taxonomic assignments).
 #' @param sqlFile a string giving the path where the output sqlite file should be saved
 #' @param overwrite If TRUE, delete names table in database if present and regenerate
 #' @return invisibly returns a string with path to sqlfile
@@ -48,8 +48,8 @@ read.names<-function(nameFile,onlyScientific=TRUE){
 #'   "2\t|\tMonera\t|\tMonera <Bacteria>\t|\tin-part\t|",
 #'   "2\t|\tProcaryotae\t|\tProcaryotae <Bacteria>\t|\tin-part\t|"
 #' )
-#' read.names(textConnection(namesText))
-read.names2<-function(nameFile,sqlFile='nameNode.sqlite',onlyScientific=TRUE,overwrite=FALSE){
+#' read.names.sql(textConnection(namesText))
+read.names.sql<-function(nameFile,sqlFile='nameNode.sqlite',overwrite=FALSE){
   if(file.exists(sqlFile)){
     dbTest <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
     on.exit(RSQLite::dbDisconnect(dbTest))
@@ -63,15 +63,15 @@ read.names2<-function(nameFile,sqlFile='nameNode.sqlite',onlyScientific=TRUE,ove
     }
   }
   splitLines<-do.call(rbind,strsplit(readLines(nameFile),'\\s*\\|\\s*'))
-  if(onlyScientific)splitLines<-splitLines[splitLines[,4]=='scientific name',]
+  isScientific<-splitLines[,4]=='scientific name'
   splitLines<-splitLines[,-(3:4)]
   colnames(splitLines)<-c('id','name')
-  splitLines<-data.frame('id'=as.numeric(splitLines[,'id']),'name'=splitLines[,'name'],stringsAsFactors=FALSE)
+  splitLines<-data.frame('id'=as.numeric(splitLines[,'id']),'name'=splitLines[,'name'],'scientific'=isScientific,stringsAsFactors=FALSE)
   db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
   on.exit(RSQLite::dbDisconnect(db),add=TRUE)
   RSQLite::dbWriteTable(conn = db, name = "names", value=splitLines)
   RSQLite::dbExecute(db,"CREATE INDEX index_names_id ON names (id)")
-  RSQLite::dbExecute(db,"CREATE INDEX index_names_name ON names (name)")
+  RSQLite::dbExecute(db,"CREATE INDEX index_names_name ON names (name,scientific)")
   return(invisible(sqlFile))
 }
 
@@ -351,6 +351,7 @@ read.accession2taxid<-function(taxaFiles,sqlFile,vocal=TRUE,extraSqlCommand='',o
 #' taxaNodes<-read.nodes(textConnection(nodesText))
 #' getTaxonomy(c(9606,9605),taxaNodes,taxaNames,mc.cores=1)
 getTaxonomy<-function(ids,taxaNodes ,taxaNames, desiredTaxa=c('superkingdom','phylum','class','order','family','genus','species'),mc.cores=1,debug=FALSE){
+  .Deprecated('getTaxonomySql','taxonomizr',"taxonomizr is moving from data.table to sqlite databases to improve performance. This will require changing nodes and names processing. Please see http://github.com/sherrillmix/taxonomizr/")
   ids<-as.numeric(ids)
   if(length(ids)==0)return(NULL)
   uniqIds<-unique(ids)
@@ -389,8 +390,8 @@ getParentNodes<-function(ids,sqlFile='nameNode.sqlite'){
   tmp<-tempfile()
   on.exit(file.remove(tmp))
   tmpDb <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=tmp)
+  on.exit(RSQLite::dbDisconnect(tmpDb),add=TRUE)
   RSQLite::dbWriteTable(tmpDb,'query',data.frame('id'=ids),overwrite=TRUE)
-  RSQLite::dbDisconnect(tmpDb)
   #attach the temp table
   db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
   on.exit(RSQLite::dbDisconnect(db),add=TRUE)
@@ -451,7 +452,7 @@ getParentNodes<-function(ids,sqlFile='nameNode.sqlite'){
 #'   "2759\t|\tEukaryota\t|\t\t|\tscientific name",
 #'   "131567\t|\tcellular organisms\t|\t\t|\tscientific name"
 #' )
-#' taxaNames<-read.names2(textConnection(namesText),sqlFile)
+#' taxaNames<-read.names.sql(textConnection(namesText),sqlFile)
 #' nodesText<-c(
 #'  "1\t|\t1\t|\tno rank\t|\t\t|\t8\t|\t0\t|\t1\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
 #'   "2\t|\t131567\t|\tsuperkingdom\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
@@ -474,8 +475,8 @@ getParentNodes<-function(ids,sqlFile='nameNode.sqlite'){
 #'   "131567\t|\t1\t|\tno rank"
 #' )
 #' taxaNodes<-read.nodes.sql(textConnection(nodesText),sqlFile)
-#' getTaxonomy2(c(9606,9605),sqlFile)
-getTaxonomy2<-function (ids,sqlFile='nameNode.sqlite', desiredTaxa=c('superkingdom','phylum','class','order','family','genus','species')){
+#' getTaxonomySql(c(9606,9605),sqlFile)
+getTaxonomySql<-function (ids,sqlFile='nameNode.sqlite', desiredTaxa=c('superkingdom','phylum','class','order','family','genus','species')){
   ids<-as.numeric(ids)
   if(length(ids)==0)return(NULL)
   uniqIds<-unique(ids)
@@ -528,14 +529,14 @@ accessionToTaxa<-function(accessions,sqlFile){
   #set up a new table of accessions in a temp db (avoiding concurrency issues)
   #some trouble with dbWriteTable writing to "tmp.xxx" in the main database if we do this inside the attach
   tmpDb <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=tmp)
+  on.exit(RSQLite::dbDisconnect(tmpDb),add=TRUE)
   RSQLite::dbWriteTable(tmpDb,'query',data.frame('accession'=accessions,stringsAsFactors=FALSE),overwrite=TRUE)
-  RSQLite::dbDisconnect(tmpDb)
   #load the big sql
   db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
+  on.exit(RSQLite::dbDisconnect(db),add=TRUE)
   #attach the temp table
   RSQLite::dbExecute(db, sprintf("ATTACH '%s' AS tmp",tmp))
   taxaDf<-RSQLite::dbGetQuery(db,'SELECT tmp.query.accession, taxa FROM tmp.query LEFT OUTER JOIN accessionTaxa ON tmp.query.accession=accessionTaxa.accession')
-  RSQLite::dbDisconnect(db)
   if(any(taxaDf$accession!=accessions))stop(simpleError('Query and SQL mismatch'))
   return(taxaDf$taxa)
 }
@@ -697,6 +698,7 @@ getId2<-function(taxa,taxaNames){
 #'
 #' @param taxa a vector of taxonomic names
 #' @param sqlFile a string giving the path to a sqlite file containing a names tables
+#' @param onlyScientific If TRUE then only match to scientific names. If FALSE use all names in database for matching (potentially increasing ambiguous matches).
 #' @return a vector of character strings giving taxa IDs (potentially comma concatenated for any taxa with ambiguous names)
 #' @seealso \code{\link{read.names}}
 #' @export
@@ -710,22 +712,22 @@ getId2<-function(taxa,taxaNames){
 #'   "2\t|\tMonera\t|\tMonera <Bacteria>\t|\tin-part\t|",
 #'   "2\t|\tProcaryotae\t|\tProcaryotae <Bacteria>\t|\tin-part\t|"
 #' )
-#' names<-read.names2(textConnection(namesText))
+#' names<-read.names.sql(textConnection(namesText))
 #' getId('Bacteria',names)
 #' getId('Not a real name',names)
 #' getId('Multi',names)
-getId<-function(taxa,sqlFile='nameNode.sqlite'){
+getId<-function(taxa,sqlFile='nameNode.sqlite',onlyScientific=TRUE){
   if('data.table' %in% class(sqlFile))return(getId2(taxa,sqlFile))
   tmp<-tempfile()
   on.exit(file.remove(tmp))
   uniqTaxa<-unique(taxa)
   tmpDb <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=tmp)
+  on.exit(RSQLite::dbDisconnect(tmpDb),add=TRUE)
   RSQLite::dbWriteTable(tmpDb,'query',data.frame('name'=uniqTaxa,stringsAsFactors=FALSE),overwrite=TRUE)
-  RSQLite::dbDisconnect(tmpDb)
   db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
+  on.exit(RSQLite::dbDisconnect(db),add=TRUE)
   RSQLite::dbExecute(db, sprintf("ATTACH '%s' AS tmp",tmp))
-  taxaDf<-RSQLite::dbGetQuery(db,'SELECT tmp.query.name, id FROM tmp.query LEFT OUTER JOIN names ON tmp.query.name=names.name')
-  RSQLite::dbDisconnect(db)
+  taxaDf<-RSQLite::dbGetQuery(db,sprintf('SELECT tmp.query.name, id FROM tmp.query LEFT OUTER JOIN names ON tmp.query.name=names.name%s',ifelse(onlyScientific,' WHERE names.scientific','')))
   taxaN<-stats::ave(taxaDf$id,taxaDf$name,FUN=length)
   if(any(taxaN>1)){
     warning('Multiple taxa ids found for ',paste(names(taxaN)[taxaN>1],collapse=', '),'. Collapsing with commas')
@@ -744,7 +746,7 @@ getId<-function(taxa,sqlFile='nameNode.sqlite'){
 #' @param vocal if TRUE output messages describing progress
 #' @param ... additional arguments to getNamesAndNodes, getAccession2taxid or read.accession2taxid
 #' @return a vector of character string giving the path to the SQLite file
-#' @seealso \code{\link{getNamesAndNodes}}, \code{\link{getAccession2taxid}}, \code{\link{read.accession2taxid}}, \code{\link{read.nodes.sql}}, \code{\link{read.names2}}
+#' @seealso \code{\link{getNamesAndNodes}}, \code{\link{getAccession2taxid}}, \code{\link{read.accession2taxid}}, \code{\link{read.nodes.sql}}, \code{\link{read.names.sql}}
 #' @export
 #' @examples
 #' \dontrun{
@@ -763,8 +765,8 @@ prepareDatabase<-function(sqlFile='nameNode.sqlite',tmpDir='.',vocal=TRUE,...){
   args <- intersect(argnames, names(as.list(args(getAccession2taxid))))
   accessionFiles<-do.call(getAccession2taxid,c(list(outDir=tmpDir),list(...)[args]))
   nameFile<-file.path(tmpDir,'names.dmp')
-  if(vocal)message('Preprocessing names with read.names2()')
-  read.names2(nameFile,sqlFile=sqlFile)
+  if(vocal)message('Preprocessing names with read.names.sql()')
+  read.names.sql(nameFile,sqlFile=sqlFile)
   if(vocal)message('Preprocessing nodes with read.nodes.sql()')
   nodeFile<-file.path(tmpDir,'nodes.dmp')
   read.nodes.sql(nodeFile,sqlFile=sqlFile)

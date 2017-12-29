@@ -27,7 +27,7 @@ test_that("Test read.nodes",{
   expect_equal(read.nodes(textConnection(nodes)),out)
 })
 
-test_that("Test read.names2",{
+test_that("Test read.names.sql",{
   names<-c(
     "1\t|\tall\t|\t\t|\tsynonym\t|",
     "1\t|\troot\t|\t\t|\tscientific name\t|",
@@ -36,20 +36,20 @@ test_that("Test read.names2",{
     "2\t|\tProcaryotae\t|\tProcaryotae <Bacteria>\t|\tin-part\t|"
   )
   tmp<-tempfile()
-  out<-data.frame('id'=1:2,'name'=c('root','Bacteria'),stringsAsFactors=FALSE)
-  expect_warning(expect_error(read.names2('____NOT_A_REAL____.FILE'),'cannot open'),'cannot open')
-  expect_equal(read.names2(textConnection(names),tmp),tmp)
+  out<-data.frame('id'=1:2,'name'=c('root','Bacteria'),scientific=c(1,1),stringsAsFactors=FALSE)
+  out2<-data.frame('id'=rep(1:2,2:3),'name'=c('all','root','Bacteria','Monera','Procaryotae'),'scientific'=c(0,1,1,0,0),stringsAsFactors=FALSE)
+  expect_warning(expect_error(read.names.sql('____NOT_A_REAL____.FILE'),'cannot open'),'cannot open')
+  expect_equal(read.names.sql(textConnection(names),tmp),tmp)
   expect_true(file.exists(tmp))
-  expect_message(read.names2(textConnection(names),tmp),'contains')
+  expect_message(read.names.sql(textConnection(names),tmp),'contains')
   expect_error(db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=tmp),NA)
-  expect_equal(RSQLite::dbGetQuery(db,"SELECT * FROM names"),out)
-  dbDisconnect(db)
-  file.remove(tmp)
-  out<-data.frame('id'=rep(1:2,2:3),'name'=c('all','root','Bacteria','Monera','Procaryotae'),stringsAsFactors=FALSE)
-  expect_equal(read.names2(textConnection(names),tmp,FALSE),tmp)
+  expect_equal(RSQLite::dbGetQuery(db,"SELECT * FROM names WHERE scientific"),out)
+  expect_equal(RSQLite::dbGetQuery(db,"SELECT * FROM names"),out2)
+  RSQLite::dbDisconnect(db)
+  expect_equal(read.names.sql(textConnection(names),tmp,TRUE),tmp)
   expect_error(db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=tmp),NA)
-  expect_equal(RSQLite::dbGetQuery(db,"SELECT * FROM names"),out)
-  dbDisconnect(db)
+  expect_equal(RSQLite::dbGetQuery(db,"SELECT * FROM names"),out2)
+  RSQLite::dbDisconnect(db)
 })
 
 test_that("Test read.nodes.sql",{
@@ -68,7 +68,7 @@ test_that("Test read.nodes.sql",{
   expect_equal(read.nodes.sql(textConnection(nodes),tmp),tmp)
   expect_error(db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=tmp),NA)
   expect_equal(RSQLite::dbGetQuery(db,"SELECT * FROM nodes"),out)
-  dbDisconnect(db)
+  RSQLite::dbDisconnect(db)
 })
 
 test_that("Test lastNotNa",{
@@ -276,7 +276,7 @@ test_that("Test getParentNodes",{
   )
   tmp<-tempfile()
   read.nodes.sql(textConnection(nodesText),tmp)
-  read.names2(textConnection(namesText),tmp)
+  read.names.sql(textConnection(namesText),tmp)
   expect_equal(getParentNodes(c(9606,9605),tmp),data.frame('name'=c('Homo sapiens','Homo'),'parent'=c(9605,207598),'rank'=c('species','genus'),stringsAsFactors=FALSE))
   expect_equal(getParentNodes(c(NA,9606,9999999,9606),tmp),data.frame('name'=c(NA,'Homo sapiens',NA,'Homo sapiens'),'parent'=c(NA,9605,NA,9605),'rank'=c(NA,'species',NA,'species'),stringsAsFactors=FALSE))
 })
@@ -340,6 +340,8 @@ test_that("Test getNamesAndNodes",{
   dir.create(tmp)
   expect_error(getNamesAndNodes(tmp,'file://fakeNamesNodes.tar.gz'),NA)
   expect_equal(sort(list.files(tmp,'^(names|nodes).dmp$')),c('names.dmp','nodes.dmp'))
+  expect_message(getNamesAndNodes(tmp,'file://fakeNamesNodes.tar.gz'),'exist')
+  expect_equal(getNamesAndNodes(tmp,'file://fakeNamesNodes.tar.gz'),file.path(tmp,c('names.dmp','nodes.dmp')))
 })
 
 test_that("Test getAccession2taxid",{
