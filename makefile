@@ -12,9 +12,9 @@ install:
 localInstall:
 	R -e 'devtools::install()'
 
-docs: man README.md DESCRIPTION
-	R -e 'chooseCRANmirror(ind=1);pkgdown::build_site()'
-	touch docs
+#docs: man README.md DESCRIPTION
+#	R -e 'chooseCRANmirror(ind=1);pkgdown::build_site()'
+#	touch docs
 
 man: R/*.R 
 	R -e 'devtools::document()'
