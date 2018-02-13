@@ -207,6 +207,7 @@ trimTaxa<-function(inFile,outFile){
   if(isCompressed){
     tmp<-tempfile()
     R.utils::gunzip(inFile,tmp,remove=FALSE)
+    if(!file.exists(tmp))stop('Problem unzipping ',inFile,' to temporary file ',tmp,'. Could be out of space on temp drive or permission issue?')
     inFile<-tmp
     on.exit(file.remove(tmp))
   }
