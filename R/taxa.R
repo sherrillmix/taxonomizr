@@ -18,7 +18,7 @@
 #' )
 #' read.names(textConnection(namesText))
 read.names<-function(nameFile,onlyScientific=TRUE){
-  splitLines<-do.call(rbind,strsplit(readLines(nameFile),'\\s*\\|\\s*'))
+  splitLines<-do.call(rbind,strsplit(readLines(nameFile),"\t\\|\t?"))
   if(onlyScientific)splitLines<-splitLines[splitLines[,4]=='scientific name',]
   splitLines<-splitLines[,-(3:4)]
   colnames(splitLines)<-c('id','name')
@@ -47,7 +47,7 @@ read.names<-function(nameFile,onlyScientific=TRUE){
 #' )
 #' read.nodes(textConnection(nodes))
 read.nodes<-function(nodeFile){
-  splitLines<-do.call(rbind,lapply(strsplit(readLines(nodeFile),'\\s*\\|\\s*'),'[',1:3))
+  splitLines<-do.call(rbind,lapply(strsplit(readLines(nodeFile),"\t\\|\t?"),'[',1:3))
   colnames(splitLines)<-c('id','parent','rank')
   splitLines<-data.frame('id'=as.numeric(splitLines[,'id']),'rank'=splitLines[,'rank'],'parent'=as.numeric(splitLines[,'parent']),stringsAsFactors=FALSE)
   out<-data.table::data.table(splitLines,key='id')
