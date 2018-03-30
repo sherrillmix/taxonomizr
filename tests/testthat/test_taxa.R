@@ -80,6 +80,8 @@ test_that("Test trimTaxa",{
   writeLines(out,gzfile(tmp))
   expect_error(trimTaxa(tmp,tmp2),NA)
   expect_equal(readLines(tmp2),c('2\t3','3\t4','4\t5'))
+  expect_error(trimTaxa(tmp,tmp2,2),NA)
+  expect_equal(readLines(tmp2),c('2','3','4'))
 })
 
 test_that("Test read.accession2taxid",{

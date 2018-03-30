@@ -4,12 +4,14 @@
 \alias{trimTaxa}
 \title{Trim columns from taxa file}
 \usage{
-trimTaxa(inFile, outFile)
+trimTaxa(inFile, outFile, desiredCols = c(2, 3))
 }
 \arguments{
 \item{inFile}{a single string giving the 4 column tab separated file to read from}
 
 \item{outFile}{a single string giving the file path to write to}
+
+\item{desiredCols}{the integer IDs for columns to pull out from file}
 }
 \description{
 A simple script to delete the first row and then delete the first and fourth column of a four column tab delimited file and write to another file.

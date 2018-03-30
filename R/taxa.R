@@ -110,9 +110,10 @@ streamingRead<-function(bigFile,n=1e6,FUN=function(xx)sub(',.*','',xx),...,vocal
 #'
 #' @param inFile a single string giving the 4 column tab separated file to read from
 #' @param outFile a single string giving the file path to write to
+#' @param desiredCols the integer IDs for columns to pull out from file
 #'
 #' @useDynLib taxonomizr, .registration=TRUE
-trimTaxa<-function(inFile,outFile){
+trimTaxa<-function(inFile,outFile,desiredCols=c(2,3)){
   inFile<-as.character(inFile)
   outFile<-as.character(outFile)
   if(!file.exists(inFile))stop(simpleError(sprintf('%s file not found',inFile)))
@@ -126,7 +127,7 @@ trimTaxa<-function(inFile,outFile){
   #too much memory
   #out<-data.table::fread(sprintf('gzip -dcf %s',inFile),select=c(2,3))
   #write.table(out,outFile,row.names=FALSE,col.names=FALSE)
-  .C('taxaTrim',c(inFile,outFile),PACKAGE='taxonomizr')
+  .C('taxaTrim',c(inFile,outFile),as.integer(desiredCols-1),length(desiredCols),PACKAGE='taxonomizr')
 }
 
 #' Read NCBI accession2taxid files
