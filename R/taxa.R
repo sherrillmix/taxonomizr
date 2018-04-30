@@ -166,7 +166,7 @@ read.accession2taxid<-function(taxaFiles,sqlFile,vocal=TRUE,extraSqlCommand=''){
   }
   tryCatch({
     tmp<-tempfile()
-    writeLines('accession\tversion\ttaxa',tmp)
+    writeLines('base\tversion\ttaxa',tmp)
     for(ii in taxaFiles){
       if(vocal)message('Reading ',ii,'.')
       trimTaxa(ii,tmp,1:3)
@@ -176,7 +176,7 @@ read.accession2taxid<-function(taxaFiles,sqlFile,vocal=TRUE,extraSqlCommand=''){
     if(vocal)message('Reading in values. This may take a while.')
     RSQLite::dbWriteTable(conn = db, name = "accessionTaxa", value =tmp, row.names = FALSE, header = TRUE,sep='\t')
     if(vocal)message('Adding index. This may also take a while.')
-    RSQLite::dbExecute(db,"CREATE INDEX index_accession ON accessionTaxa (accession)")
+    RSQLite::dbExecute(db,"CREATE INDEX index_accession ON accessionTaxa (base)")
     RSQLite::dbExecute(db,"CREATE INDEX index_version ON accessionTaxa (version)")
     RSQLite::dbDisconnect(db)
   },error=function(e){
@@ -304,6 +304,7 @@ getTaxonomy<-function (ids,taxaNodes ,taxaNames, desiredTaxa=c('superkingdom','p
 #'
 #' @param accessions a vector of NCBI accession strings to convert to taxa
 #' @param sqlFile a string giving the path to a sqlite file screated by \code{\link{read.accession2taxid}}
+#' @param version either 'version' indicating that taxaids are versioned e.g. Z17427.1 or 'base' indicating that taxaids do not have version numbers e.g. Z17427
 #' @return a vector of NCBI taxa ids
 #' @export
 #' @references \url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid}
@@ -322,7 +323,8 @@ getTaxonomy<-function (ids,taxaNodes ,taxaNames, desiredTaxa=c('superkingdom','p
 #' writeLines(taxa,inFile)
 #' read.accession2taxid(inFile,sqlFile)
 #' accessionToTaxa(c("Z17430.1","Z17429.1","X62402.1",'NOTREAL'),sqlFile)
-accessionToTaxa<-function(accessions,sqlFile){
+accessionToTaxa<-function(accessions,sqlFile,version=c('version','base')){
+  version<-match.arg(version)
   if(!file.exists(sqlFile))stop(sqlFile,' does not exist.')
   if(length(accessions)==0)return(c())
   tmp<-tempfile()
@@ -335,7 +337,7 @@ accessionToTaxa<-function(accessions,sqlFile){
   db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
   #attach the temp table
   RSQLite::dbExecute(db, sprintf("ATTACH '%s' AS tmp",tmp))
-  taxaDf<-RSQLite::dbGetQuery(db,'SELECT tmp.query.accession, taxa FROM tmp.query LEFT OUTER JOIN accessionTaxa ON tmp.query.accession=accessionTaxa.version')
+  taxaDf<-RSQLite::dbGetQuery(db,sprintf('SELECT tmp.query.accession, taxa FROM tmp.query LEFT OUTER JOIN accessionTaxa ON tmp.query.accession=accessionTaxa.%s',version))
   RSQLite::dbExecute(db,'DROP TABLE tmp.query')
   RSQLite::dbExecute(db,'DETACH tmp')
   RSQLite::dbDisconnect(db)

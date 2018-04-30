@@ -107,7 +107,7 @@ test_that("Test read.accession2taxid",{
   expect_error(read.accession2taxid(inFile,outFile),NA)
   expect_message(read.accession2taxid(inFile,outFile),'exists')
   db<-RSQLite::dbConnect(RSQLite::SQLite(),dbname=outFile)
-  result<-data.frame('accession'=c('Z17427','Z17428','Z17429','Z17430'),'version'=c('Z17427.1','Z17428.1','Z17429.1','Z17430.1'),taxa=3702,stringsAsFactors=FALSE)
+  result<-data.frame('base'=c('Z17427','Z17428','Z17429','Z17430'),'version'=c('Z17427.1','Z17428.1','Z17429.1','Z17430.1'),taxa=3702,stringsAsFactors=FALSE)
   expect_true(file.exists(outFile))
   expect_equal(RSQLite::dbGetQuery(db,'SELECT * FROM accessionTaxa'),result)
   RSQLite::dbDisconnect(db)
@@ -214,6 +214,9 @@ test_that("Test accessionToTaxa",{
   expect_equal(accessionToTaxa(c("Z17430.1","NOTREAL","X62402.1","Z17429.1","X62402.1"),sqlFile),c(3702,NA,9606,3702,9606))
   expect_error(accessionToTaxa("Z17430.1","NOTREAL"),"exist")
   expect_equal(accessionToTaxa(c(),sqlFile),c())
+  expect_equal(accessionToTaxa(c("Z17430.1","Z17429.1","X62402.1"),sqlFile,'base'),as.integer(c(NA,NA,NA)))
+  expect_equal(accessionToTaxa(c("Z17430","NOTREAL","X62402","Z17429","X62402"),sqlFile,'base'),c(3702,NA,9606,3702,9606))
+  expect_equal(accessionToTaxa(c("Z17430","NOTREAL","X62402","Z17429","X62402"),sqlFile,'version'),as.integer(c(NA,NA,NA,NA,NA)))
 })
 
 test_that("Test condenseTaxa",{
