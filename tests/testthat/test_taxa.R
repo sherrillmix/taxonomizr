@@ -107,7 +107,7 @@ test_that("Test read.accession2taxid",{
   expect_error(read.accession2taxid(inFile,outFile),NA)
   expect_message(read.accession2taxid(inFile,outFile),'exists')
   db<-RSQLite::dbConnect(RSQLite::SQLite(),dbname=outFile)
-  result<-data.frame('accession'=c('Z17427.1','Z17428.1','Z17429.1','Z17430.1'),taxa=3702,stringsAsFactors=FALSE)
+  result<-data.frame('accession'=c('Z17427','Z17428','Z17429','Z17430'),'version'=c('Z17427.1','Z17428.1','Z17429.1','Z17430.1'),taxa=3702,stringsAsFactors=FALSE)
   expect_true(file.exists(outFile))
   expect_equal(RSQLite::dbGetQuery(db,'SELECT * FROM accessionTaxa'),result)
   RSQLite::dbDisconnect(db)

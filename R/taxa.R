@@ -67,6 +67,7 @@ read.nodes<-function(nodeFile){
 #' lastNotNa(c(letters[1:4],NA,'z',NA))
 #' lastNotNa(c(NA,NA))
 lastNotNa<-function(x,default='Unknown'){
+  if(length(x)==0)return(default)
   out<-x[!is.na(x)]
   if(length(out)==0)return(default)
   return(out[length(out)])
@@ -165,17 +166,18 @@ read.accession2taxid<-function(taxaFiles,sqlFile,vocal=TRUE,extraSqlCommand=''){
   }
   tryCatch({
     tmp<-tempfile()
-    writeLines('accession\ttaxa',tmp)
+    writeLines('accession\tversion\ttaxa',tmp)
     for(ii in taxaFiles){
       if(vocal)message('Reading ',ii,'.')
-      trimTaxa(ii,tmp)
+      trimTaxa(ii,tmp,1:3)
     }
     db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
-    if(extraSqlCommand!='')RSQLite::dbGetQuery(db,extraSqlCommand)
+    if(extraSqlCommand!='')RSQLite::dbExecute(db,extraSqlCommand)
     if(vocal)message('Reading in values. This may take a while.')
     RSQLite::dbWriteTable(conn = db, name = "accessionTaxa", value =tmp, row.names = FALSE, header = TRUE,sep='\t')
     if(vocal)message('Adding index. This may also take a while.')
-    RSQLite::dbGetQuery(db,"CREATE INDEX index_accession ON accessionTaxa (accession)")
+    RSQLite::dbExecute(db,"CREATE INDEX index_accession ON accessionTaxa (accession)")
+    RSQLite::dbExecute(db,"CREATE INDEX index_version ON accessionTaxa (version)")
     RSQLite::dbDisconnect(db)
   },error=function(e){
     message('Error: Problem creating sql file. Deleting.')
@@ -332,10 +334,10 @@ accessionToTaxa<-function(accessions,sqlFile){
   #load the big sql
   db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
   #attach the temp table
-  RSQLite::dbGetQuery(db, sprintf("ATTACH '%s' AS tmp",tmp))
-  taxaDf<-RSQLite::dbGetQuery(db,'SELECT tmp.query.accession, taxa FROM tmp.query LEFT OUTER JOIN accessionTaxa ON tmp.query.accession=accessionTaxa.accession')
-  RSQLite::dbGetQuery(db,'DROP TABLE tmp.query')
-  RSQLite::dbGetQuery(db,'DETACH tmp')
+  RSQLite::dbExecute(db, sprintf("ATTACH '%s' AS tmp",tmp))
+  taxaDf<-RSQLite::dbGetQuery(db,'SELECT tmp.query.accession, taxa FROM tmp.query LEFT OUTER JOIN accessionTaxa ON tmp.query.accession=accessionTaxa.version')
+  RSQLite::dbExecute(db,'DROP TABLE tmp.query')
+  RSQLite::dbExecute(db,'DETACH tmp')
   RSQLite::dbDisconnect(db)
   file.remove(tmp)
   if(any(taxaDf$accession!=accessions))stop(simpleError('Query and SQL mismatch'))
