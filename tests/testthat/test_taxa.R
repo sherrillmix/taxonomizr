@@ -7,11 +7,11 @@ test_that("Test read.names",{
     "2\t|\tMonera\t|\tMonera <Bacteria>\t|\tin-part\t|",
     "2\t|\tProcaryotae\t|\tProcaryotae <Bacteria>\t|\tin-part\t|"
   )
-  out<-data.table('id'=1:2,'name'=c('root','Bacteria'),key='id')
-  setindex(out,'name')
+  out<-data.table::data.table('id'=1:2,'name'=c('root','Bacteria'),key='id')
+  data.table::setindex(out,'name')
   expect_equal(read.names(textConnection(names)),out)
-  out<-data.table('id'=rep(1:2,2:3),'name'=c('all','root','Bacteria','Monera','Procaryotae'),key='id')
-  setindex(out,'name')
+  out<-data.table::data.table('id'=rep(1:2,2:3),'name'=c('all','root','Bacteria','Monera','Procaryotae'),key='id')
+  data.table::setindex(out,'name')
   expect_equal(read.names(textConnection(names),FALSE),out)
 })
 
@@ -23,7 +23,7 @@ test_that("Test read.nodes",{
     "7\t|\t6\t|\tspecies\t|\tAC\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|",
     "9\t|\t32199\t|\tspecies\t|\tBA\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|"
   )
-  out<-data.table('id'=c(1:2,6:7,9),'rank'=c('no rank','superkingdom','genus','species','species'),'parent'=c(1,131567,335928,6,32199),key='id')
+  out<-data.table::data.table('id'=c(1:2,6:7,9),'rank'=c('no rank','superkingdom','genus','species','species'),'parent'=c(1,131567,335928,6,32199),key='id')
   expect_equal(read.nodes(textConnection(nodes)),out)
 })
 
@@ -77,13 +77,20 @@ test_that("Test trimTaxa",{
   expect_equal(readLines(tmp2),c('2\t3','3\t4','4\t5'))
   writeLines(c(out,'1\t2\t3\t4\t5'),tmp)
   expect_error(taxonomizr:::trimTaxa(tmp,tmp2),"line")
-  writeLines(out,gzfile(tmp))
+  file.remove(tmp2)
+  gzHandle<-gzfile(tmp)
+  writeLines(out,gzHandle)
+  close(gzHandle)
   expect_error(taxonomizr:::trimTaxa(tmp,tmp2),NA)
   expect_equal(readLines(tmp2),c('2\t3','3\t4','4\t5'))
+  file.remove(tmp2)
   expect_error(taxonomizr:::trimTaxa(tmp,tmp2,2),NA)
   expect_equal(readLines(tmp2),c('2','3','4'))
+  file.remove(tmp2)
   expect_error(taxonomizr:::trimTaxa(tmp,tmp2,c(2,4)),NA)
   expect_equal(readLines(tmp2),c('2\t4','3\t5','4\t6'))
+  expect_error(taxonomizr:::trimTaxa(tmp,tmp2,c(2,4)),NA)
+  expect_equal(readLines(tmp2),rep(c('2\t4','3\t5','4\t6'),2))
 })
 
 test_that("Test read.accession2taxid",{
@@ -102,7 +109,8 @@ test_that("Test read.accession2taxid",{
   db<-RSQLite::dbConnect(RSQLite::SQLite(),dbname=outFile)
   result<-data.frame('accession'=c('Z17427.1','Z17428.1','Z17429.1','Z17430.1'),taxa=3702,stringsAsFactors=FALSE)
   expect_true(file.exists(outFile))
-  expect_equal(dbGetQuery(db,'SELECT * FROM accessionTaxa'),result)
+  expect_equal(RSQLite::dbGetQuery(db,'SELECT * FROM accessionTaxa'),result)
+  RSQLite::dbDisconnect(db)
   file.remove(outFile)
   expect_error(read.accession2taxid(inFile,outFile,extraSqlCommand='pragma temp_store = 2;'),NA)
   file.remove(outFile)

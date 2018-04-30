@@ -94,12 +94,12 @@ streamingRead<-function(bigFile,n=1e6,FUN=function(xx)sub(',.*','',xx),...,vocal
   if(is.character(bigFile))handle<-file(bigFile,'r')
   else handle<-bigFile
   if(!isOpen(handle))open(handle)
+  on.exit(close(handle))
   out<-list()
   while(length(piece<-readLines(handle,n=n))>0){
     if(vocal)cat('.')
     out<-c(out,list(FUN(piece,...)))
   }
-  close(handle)
   return(out)
 }
 
@@ -118,7 +118,7 @@ trimTaxa<-function(inFile,outFile,desiredCols=c(2,3)){
   outFile<-as.character(outFile)
   desiredCols<-sort(desiredCols)
   if(!file.exists(inFile))stop(simpleError(sprintf('%s file not found',inFile)))
-  isCompressed<-R.utils::isGzipped(inFile)
+  isCompressed<-R.utils::isGzipped(inFile,method='content')
   if(isCompressed){
     tmp<-tempfile()
     R.utils::gunzip(inFile,tmp,remove=FALSE)
