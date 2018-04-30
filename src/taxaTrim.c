@@ -18,9 +18,12 @@ void taxaTrim(char **files,int *desiredCols, int *nCol){
     if(byte=='\n')break;
   }
   while((byte = fgetc(in))!=EOF){
-    for(int ii=0;ii<nCol[0];ii++)if(nTabs==desiredCols[ii]){
-      if(byte!='\t'||ii!=nCol[0])fputc(byte,out);
-      break;
+    for(int ii=0;ii<nCol[0];ii++){
+      if(nTabs==desiredCols[ii]){
+        if((byte!='\t') & (byte!='\n'))fputc(byte,out);
+        else if(ii<nCol[0]-1)fputc('\t',out);
+        break;
+      }
     }
     if(byte=='\t')nTabs++;
     if(byte=='\n'){

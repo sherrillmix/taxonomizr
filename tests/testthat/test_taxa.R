@@ -58,7 +58,7 @@ test_that("Test streamingRead",{
 })
 
 test_that("Test trimTaxa",{
-  expect_error(trimTaxa('NotARealFile','test'),'file')
+  expect_error(taxonomizr:::trimTaxa('NotARealFile','test'),'file')
   expect_error(.C('taxaTrim',c('NotARealFile','test'),PACKAGE='taxonomizr'),'file')
   tmp<-tempfile()
   out<-c(
@@ -73,15 +73,17 @@ test_that("Test trimTaxa",{
   #should error (can't write to directory)
   expect_error(.C('taxaTrim',c(tmp,tmp2),PACKAGE='taxonomizr'),'file')
   tmp2<-tempfile()
-  expect_error(trimTaxa(tmp,tmp2),NA)
+  expect_error(taxonomizr:::trimTaxa(tmp,tmp2),NA)
   expect_equal(readLines(tmp2),c('2\t3','3\t4','4\t5'))
   writeLines(c(out,'1\t2\t3\t4\t5'),tmp)
-  expect_error(trimTaxa(tmp,tmp2),"line")
+  expect_error(taxonomizr:::trimTaxa(tmp,tmp2),"line")
   writeLines(out,gzfile(tmp))
-  expect_error(trimTaxa(tmp,tmp2),NA)
+  expect_error(taxonomizr:::trimTaxa(tmp,tmp2),NA)
   expect_equal(readLines(tmp2),c('2\t3','3\t4','4\t5'))
-  expect_error(trimTaxa(tmp,tmp2,2),NA)
+  expect_error(taxonomizr:::trimTaxa(tmp,tmp2,2),NA)
   expect_equal(readLines(tmp2),c('2','3','4'))
+  expect_error(taxonomizr:::trimTaxa(tmp,tmp2,c(2,4)),NA)
+  expect_equal(readLines(tmp2),c('2\t4','3\t5','4\t6'))
 })
 
 test_that("Test read.accession2taxid",{

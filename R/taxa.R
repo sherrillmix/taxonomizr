@@ -116,6 +116,7 @@ streamingRead<-function(bigFile,n=1e6,FUN=function(xx)sub(',.*','',xx),...,vocal
 trimTaxa<-function(inFile,outFile,desiredCols=c(2,3)){
   inFile<-as.character(inFile)
   outFile<-as.character(outFile)
+  desiredCols<-sort(desiredCols)
   if(!file.exists(inFile))stop(simpleError(sprintf('%s file not found',inFile)))
   isCompressed<-R.utils::isGzipped(inFile)
   if(isCompressed){
