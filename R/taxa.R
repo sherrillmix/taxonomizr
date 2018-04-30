@@ -157,6 +157,7 @@ trimTaxa<-function(inFile,outFile,desiredCols=c(2,3)){
 #' read.accession2taxid(inFile,outFile)
 #' db<-RSQLite::dbConnect(RSQLite::SQLite(),dbname=outFile)
 #' RSQLite::dbGetQuery(db,'SELECT * FROM accessionTaxa')
+#' RSQLite::dbDisconnect(db)
 read.accession2taxid<-function(taxaFiles,sqlFile,vocal=TRUE,extraSqlCommand=''){
   if(file.exists(sqlFile)){
     message(sqlFile,' already exists. Delete to reprocess data')
