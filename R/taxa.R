@@ -166,7 +166,7 @@ read.accession2taxid<-function(taxaFiles,sqlFile,vocal=TRUE,extraSqlCommand=''){
   }
   tryCatch({
     tmp<-tempfile()
-    writeLines('base\tversion\ttaxa',tmp)
+    writeLines('base\taccession\ttaxa',tmp)
     for(ii in taxaFiles){
       if(vocal)message('Reading ',ii,'.')
       trimTaxa(ii,tmp,1:3)
@@ -177,7 +177,7 @@ read.accession2taxid<-function(taxaFiles,sqlFile,vocal=TRUE,extraSqlCommand=''){
     RSQLite::dbWriteTable(conn = db, name = "accessionTaxa", value =tmp, row.names = FALSE, header = TRUE,sep='\t')
     if(vocal)message('Adding index. This may also take a while.')
     RSQLite::dbExecute(db,"CREATE INDEX index_accession ON accessionTaxa (base)")
-    RSQLite::dbExecute(db,"CREATE INDEX index_version ON accessionTaxa (version)")
+    RSQLite::dbExecute(db,"CREATE INDEX index_version ON accessionTaxa (accession)")
     RSQLite::dbDisconnect(db)
   },error=function(e){
     message('Error: Problem creating sql file. Deleting.')
@@ -325,6 +325,7 @@ getTaxonomy<-function (ids,taxaNodes ,taxaNames, desiredTaxa=c('superkingdom','p
 #' accessionToTaxa(c("Z17430.1","Z17429.1","X62402.1",'NOTREAL'),sqlFile)
 accessionToTaxa<-function(accessions,sqlFile,version=c('version','base')){
   version<-match.arg(version)
+  if(version=='version')version<-'accession'
   if(!file.exists(sqlFile))stop(sqlFile,' does not exist.')
   if(length(accessions)==0)return(c())
   tmp<-tempfile()
