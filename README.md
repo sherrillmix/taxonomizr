@@ -14,7 +14,6 @@ The package is on CRAN, so it should install with a simple:
 ```r
 install.packages("taxonomizr")
 ```
-
 If you want the development version directly from github, use the [<code>devtools</code>](https://github.com/hadley/devtools) library and run:
 
 ```r
@@ -148,6 +147,31 @@ getTaxonomy(taxaId,taxaNodes,taxaNames)
 ## 1313 "Streptococcaceae" "Streptococcus" "Streptococcus pneumoniae"
 ## 9606 "Hominidae"        "Homo"          "Homo sapiens"
 ```
+
+You can also get taxonomy for NCBI accession numbers without versions (the .X following the main number e.g. the the ".1" in LN847353.1) using the `version='base'` argument of `accessionToTaxa`:
+
+
+
+```r
+taxaId<-accessionToTaxa(c("LN847353","AL079352"),"accessionTaxa.sql")
+print(taxaId)
+```
+
+```
+## [1] NA NA
+```
+
+
+```r
+taxaId<-accessionToTaxa(c("LN847353","AL079352"),"accessionTaxa.sql",version='base')
+print(taxaId)
+```
+
+```
+## [1] 1313 9606
+```
+
+
 
 ### Finding taxonomy for taxonomic names
 

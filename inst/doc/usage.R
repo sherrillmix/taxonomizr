@@ -33,6 +33,14 @@ library(taxonomizr)
 #  getTaxonomy(taxaId,taxaNodes,taxaNames)
 
 ## ----eval=FALSE----------------------------------------------------------
+#  taxaId<-accessionToTaxa(c("LN847353","AL079352"),"accessionTaxa.sql")
+#  print(taxaId)
+
+## ----eval=FALSE----------------------------------------------------------
+#  taxaId<-accessionToTaxa(c("LN847353","AL079352"),"accessionTaxa.sql",version='base')
+#  print(taxaId)
+
+## ----eval=FALSE----------------------------------------------------------
 #  taxaId<-getId(c('Homo sapiens','Bos taurus','Homo'),taxaNames)
 #  print(taxaId)
 
