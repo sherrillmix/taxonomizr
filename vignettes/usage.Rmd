@@ -13,6 +13,9 @@ vignette: >
 
 `taxonomizr` provides some simple functions to parse NCBI taxonomy files and accession dumps and efficiently use them to assign [taxonomy](https://www.ncbi.nlm.nih.gov/Taxonomy/taxonomyhome.html/) to accession numbers or taxonomic IDs. This is useful for example to assign taxonomy to BLAST results. This is all done locally after downloading the appropriate files from NCBI using included functions (see [below](#preparation)). 
 
+## Requirements
+This package downloads a few databases from NCBI and stores them in an easily accessible form on the hardrive. This ends up taking a decent amount of space so you'll probably want around 75 Gb of free hard drive space. 
+
 ## Installation
 The package is on CRAN, so it should install with a simple:
 ```{r, eval=FALSE}
