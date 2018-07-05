@@ -216,7 +216,7 @@ To find all the accessions for a given taxonomic ID, you can use the `getAccessi
 read.accession2taxid(list.files('.','accession2taxid.gz$'),'accessionTaxa.sql',indexTaxa=TRUE)
 ```
 
-Then you can get the accessions for taxa 3702 like (note that the limit argument is used here in order to preserve space):
+Then you can get the accessions for taxa 3702 with a command like (note that the limit argument is used here in order to preserve space):
 
 
 ```r
