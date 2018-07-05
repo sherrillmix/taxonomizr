@@ -102,9 +102,11 @@ test_that("Test read.accession2taxid",{
     "Z17430\tZ17430.1\t3702\t16572"
   )
   outFile<-tempfile()
+  outFile2<-tempfile()
   inFile<-tempfile()
   writeLines(taxa,inFile)
   expect_error(read.accession2taxid(inFile,outFile),NA)
+  expect_error(read.accession2taxid(inFile,outFile2,indexTaxa=TRUE),NA)
   expect_message(read.accession2taxid(inFile,outFile),'exists')
   db<-RSQLite::dbConnect(RSQLite::SQLite(),dbname=outFile)
   result<-data.frame('base'=c('Z17427','Z17428','Z17429','Z17430'),'accession'=c('Z17427.1','Z17428.1','Z17429.1','Z17430.1'),taxa=3702,stringsAsFactors=FALSE)
@@ -271,3 +273,38 @@ test_that("Test getId",{
  expect_warning(getId('Multi',names),'Multiple')
 })
 
+test_that("Test getAccessions",{
+  taxa<-c(
+    "accession\taccession.version\ttaxid\tgi",
+    "Z17427\tZ17427.1\t3702\t16569",
+    "Z17428\tZ17428.1\t3702\t16570",
+    "Z17429\tZ17429.1\t3702\t16571",
+    "Z17430\tZ17430.1\t3702\t16572",
+    "X62402\tX62402.1\t9606\t30394"
+  )
+  inFile<-tempfile()
+  sqlFile<-tempfile()
+  #not created yet
+  expect_error(getAccessions("Z17430.1",notARealVariable),"found")
+  expect_error(getAccessions("Z17430.1",sqlFile),"exist")
+  expect_error(getAccessions(c(),notARealVariable),"found")
+  expect_error(getAccessions(c(),sqlFile),"exist")
+  writeLines(taxa,inFile)
+  read.accession2taxid(inFile,sqlFile)
+  #one taxa
+  expect_equal(getAccessions(3702,sqlFile),data.frame('taxa'=3702,'accession'=c("Z17427.1","Z17428.1","Z17429.1","Z17430.1"),stringsAsFactors=FALSE))
+  #two taxa
+  expect_equal(getAccessions(c(3702,9606),sqlFile),data.frame('taxa'=rep(c(3702,9606),c(4,1)),'accession'=c("Z17427.1","Z17428.1","Z17429.1","Z17430.1","X62402.1"),stringsAsFactors=FALSE))
+  #two taxa base
+  expect_equal(getAccessions(c(3702,9606),sqlFile,'base'),data.frame('taxa'=rep(c(3702,9606),c(4,1)),'accession'=c("Z17427","Z17428","Z17429","Z17430","X62402"),stringsAsFactors=FALSE))
+  #one taxa plus one NA
+  expect_equal(getAccessions(c(3702,9999),sqlFile),data.frame('taxa'=rep(c(3702,9999),c(4,1)),'accession'=c("Z17427.1","Z17428.1","Z17429.1","Z17430.1",NA),stringsAsFactors=FALSE))
+  #one taxa plus two NA
+  expect_equal(getAccessions(c(3702,9999,'NOTREAL'),sqlFile),data.frame('taxa'=rep(c(3702,9999,'NOTREAL'),c(4,1,1)),'accession'=c("Z17427.1","Z17428.1","Z17429.1","Z17430.1",NA,NA),stringsAsFactors=FALSE))
+  #one taxa plus two NA base
+  expect_equal(getAccessions(c(3702,9999,'NOTREAL'),sqlFile,'base'),data.frame('taxa'=rep(c(3702,9999,'NOTREAL'),c(4,1,1)),'accession'=c("Z17427","Z17428","Z17429","Z17430",NA,NA),stringsAsFactors=FALSE))
+  #check version
+  expect_equal(getAccessions(c(3702,9999,'NOTREAL'),sqlFile,'version'),data.frame('taxa'=rep(c(3702,9999,'NOTREAL'),c(4,1,1)),'accession'=c("Z17427.1","Z17428.1","Z17429.1","Z17430.1",NA,NA),stringsAsFactors=FALSE))
+  #check limit
+  expect_equal(getAccessions(c(3702,9606),sqlFile,limit=3),data.frame('taxa'=rep(c(3702,9606),c(3,0)),'accession'=c("Z17427.1","Z17428.1","Z17429.1"),stringsAsFactors=FALSE))
+})

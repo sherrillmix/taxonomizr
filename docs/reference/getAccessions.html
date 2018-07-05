@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Return last not NA value — lastNotNa • taxonomizr</title>
+<title>Find all accessions for a taxa — getAccessions • taxonomizr</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -28,9 +28,9 @@
 
 
 
-<meta property="og:title" content="Return last not NA value — lastNotNa" />
+<meta property="og:title" content="Find all accessions for a taxa — getAccessions" />
 
-<meta property="og:description" content="A convenience function to return the last value which is not NA in a vector" />
+<meta property="og:description" content="Find accessions numbers for a given taxa ID the NCBI taxonomy. This will be pretty slow unless the database was built with indexTaxa=TRUE since the database would not have an index for taxaId." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -101,39 +101,65 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Return last not NA value</h1>
+    <h1>Find all accessions for a taxa</h1>
     
-    <div class="hidden name"><code>lastNotNa.Rd</code></div>
+    <div class="hidden name"><code>getAccessions.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>A convenience function to return the last value which is not NA in a vector</p>
+    <p>Find accessions numbers for a given taxa ID the NCBI taxonomy. This will be pretty slow unless the database was built with indexTaxa=TRUE since the database would not have an index for taxaId.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>lastNotNa</span>(<span class='no'>x</span>, <span class='kw'>default</span> <span class='kw'>=</span> <span class='st'>"Unknown"</span>)</pre>
+    <pre class="usage"><span class='fu'>getAccessions</span>(<span class='no'>taxaId</span>, <span class='no'>sqlFile</span>, <span class='kw'>version</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"version"</span>, <span class='st'>"base"</span>), <span class='kw'>limit</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>x</th>
-      <td><p>a vector to look for the last value in</p></td>
+      <th>taxaId</th>
+      <td><p>a vector of taxonomic IDs</p></td>
     </tr>
     <tr>
-      <th>default</th>
-      <td><p>a default value to use when all values are NA in a vector</p></td>
+      <th>sqlFile</th>
+      <td><p>a string giving the path to a sqlite file screated by <code><a href='read.accession2taxid.html'>read.accession2taxid</a></code></p></td>
+    </tr>
+    <tr>
+      <th>version</th>
+      <td><p>either 'version' indicating that taxaids are versioned e.g. Z17427.1 or 'base' indicating that taxaids do not have version numbers e.g. Z17427</p></td>
+    </tr>
+    <tr>
+      <th>limit</th>
+      <td><p>return only this number of accessions or NULL for no limits</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a single element from the last non NA value in x (or the default)</p>
+    <p>a vector of character strings giving taxa IDs (potentially comma concatenated for any taxa with ambiguous names)</p>
+    
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p><code><a href='read.accession2taxid.html'>read.accession2taxid</a></code></p></div>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>lastNotNa</span>(<span class='fu'>c</span>(<span class='fl'>1</span>:<span class='fl'>4</span>,<span class='fl'>NA</span>,<span class='fl'>NA</span>))</div><div class='output co'>#&gt; [1] 4</div><div class='input'><span class='fu'>lastNotNa</span>(<span class='fu'>c</span>(<span class='no'>letters</span>[<span class='fl'>1</span>:<span class='fl'>4</span>],<span class='fl'>NA</span>,<span class='st'>'z'</span>,<span class='fl'>NA</span>))</div><div class='output co'>#&gt; [1] "z"</div><div class='input'><span class='fu'>lastNotNa</span>(<span class='fu'>c</span>(<span class='fl'>NA</span>,<span class='fl'>NA</span>))</div><div class='output co'>#&gt; [1] "Unknown"</div></pre>
+    <pre class="examples"><div class='input'><span class='no'>taxa</span><span class='kw'>&lt;-</span><span class='fu'>c</span>(
+  <span class='st'>"accession\taccession.version\ttaxid\tgi"</span>,
+  <span class='st'>"Z17427\tZ17427.1\t3702\t16569"</span>,
+  <span class='st'>"Z17428\tZ17428.1\t3702\t16570"</span>,
+  <span class='st'>"Z17429\tZ17429.1\t3702\t16571"</span>,
+  <span class='st'>"Z17430\tZ17430.1\t3702\t16572"</span>
+)
+<span class='no'>inFile</span><span class='kw'>&lt;-</span><span class='fu'>tempfile</span>()
+<span class='no'>outFile</span><span class='kw'>&lt;-</span><span class='fu'>tempfile</span>()
+<span class='fu'>writeLines</span>(<span class='no'>taxa</span>,<span class='no'>inFile</span>)
+<span class='fu'><a href='read.accession2taxid.html'>read.accession2taxid</a></span>(<span class='no'>inFile</span>,<span class='no'>outFile</span>)</div><div class='output co'>#&gt; <span class='message'>Reading /tmp/RtmpM406lF/file2637358c817a.</span></div><div class='output co'>#&gt; <span class='message'>Reading in values. This may take a while.</span></div><div class='output co'>#&gt; <span class='message'>Adding index. This may also take a while.</span></div><div class='output co'>#&gt; [1] TRUE</div><div class='input'><span class='fu'>getAccessions</span>(<span class='fl'>3702</span>,<span class='no'>outFile</span>)</div><div class='output co'>#&gt;   taxa accession
+#&gt; 1 3702  Z17427.1
+#&gt; 2 3702  Z17428.1
+#&gt; 3 3702  Z17429.1
+#&gt; 4 3702  Z17430.1</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -141,6 +167,8 @@
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
+
+      <li><a href="#see-also">See also</a></li>
       
       <li><a href="#examples">Examples</a></li>
     </ul>

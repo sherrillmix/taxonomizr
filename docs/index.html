@@ -29,7 +29,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">taxonomizr</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.3.0</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.4.1</span>
       </span>
     </div>
 
@@ -80,6 +80,11 @@
 <h2 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h2>
 <p><code>taxonomizr</code> provides some simple functions to parse NCBI taxonomy files and accession dumps and efficiently use them to assign <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/taxonomyhome.html/">taxonomy</a> to accession numbers or taxonomic IDs. This is useful for example to assign taxonomy to BLAST results. This is all done locally after downloading the appropriate files from NCBI using included functions (see <a href="#preparation">below</a>).</p>
+</div>
+<div id="requirements" class="section level2">
+<h2 class="hasAnchor">
+<a href="#requirements" class="anchor"></a>Requirements</h2>
+<p>This package downloads a few databases from NCBI and stores them in an easily accessible form on the hardrive. This ends up taking a decent amount of space so you’ll probably want around 75 Gb of free hard drive space.</p>
 </div>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
@@ -153,6 +158,13 @@ taxaNames&lt;-<span class="kw"><a href="reference/read.names.html">read.names</a
 ##      family             genus           species                   
 ## 1313 "Streptococcaceae" "Streptococcus" "Streptococcus pneumoniae"
 ## 9606 "Hominidae"        "Homo"          "Homo sapiens"</code></pre>
+<p>You can also get taxonomy for NCBI accession numbers without versions (the .X following the main number e.g. the the “.1” in LN847353.1) using the <code>version='base'</code> argument of <code>accessionToTaxa</code>:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">taxaId&lt;-<span class="kw"><a href="reference/accessionToTaxa.html">accessionToTaxa</a></span>(<span class="kw">c</span>(<span class="st">"LN847353"</span>,<span class="st">"AL079352"</span>),<span class="st">"accessionTaxa.sql"</span>)
+<span class="kw">print</span>(taxaId)</code></pre></div>
+<pre><code>## [1] NA NA</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">taxaId&lt;-<span class="kw"><a href="reference/accessionToTaxa.html">accessionToTaxa</a></span>(<span class="kw">c</span>(<span class="st">"LN847353"</span>,<span class="st">"AL079352"</span>),<span class="st">"accessionTaxa.sql"</span>,<span class="dt">version=</span><span class="st">'base'</span>)
+<span class="kw">print</span>(taxaId)</code></pre></div>
+<pre><code>## [1] 1313 9606</code></pre>
 </div>
 <div id="finding-taxonomy-for-taxonomic-names" class="section level3">
 <h3 class="hasAnchor">

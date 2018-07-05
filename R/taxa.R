@@ -140,6 +140,7 @@ trimTaxa<-function(inFile,outFile,desiredCols=c(2,3)){
 #' @param sqlFile a string giving the path where the output sqlite file should be saved
 #' @param vocal if TRUE output status messages
 #' @param extraSqlCommand for advanced use. A string giving a command to be called on the sqlite databse before loading data e.g. "pragma temp_store = 2;" to keep all temp files in memory (don't do this unless you have a lot (>100 Gb) of RAM)
+#' @param indexTaxa if TRUE add an index for taxa ID. This would only be necessary if you want to look up accessions by taxa ID e.g. \code{\link{getAccessions}}
 #' @return TRUE if sucessful
 #' @export
 #' @references \url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid}
@@ -159,7 +160,7 @@ trimTaxa<-function(inFile,outFile,desiredCols=c(2,3)){
 #' db<-RSQLite::dbConnect(RSQLite::SQLite(),dbname=outFile)
 #' RSQLite::dbGetQuery(db,'SELECT * FROM accessionTaxa')
 #' RSQLite::dbDisconnect(db)
-read.accession2taxid<-function(taxaFiles,sqlFile,vocal=TRUE,extraSqlCommand=''){
+read.accession2taxid<-function(taxaFiles,sqlFile,vocal=TRUE,extraSqlCommand='',indexTaxa=FALSE){
   if(file.exists(sqlFile)){
     message(sqlFile,' already exists. Delete to reprocess data')
     return(TRUE)
@@ -177,7 +178,7 @@ read.accession2taxid<-function(taxaFiles,sqlFile,vocal=TRUE,extraSqlCommand=''){
     RSQLite::dbWriteTable(conn = db, name = "accessionTaxa", value =tmp, row.names = FALSE, header = TRUE,sep='\t')
     if(vocal)message('Adding index. This may also take a while.')
     RSQLite::dbExecute(db,"CREATE INDEX index_accession ON accessionTaxa (base)")
-    RSQLite::dbExecute(db,"CREATE INDEX index_version ON accessionTaxa (accession)")
+    if(indexTaxa)RSQLite::dbExecute(db,"CREATE INDEX index_taxa ON accessionTaxa (taxa)")
     RSQLite::dbDisconnect(db)
   },error=function(e){
     message('Error: Problem creating sql file. Deleting.')
@@ -466,5 +467,52 @@ getId<-function(taxa,taxaNames){
   out<-as.character(unlist(out))
   names(out)<-uniqTaxa
   return(unname(out[taxa]))
+}
+
+#' Find all accessions for a taxa
+#'
+#' Find accessions numbers for a given taxa ID the NCBI taxonomy. This will be pretty slow unless the database was built with indexTaxa=TRUE since the database would not have an index for taxaId.
+#' @param taxaId a vector of taxonomic IDs
+#' @param sqlFile a string giving the path to a sqlite file screated by \code{\link{read.accession2taxid}}
+#' @param version either 'version' indicating that taxaids are versioned e.g. Z17427.1 or 'base' indicating that taxaids do not have version numbers e.g. Z17427
+#' @param limit return only this number of accessions or NULL for no limits
+#' @return a vector of character strings giving taxa IDs (potentially comma concatenated for any taxa with ambiguous names)
+#' @seealso \code{\link{read.accession2taxid}}
+#' @export
+#' @examples
+#' taxa<-c(
+#'   "accession\taccession.version\ttaxid\tgi",
+#'   "Z17427\tZ17427.1\t3702\t16569",
+#'   "Z17428\tZ17428.1\t3702\t16570",
+#'   "Z17429\tZ17429.1\t3702\t16571",
+#'   "Z17430\tZ17430.1\t3702\t16572"
+#' )
+#' inFile<-tempfile()
+#' outFile<-tempfile()
+#' writeLines(taxa,inFile)
+#' read.accession2taxid(inFile,outFile)
+#' getAccessions(3702,outFile)
+getAccessions<-function(taxaId,sqlFile,version=c('version','base'),limit=NULL){
+  version<-match.arg(version)
+  if(version=='version')version<-'accession'
+  if(!file.exists(sqlFile))stop(sqlFile,' does not exist.')
+  if(length(taxaId)==0)return(c())
+  tmp<-tempfile()
+  #set up a new table of accessions in a temp db (avoiding concurrency issues)
+  #some trouble with dbWriteTable writing to "tmp.xxx" in the main database if we do this inside the attach
+  tmpDb <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=tmp)
+  RSQLite::dbWriteTable(tmpDb,'query',data.frame('taxa'=taxaId,stringsAsFactors=FALSE),overwrite=TRUE)
+  RSQLite::dbDisconnect(tmpDb)
+  #load the big sql
+  db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
+  #attach the temp table
+  RSQLite::dbExecute(db, sprintf("ATTACH '%s' AS tmp",tmp))
+  taxaDf<-RSQLite::dbGetQuery(db,sprintf('SELECT tmp.query.taxa, %s FROM tmp.query LEFT OUTER JOIN accessionTaxa ON tmp.query.taxa=accessionTaxa.taxa%s',version,ifelse(!is.null(limit),sprintf(' LIMIT %s',limit),'')))
+  RSQLite::dbExecute(db,'DROP TABLE tmp.query')
+  RSQLite::dbExecute(db,'DETACH tmp')
+  RSQLite::dbDisconnect(db)
+  file.remove(tmp)
+  colnames(taxaDf)<-c('taxa','accession')
+  return(taxaDf)
 }
 
