@@ -206,3 +206,38 @@ getTaxonomy(taxaId,taxaNodes,taxaNames)
 ## 9913 "Bos taurus"  
 ## 9605 NA
 ```
+
+### Finding accessions for a given taxonomic ID
+
+To find all the accessions for a given taxonomic ID, you can use the `getAccessions' function. This is a bit of an unusual use case so to preserve space, an index is not created by default in `read.accession2taxid`. If you are going to use this function, you will want to rebuild the SQLite database with the `indexTaxa` argument set to true something like:
+
+
+```r
+read.accession2taxid(list.files('.','accession2taxid.gz$'),'accessionTaxa.sql',indexTaxa=TRUE)
+```
+
+Then you can get the accessions for taxa 3702 like (note that the limit argument is used here in order to preserve space):
+
+
+```r
+getAccessions(3702,'accessionTaxa.sql',limit=10)
+```
+
+```
+##    taxa accession
+## 1  3702  Z17427.1
+## 2  3702  Z17428.1
+## 3  3702  Z17429.1
+## 4  3702  Z17430.1
+## 5  3702  Z17431.1
+## 6  3702  Z17432.1
+## 7  3702  Z17433.1
+## 8  3702  Z17434.1
+## 9  3702  Z17435.1
+## 10 3702  Z17436.1
+```
+
+
+
+
+
