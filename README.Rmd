@@ -195,7 +195,7 @@ getTaxonomy(taxaId,taxaNodes,taxaNames)
 
 ### Finding accessions for a given taxonomic ID
 
-To find all the accessions for a given taxonomic ID, you can use the `getAccessions' function. This is a bit of an unusual use case so to preserve space, an index is not created by default in `read.accession2taxid`. If you are going to use this function, you will want to rebuild the SQLite database with the `indexTaxa` argument set to true something like:
+To find all the accessions for a given taxonomic ID, you can use the `getAccessions` function. This is a bit of an unusual use case so to preserve space, an index is not created by default in `read.accession2taxid`. If you are going to use this function, you will want to rebuild the SQLite database with the `indexTaxa` argument set to true something like:
 
 ```{r,eval=FALSE}
 read.accession2taxid(list.files('.','accession2taxid.gz$'),'accessionTaxa.sql',indexTaxa=TRUE)
