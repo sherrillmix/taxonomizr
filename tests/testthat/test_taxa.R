@@ -257,6 +257,7 @@ test_that("Test getParentNodes",{
     "2\t|\tBacteria\t|\tBacteria <prokaryotes>\t|\tscientific name\t|",
     "2\t|\tMonera\t|\tMonera <Bacteria>\t|\tin-part\t|",
     "2\t|\tProcaryotae\t|\tProcaryotae <Bacteria>\t|\tin-part\t|",
+    "9606\t|\tMan\t|\t\t|\tsynonym","9606\t|\thuman\t|\t\t|\tsynonym",
     "9606\t|\tHomo sapiens\t|\t\t|\tscientific name", "9605\t|\tHomo\t|\t\t|\tscientific name",
     "207598\t|\tHomininae\t|\t\t|\tscientific name", "9604\t|\tHominidae\t|\t\t|\tscientific name",
     "314295\t|\tHominoidea\t|\t\t|\tscientific name", "9526\t|\tCatarrhini\t|\t\t|\tscientific name",
