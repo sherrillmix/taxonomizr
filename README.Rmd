@@ -8,12 +8,14 @@
 
 `taxonomizr` provides some simple functions to parse NCBI taxonomy files and accession dumps and efficiently use them to assign [taxonomy](https://www.ncbi.nlm.nih.gov/Taxonomy/taxonomyhome.html/) to accession numbers or taxonomic IDs. This is useful for example to assign taxonomy to BLAST results. This is all done locally after downloading the appropriate files from NCBI using included functions (see [below](#preparation)). 
 
+## Requirements
+This package downloads a few databases from NCBI and stores them in an easily accessible form on the hardrive. This ends up taking a decent amount of space so you'll probably want around 75 Gb of free hard drive space. 
+
 ## Installation
 The package is on CRAN, so it should install with a simple:
 ```{r, eval=FALSE}
 install.packages("taxonomizr")
 ```
-
 If you want the development version directly from github, use the [<code>devtools</code>](https://github.com/hadley/devtools) library and run:
 ```{r, eval=FALSE}
 devtools::install_github("sherrillmix/taxonomizr")
@@ -196,6 +198,29 @@ getTaxonomy(taxaId,taxaNodes,taxaNames)
 ## 9606 "Hominidae"        "Homo"          "Homo sapiens"
 ```
 
+You can also get taxonomy for NCBI accession numbers without versions (the .X following the main number e.g. the the ".1" in LN847353.1) using the `version='base'` argument of `accessionToTaxa`:
+
+
+```{r,eval=FALSE}
+taxaId<-accessionToTaxa(c("LN847353","AL079352"),"accessionTaxa.sql")
+print(taxaId)
+```
+
+```
+## [1] NA NA
+```
+
+```{r,eval=FALSE}
+taxaId<-accessionToTaxa(c("LN847353","AL079352"),"accessionTaxa.sql",version='base')
+print(taxaId)
+```
+
+```
+## [1] 1313 9606
+```
+
+
+
 ### Finding taxonomy for taxonomic names
 
 If you'd like to find IDs for taxonomic names then you can do something like:
@@ -224,3 +249,36 @@ getTaxonomy(taxaId,taxaNodes,taxaNames)
 ## 9913 "Bos taurus"  
 ## 9605 NA
 ```
+
+### Finding accessions for a given taxonomic ID
+
+To find all the accessions for a given taxonomic ID, you can use the `getAccessions` function. This is a bit of an unusual use case so to preserve space, an index is not created by default in `read.accession2taxid`. If you are going to use this function, you will want to rebuild the SQLite database with the `indexTaxa` argument set to true with something like:
+
+```{r,eval=FALSE}
+read.accession2taxid(list.files('.','accession2taxid.gz$'),'accessionTaxa.sql',indexTaxa=TRUE)
+```
+
+Then you can get the accessions for taxa 3702 with a command like (note that the limit argument is used here in order to preserve space):
+
+```{r,eval=FALSE}
+getAccessions(3702,'accessionTaxa.sql',limit=10)
+```
+
+```
+##    taxa accession
+## 1  3702  Z17427.1
+## 2  3702  Z17428.1
+## 3  3702  Z17429.1
+## 4  3702  Z17430.1
+## 5  3702  Z17431.1
+## 6  3702  Z17432.1
+## 7  3702  Z17433.1
+## 8  3702  Z17434.1
+## 9  3702  Z17435.1
+## 10 3702  Z17436.1
+```
+
+
+
+
+

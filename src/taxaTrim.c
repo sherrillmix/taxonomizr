@@ -2,7 +2,7 @@
 #include <R.h> //for errors
 #include <R_ext/Utils.h> //for interrupt
 
-void taxaTrim(char **files){
+void taxaTrim(char **files,int *desiredCols, int *nCol){
   unsigned int nTabs=0;
   unsigned int line=1;
   unsigned int pos=0;
@@ -18,7 +18,13 @@ void taxaTrim(char **files){
     if(byte=='\n')break;
   }
   while((byte = fgetc(in))!=EOF){
-    if(nTabs==1||(nTabs==2&&byte!='\t'))fputc(byte,out);
+    for(int ii=0;ii<nCol[0];ii++){
+      if(nTabs==desiredCols[ii]){
+        if((byte!='\t') & (byte!='\n'))fputc(byte,out);
+        else if(ii<nCol[0]-1)fputc('\t',out);
+        break;
+      }
+    }
     if(byte=='\t')nTabs++;
     if(byte=='\n'){
       if((nTabs!=3)&(pos!=0))error("Malformed line on line %d ",line);

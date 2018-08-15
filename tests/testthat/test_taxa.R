@@ -7,11 +7,11 @@ test_that("Test read.names",{
     "2\t|\tMonera\t|\tMonera <Bacteria>\t|\tin-part\t|",
     "2\t|\tProcaryotae\t|\tProcaryotae <Bacteria>\t|\tin-part\t|"
   )
-  out<-data.table('id'=1:2,'name'=c('root','Bacteria'),key='id')
-  setindex(out,'name')
+  out<-data.table::data.table('id'=1:2,'name'=c('root','Bacteria'),key='id')
+  data.table::setindex(out,'name')
   expect_equal(read.names(textConnection(names)),out)
-  out<-data.table('id'=rep(1:2,2:3),'name'=c('all','root','Bacteria','Monera','Procaryotae'),key='id')
-  setindex(out,'name')
+  out<-data.table::data.table('id'=rep(1:2,2:3),'name'=c('all','root','Bacteria','Monera','Procaryotae'),key='id')
+  data.table::setindex(out,'name')
   expect_equal(read.names(textConnection(names),FALSE),out)
 })
 
@@ -23,7 +23,7 @@ test_that("Test read.nodes",{
     "7\t|\t6\t|\tspecies\t|\tAC\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|",
     "9\t|\t32199\t|\tspecies\t|\tBA\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|"
   )
-  out<-data.table('id'=c(1:2,6:7,9),'rank'=c('no rank','superkingdom','genus','species','species'),'parent'=c(1,131567,335928,6,32199),key='id')
+  out<-data.table::data.table('id'=c(1:2,6:7,9),'rank'=c('no rank','superkingdom','genus','species','species'),'parent'=c(1,131567,335928,6,32199),key='id')
   expect_equal(read.nodes(textConnection(nodes)),out)
 })
 
@@ -102,7 +102,7 @@ test_that("Test streamingRead",{
 })
 
 test_that("Test trimTaxa",{
-  expect_error(trimTaxa('NotARealFile','test'),'file')
+  expect_error(taxonomizr:::trimTaxa('NotARealFile','test'),'file')
   expect_error(.C('taxaTrim',c('NotARealFile','test'),PACKAGE='taxonomizr'),'file')
   tmp<-tempfile()
   out<-c(
@@ -117,13 +117,24 @@ test_that("Test trimTaxa",{
   #should error (can't write to directory)
   expect_error(.C('taxaTrim',c(tmp,tmp2),PACKAGE='taxonomizr'),'file')
   tmp2<-tempfile()
-  expect_error(trimTaxa(tmp,tmp2),NA)
+  expect_error(taxonomizr:::trimTaxa(tmp,tmp2),NA)
   expect_equal(readLines(tmp2),c('2\t3','3\t4','4\t5'))
   writeLines(c(out,'1\t2\t3\t4\t5'),tmp)
-  expect_error(trimTaxa(tmp,tmp2),"line")
-  writeLines(out,gzfile(tmp))
-  expect_error(trimTaxa(tmp,tmp2),NA)
+  expect_error(taxonomizr:::trimTaxa(tmp,tmp2),"line")
+  file.remove(tmp2)
+  gzHandle<-gzfile(tmp)
+  writeLines(out,gzHandle)
+  close(gzHandle)
+  expect_error(taxonomizr:::trimTaxa(tmp,tmp2),NA)
   expect_equal(readLines(tmp2),c('2\t3','3\t4','4\t5'))
+  file.remove(tmp2)
+  expect_error(taxonomizr:::trimTaxa(tmp,tmp2,2),NA)
+  expect_equal(readLines(tmp2),c('2','3','4'))
+  file.remove(tmp2)
+  expect_error(taxonomizr:::trimTaxa(tmp,tmp2,c(2,4)),NA)
+  expect_equal(readLines(tmp2),c('2\t4','3\t5','4\t6'))
+  expect_error(taxonomizr:::trimTaxa(tmp,tmp2,c(2,4)),NA)
+  expect_equal(readLines(tmp2),rep(c('2\t4','3\t5','4\t6'),2))
 })
 
 test_that("Test read.accession2taxid",{
@@ -135,6 +146,7 @@ test_that("Test read.accession2taxid",{
     "Z17430\tZ17430.1\t3702\t16572"
   )
   outFile<-tempfile()
+  outFile2<-tempfile()
   inFile<-tempfile()
   writeLines(taxa,inFile)
   file.create(outFile) 
@@ -144,9 +156,10 @@ test_that("Test read.accession2taxid",{
   expect_message(read.accession2taxid(inFile,outFile),'contains')
   expect_error(read.accession2taxid(inFile,outFile,overwrite=TRUE),NA)
   db<-RSQLite::dbConnect(RSQLite::SQLite(),dbname=outFile)
-  result<-data.frame('accession'=c('Z17427.1','Z17428.1','Z17429.1','Z17430.1'),taxa=3702,stringsAsFactors=FALSE)
+  result<-data.frame('base'=c('Z17427','Z17428','Z17429','Z17430'),'accession'=c('Z17427.1','Z17428.1','Z17429.1','Z17430.1'),taxa=3702,stringsAsFactors=FALSE)
   expect_true(file.exists(outFile))
-  expect_equal(dbGetQuery(db,'SELECT * FROM accessionTaxa'),result)
+  expect_equal(RSQLite::dbGetQuery(db,'SELECT * FROM accessionTaxa'),result)
+  RSQLite::dbDisconnect(db)
   file.remove(outFile)
   expect_error(read.accession2taxid(inFile,outFile,extraSqlCommand='pragma temp_store = 2;'),NA)
   file.remove(outFile)
@@ -295,7 +308,10 @@ test_that("Test accessionToTaxa",{
   inFile<-tempfile()
   sqlFile<-tempfile()
   #not created yet
+  expect_error(accessionToTaxa("Z17430.1",notARealVariable),"found")
   expect_error(accessionToTaxa("Z17430.1",sqlFile),"exist")
+  expect_error(accessionToTaxa(c(),notARealVariable),"found")
+  expect_error(accessionToTaxa(c(),sqlFile),"exist")
   writeLines(taxa,inFile)
   read.accession2taxid(inFile,sqlFile)
   expect_equal(accessionToTaxa(c("Z17430.1","Z17429.1","X62402.1"),sqlFile),c(3702,3702,9606))
@@ -303,6 +319,9 @@ test_that("Test accessionToTaxa",{
   expect_equal(accessionToTaxa(c("Z17430.1","NOTREAL","X62402.1","Z17429.1","X62402.1"),sqlFile),c(3702,NA,9606,3702,9606))
   expect_error(accessionToTaxa("Z17430.1","NOTREAL"),"exist")
   expect_equal(accessionToTaxa(c(),sqlFile),c())
+  expect_equal(accessionToTaxa(c("Z17430.1","Z17429.1","X62402.1"),sqlFile,'base'),as.integer(c(NA,NA,NA)))
+  expect_equal(accessionToTaxa(c("Z17430","NOTREAL","X62402","Z17429","X62402"),sqlFile,'base'),c(3702,NA,9606,3702,9606))
+  expect_equal(accessionToTaxa(c("Z17430","NOTREAL","X62402","Z17429","X62402"),sqlFile,'version'),as.integer(c(NA,NA,NA,NA,NA)))
 })
 
 test_that("Test condenseTaxa",{
@@ -372,3 +391,38 @@ test_that("Test getId",{
  expect_warning(getId('Multi',names),'Multiple')
 })
 
+test_that("Test getAccessions",{
+  taxa<-c(
+    "accession\taccession.version\ttaxid\tgi",
+    "Z17427\tZ17427.1\t3702\t16569",
+    "Z17428\tZ17428.1\t3702\t16570",
+    "Z17429\tZ17429.1\t3702\t16571",
+    "Z17430\tZ17430.1\t3702\t16572",
+    "X62402\tX62402.1\t9606\t30394"
+  )
+  inFile<-tempfile()
+  sqlFile<-tempfile()
+  #not created yet
+  expect_error(getAccessions("Z17430.1",notARealVariable),"found")
+  expect_error(getAccessions("Z17430.1",sqlFile),"exist")
+  expect_error(getAccessions(c(),notARealVariable),"found")
+  expect_error(getAccessions(c(),sqlFile),"exist")
+  writeLines(taxa,inFile)
+  read.accession2taxid(inFile,sqlFile)
+  #one taxa
+  expect_equal(getAccessions(3702,sqlFile),data.frame('taxa'=3702,'accession'=c("Z17427.1","Z17428.1","Z17429.1","Z17430.1"),stringsAsFactors=FALSE))
+  #two taxa
+  expect_equal(getAccessions(c(3702,9606),sqlFile),data.frame('taxa'=rep(c(3702,9606),c(4,1)),'accession'=c("Z17427.1","Z17428.1","Z17429.1","Z17430.1","X62402.1"),stringsAsFactors=FALSE))
+  #two taxa base
+  expect_equal(getAccessions(c(3702,9606),sqlFile,'base'),data.frame('taxa'=rep(c(3702,9606),c(4,1)),'accession'=c("Z17427","Z17428","Z17429","Z17430","X62402"),stringsAsFactors=FALSE))
+  #one taxa plus one NA
+  expect_equal(getAccessions(c(3702,9999),sqlFile),data.frame('taxa'=rep(c(3702,9999),c(4,1)),'accession'=c("Z17427.1","Z17428.1","Z17429.1","Z17430.1",NA),stringsAsFactors=FALSE))
+  #one taxa plus two NA
+  expect_equal(getAccessions(c(3702,9999,'NOTREAL'),sqlFile),data.frame('taxa'=rep(c(3702,9999,'NOTREAL'),c(4,1,1)),'accession'=c("Z17427.1","Z17428.1","Z17429.1","Z17430.1",NA,NA),stringsAsFactors=FALSE))
+  #one taxa plus two NA base
+  expect_equal(getAccessions(c(3702,9999,'NOTREAL'),sqlFile,'base'),data.frame('taxa'=rep(c(3702,9999,'NOTREAL'),c(4,1,1)),'accession'=c("Z17427","Z17428","Z17429","Z17430",NA,NA),stringsAsFactors=FALSE))
+  #check version
+  expect_equal(getAccessions(c(3702,9999,'NOTREAL'),sqlFile,'version'),data.frame('taxa'=rep(c(3702,9999,'NOTREAL'),c(4,1,1)),'accession'=c("Z17427.1","Z17428.1","Z17429.1","Z17430.1",NA,NA),stringsAsFactors=FALSE))
+  #check limit
+  expect_equal(getAccessions(c(3702,9606),sqlFile,limit=3),data.frame('taxa'=rep(c(3702,9606),c(3,0)),'accession'=c("Z17427.1","Z17428.1","Z17429.1"),stringsAsFactors=FALSE))
+})
