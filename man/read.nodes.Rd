@@ -23,7 +23,9 @@ nodes<-c(
  "7\\t|\\t6\\t|\\tspecies\\t|\\tAC\\t|\\t0\\t|\\t1\\t|\\t11\\t|\\t1\\t|\\t0\\t|\\t1\\t|\\t1\\t|\\t0\\t|\\t\\t|",
  "9\\t|\\t32199\\t|\\tspecies\\t|\\tBA\\t|\\t0\\t|\\t1\\t|\\t11\\t|\\t1\\t|\\t0\\t|\\t1\\t|\\t1\\t|\\t0\\t|\\t\\t|"
 )
-read.nodes(textConnection(nodes))
+tmpFile<-tempfile()
+writeLines(nodes,tmpFile)
+read.nodes(tmpFile)
 }
 \references{
 \url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/}

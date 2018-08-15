@@ -29,7 +29,9 @@ namesText<-c(
   "2\\t|\\tMonera\\t|\\tMonera <Bacteria>\\t|\\tin-part\\t|",
   "2\\t|\\tProcaryotae\\t|\\tProcaryotae <Bacteria>\\t|\\tin-part\\t|"
 )
-names<-read.names.sql(textConnection(namesText))
+tmpFile<-tempfile()
+writeLines(namesText,tmpFile)
+names<-read.names.sql(tmpFile)
 getId('Bacteria',names)
 getId('Not a real name',names)
 getId('Multi',names)

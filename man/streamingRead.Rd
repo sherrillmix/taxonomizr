@@ -25,9 +25,10 @@ a list containing the results from applying func to the multiple chunks of the f
 A convenience function to read in a large file piece by piece, process it (hopefully reducing the size either by summarizing or removing extra rows or columns) and return the output
 }
 \examples{
-streamingRead(textConnection(LETTERS),10,head,1)
-temp<-tempfile()
-writeLines(letters,temp)
-streamingRead(temp,2,paste,collapse='',vocal=TRUE)
-unlist(streamingRead(temp,2,sample,1))
+tmpFile<-tempfile()
+writeLines(LETTERS,tmpFile)
+streamingRead(tmpFile,10,head,1)
+writeLines(letters,tmpFile)
+streamingRead(tmpFile,2,paste,collapse='',vocal=TRUE)
+unlist(streamingRead(tmpFile,2,sample,1))
 }

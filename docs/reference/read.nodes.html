@@ -144,7 +144,9 @@
  <span class='st'>"7\t|\t6\t|\tspecies\t|\tAC\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|"</span>,
  <span class='st'>"9\t|\t32199\t|\tspecies\t|\tBA\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|"</span>
 )
-<span class='fu'>read.nodes</span>(<span class='fu'>textConnection</span>(<span class='no'>nodes</span>))</div><div class='output co'>#&gt; <span class='warning'>Warning: taxonomizr is moving from data.table to sqlite databases to improve performance. This will require changing nodes and names processing. Please see http://github.com/sherrillmix/taxonomizr/</span></div><div class='output co'>#&gt;    id         rank parent
+<span class='no'>tmpFile</span><span class='kw'>&lt;-</span><span class='fu'>tempfile</span>()
+<span class='fu'>writeLines</span>(<span class='no'>nodes</span>,<span class='no'>tmpFile</span>)
+<span class='fu'>read.nodes</span>(<span class='no'>tmpFile</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: taxonomizr is moving from data.table to sqlite databases to improve performance. This will require changing nodes and names processing. Please see http://github.com/sherrillmix/taxonomizr/</span></div><div class='output co'>#&gt;    id         rank parent
 #&gt; 1:  1      no rank      1
 #&gt; 2:  2 superkingdom 131567
 #&gt; 3:  6        genus 335928

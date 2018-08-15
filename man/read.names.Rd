@@ -25,7 +25,9 @@ namesText<-c(
   "2\\t|\\tMonera\\t|\\tMonera <Bacteria>\\t|\\tin-part\\t|",
   "2\\t|\\tProcaryotae\\t|\\tProcaryotae <Bacteria>\\t|\\tin-part\\t|"
 )
-read.names(textConnection(namesText))
+tmpFile<-tempfile()
+writeLines(namesText,tmpFile)
+read.names(tmpFile)
 }
 \references{
 \url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/}

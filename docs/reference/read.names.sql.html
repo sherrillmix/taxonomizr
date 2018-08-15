@@ -152,7 +152,9 @@
   <span class='st'>"2\t|\tMonera\t|\tMonera &lt;Bacteria&gt;\t|\tin-part\t|"</span>,
   <span class='st'>"2\t|\tProcaryotae\t|\tProcaryotae &lt;Bacteria&gt;\t|\tin-part\t|"</span>
 )
-<span class='fu'>read.names.sql</span>(<span class='fu'>textConnection</span>(<span class='no'>namesText</span>))</div><div class='output co'>#&gt; <span class='message'>nameNode.sqlite already contains table names. Delete file or set overwrite=TRUE to reload</span></div></pre>
+<span class='no'>tmpFile</span><span class='kw'>&lt;-</span><span class='fu'>tempfile</span>()
+<span class='fu'>writeLines</span>(<span class='no'>namesText</span>,<span class='no'>tmpFile</span>)
+<span class='fu'>read.names.sql</span>(<span class='no'>tmpFile</span>)</div><div class='output co'>#&gt; <span class='message'>nameNode.sqlite already contains table names. Delete file or set overwrite=TRUE to reload</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

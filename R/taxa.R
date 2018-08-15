@@ -16,7 +16,9 @@
 #'   "2\t|\tMonera\t|\tMonera <Bacteria>\t|\tin-part\t|",
 #'   "2\t|\tProcaryotae\t|\tProcaryotae <Bacteria>\t|\tin-part\t|"
 #' )
-#' read.names(textConnection(namesText))
+#' tmpFile<-tempfile()
+#' writeLines(namesText,tmpFile)
+#' read.names(tmpFile)
 read.names<-function(nameFile,onlyScientific=TRUE){
   .Deprecated('read.names.sql','taxonomizr',"taxonomizr is moving from data.table to sqlite databases to improve performance. This will require changing nodes and names processing. Please see http://github.com/sherrillmix/taxonomizr/")
   splitLines<-do.call(rbind,strsplit(readLines(nameFile),"\t\\|\t?"))
@@ -48,7 +50,9 @@ read.names<-function(nameFile,onlyScientific=TRUE){
 #'   "2\t|\tMonera\t|\tMonera <Bacteria>\t|\tin-part\t|",
 #'   "2\t|\tProcaryotae\t|\tProcaryotae <Bacteria>\t|\tin-part\t|"
 #' )
-#' read.names.sql(textConnection(namesText))
+#' tmpFile<-tempfile()
+#' writeLines(namesText,tmpFile)
+#' read.names.sql(tmpFile)
 read.names.sql<-function(nameFile,sqlFile='nameNode.sqlite',overwrite=FALSE){
   if(file.exists(sqlFile)){
     dbTest <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
@@ -92,7 +96,9 @@ read.names.sql<-function(nameFile,sqlFile='nameNode.sqlite',overwrite=FALSE){
 #'  "7\t|\t6\t|\tspecies\t|\tAC\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|",
 #'  "9\t|\t32199\t|\tspecies\t|\tBA\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|"
 #' )
-#' read.nodes(textConnection(nodes))
+#' tmpFile<-tempfile()
+#' writeLines(nodes,tmpFile)
+#' read.nodes(tmpFile)
 read.nodes<-function(nodeFile){
   .Deprecated('read.nodes.sql','taxonomizr',"taxonomizr is moving from data.table to sqlite databases to improve performance. This will require changing nodes and names processing. Please see http://github.com/sherrillmix/taxonomizr/")
   splitLines<-do.call(rbind,lapply(strsplit(readLines(nodeFile),"\t\\|\t?"),'[',1:3))
@@ -120,8 +126,10 @@ read.nodes<-function(nodeFile){
 #'  "7\t|\t6\t|\tspecies\t|\tAC\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|",
 #'  "9\t|\t32199\t|\tspecies\t|\tBA\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|"
 #' )
-#' tmp<-tempfile()
-#' read.nodes.sql(textConnection(nodes),tmp)
+#' tmpFile<-tempfile()
+#' outFile<-tempfile()
+#' writeLines(nodes,tmpFile)
+#' read.nodes.sql(tmpFile,outFile)
 read.nodes.sql<-function(nodeFile,sqlFile='nameNode.sqlite'){
   if(file.exists(sqlFile)){
     dbTest <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
@@ -172,11 +180,12 @@ lastNotNa<-function(x,default='Unknown'){
 #' @return a list containing the results from applying func to the multiple chunks of the file
 #' @export
 #' @examples
-#' streamingRead(textConnection(LETTERS),10,head,1)
-#' temp<-tempfile()
-#' writeLines(letters,temp)
-#' streamingRead(temp,2,paste,collapse='',vocal=TRUE)
-#' unlist(streamingRead(temp,2,sample,1))
+#' tmpFile<-tempfile()
+#' writeLines(LETTERS,tmpFile)
+#' streamingRead(tmpFile,10,head,1)
+#' writeLines(letters,tmpFile)
+#' streamingRead(tmpFile,2,paste,collapse='',vocal=TRUE)
+#' unlist(streamingRead(tmpFile,2,sample,1))
 streamingRead<-function(bigFile,n=1e6,FUN=function(xx)sub(',.*','',xx),...,vocal=FALSE){
   FUN<-match.fun(FUN)
   if(is.character(bigFile))handle<-file(bigFile,'r')
@@ -333,7 +342,9 @@ read.accession2taxid<-function(taxaFiles,sqlFile,vocal=TRUE,extraSqlCommand='',i
 #'   "2759\t|\tEukaryota\t|\t\t|\tscientific name",
 #'   "131567\t|\tcellular organisms\t|\t\t|\tscientific name"
 #' )
-#' taxaNames<-read.names(textConnection(namesText))
+#' tmpFile<-tempfile()
+#' writeLines(namesText,tmpFile)
+#' taxaNames<-read.names(tmpFile)
 #' nodesText<-c(
 #'  "1\t|\t1\t|\tno rank\t|\t\t|\t8\t|\t0\t|\t1\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
 #'   "2\t|\t131567\t|\tsuperkingdom\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
@@ -355,7 +366,8 @@ read.accession2taxid<-function(taxaFiles,sqlFile,vocal=TRUE,extraSqlCommand='',i
 #'   "33154\t|\t2759\t|\tno rank", "2759\t|\t131567\t|\tsuperkingdom",
 #'   "131567\t|\t1\t|\tno rank"
 #' )
-#' taxaNodes<-read.nodes(textConnection(nodesText))
+#' writeLines(nodesText,tmpFile)
+#' taxaNodes<-read.nodes(tmpFile)
 #' getTaxonomy(c(9606,9605),taxaNodes,taxaNames,mc.cores=1)
 getTaxonomy<-function(ids,taxaNodes ,taxaNames, desiredTaxa=c('superkingdom','phylum','class','order','family','genus','species'),mc.cores=1,debug=FALSE){
   .Deprecated('getTaxonomySql','taxonomizr',"taxonomizr is moving from data.table to sqlite databases to improve performance. This will require changing nodes and names processing. Please see http://github.com/sherrillmix/taxonomizr/")
@@ -459,7 +471,9 @@ getParentNodes<-function(ids,sqlFile='nameNode.sqlite'){
 #'   "2759\t|\tEukaryota\t|\t\t|\tscientific name",
 #'   "131567\t|\tcellular organisms\t|\t\t|\tscientific name"
 #' )
-#' taxaNames<-read.names.sql(textConnection(namesText),sqlFile)
+#' tmpFile<-tempfile()
+#' writeLines(namesText,tmpFile)
+#' taxaNames<-read.names.sql(tmpFile,sqlFile)
 #' nodesText<-c(
 #'  "1\t|\t1\t|\tno rank\t|\t\t|\t8\t|\t0\t|\t1\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
 #'   "2\t|\t131567\t|\tsuperkingdom\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
@@ -481,7 +495,8 @@ getParentNodes<-function(ids,sqlFile='nameNode.sqlite'){
 #'   "33154\t|\t2759\t|\tno rank", "2759\t|\t131567\t|\tsuperkingdom",
 #'   "131567\t|\t1\t|\tno rank"
 #' )
-#' taxaNodes<-read.nodes.sql(textConnection(nodesText),sqlFile)
+#' writeLines(nodesText,tmpFile)
+#' taxaNodes<-read.nodes.sql(tmpFile,sqlFile)
 #' getTaxonomySql(c(9606,9605),sqlFile)
 getTaxonomySql<-function (ids,sqlFile='nameNode.sqlite', desiredTaxa=c('superkingdom','phylum','class','order','family','genus','species')){
   ids<-as.numeric(ids)
@@ -685,7 +700,9 @@ getAccession2taxid<-function(outDir='.',baseUrl='ftp://ftp.ncbi.nih.gov/pub/taxo
 #'   "2\t|\tMonera\t|\tMonera <Bacteria>\t|\tin-part\t|",
 #'   "2\t|\tProcaryotae\t|\tProcaryotae <Bacteria>\t|\tin-part\t|"
 #' )
-#' names<-read.names(textConnection(namesText))
+#' tmpFile<-tempfile()
+#' writeLines(namesText,tmpFile)
+#' names<-read.names(tmpFile)
 #' getId2('Bacteria',names)
 #' getId2('Not a real name',names)
 #' getId2('Multi',names)
@@ -725,7 +742,9 @@ getId2<-function(taxa,taxaNames){
 #'   "2\t|\tMonera\t|\tMonera <Bacteria>\t|\tin-part\t|",
 #'   "2\t|\tProcaryotae\t|\tProcaryotae <Bacteria>\t|\tin-part\t|"
 #' )
-#' names<-read.names.sql(textConnection(namesText))
+#' tmpFile<-tempfile()
+#' writeLines(namesText,tmpFile)
+#' names<-read.names.sql(tmpFile)
 #' getId('Bacteria',names)
 #' getId('Not a real name',names)
 #' getId('Multi',names)

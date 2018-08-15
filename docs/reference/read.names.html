@@ -148,7 +148,9 @@
   <span class='st'>"2\t|\tMonera\t|\tMonera &lt;Bacteria&gt;\t|\tin-part\t|"</span>,
   <span class='st'>"2\t|\tProcaryotae\t|\tProcaryotae &lt;Bacteria&gt;\t|\tin-part\t|"</span>
 )
-<span class='fu'>read.names</span>(<span class='fu'>textConnection</span>(<span class='no'>namesText</span>))</div><div class='output co'>#&gt; <span class='warning'>Warning: taxonomizr is moving from data.table to sqlite databases to improve performance. This will require changing nodes and names processing. Please see http://github.com/sherrillmix/taxonomizr/</span></div><div class='output co'>#&gt;    id     name
+<span class='no'>tmpFile</span><span class='kw'>&lt;-</span><span class='fu'>tempfile</span>()
+<span class='fu'>writeLines</span>(<span class='no'>namesText</span>,<span class='no'>tmpFile</span>)
+<span class='fu'>read.names</span>(<span class='no'>tmpFile</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: taxonomizr is moving from data.table to sqlite databases to improve performance. This will require changing nodes and names processing. Please see http://github.com/sherrillmix/taxonomizr/</span></div><div class='output co'>#&gt;    id     name
 #&gt; 1:  1     root
 #&gt; 2:  2 Bacteria</div></pre>
   </div>

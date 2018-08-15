@@ -27,7 +27,9 @@ namesText<-c(
   "2\\t|\\tMonera\\t|\\tMonera <Bacteria>\\t|\\tin-part\\t|",
   "2\\t|\\tProcaryotae\\t|\\tProcaryotae <Bacteria>\\t|\\tin-part\\t|"
 )
-names<-read.names(textConnection(namesText))
+tmpFile<-tempfile()
+writeLines(namesText,tmpFile)
+names<-read.names(tmpFile)
 getId2('Bacteria',names)
 getId2('Not a real name',names)
 getId2('Multi',names)

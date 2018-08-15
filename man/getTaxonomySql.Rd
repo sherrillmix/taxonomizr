@@ -61,7 +61,9 @@ namesText<-c(
   "2759\\t|\\tEukaryota\\t|\\t\\t|\\tscientific name",
   "131567\\t|\\tcellular organisms\\t|\\t\\t|\\tscientific name"
 )
-taxaNames<-read.names.sql(textConnection(namesText),sqlFile)
+tmpFile<-tempfile()
+writeLines(namesText,tmpFile)
+taxaNames<-read.names.sql(tmpFile,sqlFile)
 nodesText<-c(
  "1\\t|\\t1\\t|\\tno rank\\t|\\t\\t|\\t8\\t|\\t0\\t|\\t1\\t|\\t0\\t|\\t0\\t|\\t0\\t|\\t0\\t|\\t0\\t|\\t\\t|",
   "2\\t|\\t131567\\t|\\tsuperkingdom\\t|\\t\\t|\\t0\\t|\\t0\\t|\\t11\\t|\\t0\\t|\\t0\\t|\\t0\\t|\\t0\\t|\\t0\\t|\\t\\t|",
@@ -83,7 +85,8 @@ nodesText<-c(
   "33154\\t|\\t2759\\t|\\tno rank", "2759\\t|\\t131567\\t|\\tsuperkingdom",
   "131567\\t|\\t1\\t|\\tno rank"
 )
-taxaNodes<-read.nodes.sql(textConnection(nodesText),sqlFile)
+writeLines(nodesText,tmpFile)
+taxaNodes<-read.nodes.sql(tmpFile,sqlFile)
 getTaxonomySql(c(9606,9605),sqlFile)
 }
 \seealso{
