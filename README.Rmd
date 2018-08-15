@@ -27,12 +27,62 @@ library(taxonomizr)
 
 
 ## Preparation<a name="preparation"></a>
-Since version
-```{r,eval=FALSE}
-getNamesAndNodes()
+Since version 0.5.0, there is a simple function to run all preparations. Note that you'll need a bit of time, download bandwith and hard drive space before running this command (we're downloading taxonomic assignments for every record in NCBI). To create a SQLite database called `nameNode.sqlite` in the current working directory, we can run:
+
+```{r}
+prepareDatabase('nameNode.sqlite')
 ```
+
+```
+## Downloading names and nodes with getNamesAndNodes()
+```
+
+```
+## Downloading accession2taxid with getAccession2taxid()
+```
+
+```
+## This can be a big (several gigabytes) download. Please be patient and use a fast connection.
+```
+
+```
+## Preprocessing names with read.names.sql()
+```
+
+```
+## Preprocessing nodes with read.nodes.sql()
+```
+
+```
+## Preprocessing accession2taxid with read.accession2taxid()
+```
+
+```
+## Reading ./nucl_gb.accession2taxid.gz.
+```
+
+```
+## Reading ./nucl_est.accession2taxid.gz.
+```
+
+```
+## Reading ./nucl_gss.accession2taxid.gz.
+```
+
+```
+## Reading ./nucl_wgs.accession2taxid.gz.
+```
+
+```
+## Reading in values. This may take a while.
+```
+
+
+If everything works then that should have prepared a sqlite database ready for use. You can skip the "Manual preparation" steps below.
+
+
 ## Manual preparation (usually not necessary)
-**Note:** It is often not necessary to run the following manually, the function `prepareDatabase()` should do most of this automatically for you (see above).
+**Note:** Since version 0.5.0, it is often not necessary to run the following manually, the function `prepareDatabase()` should do most of this automatically for you (see <a href='#preparation'>above</a>).
 
 In order to avoid constant internet access and slow APIs, the first step in using the package is to downloads all necessary files from NCBI. This uses a bit of disk space but makes future access reliable and fast.
 
