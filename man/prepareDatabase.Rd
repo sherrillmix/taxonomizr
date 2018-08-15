@@ -20,7 +20,7 @@ prepareDatabase(sqlFile = "nameNode.sqlite", tmpDir = ".", vocal = TRUE,
 a vector of character string giving the path to the SQLite file
 }
 \description{
-Download names, nodes and accession2taxid data from NCBI and preprocess into a SQLite database for downstream use.
+Convenience function to do all necessary preparations downloading names, nodes and accession2taxid data from NCBI and preprocessing into a SQLite database for downstream use.
 }
 \examples{
 \dontrun{
