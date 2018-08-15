@@ -8,18 +8,7 @@
 library(taxonomizr)
 
 ## ----eval=FALSE----------------------------------------------------------
-#  getNamesAndNodes()
-
-## ----eval=FALSE----------------------------------------------------------
-#  #this is a big download
-#  getAccession2taxid()
-
-## ----eval=FALSE----------------------------------------------------------
-#  #this is a big download
-#  getAccession2taxid(types='prot')
-
-## ----eval=FALSE----------------------------------------------------------
-#  read.accession2taxid(list.files('.','accession2taxid.gz$'),'accessionTaxa.sql')
+#  prepareDatabase('nameNode.sqlite')
 
 ## ----eval=FALSE----------------------------------------------------------
 #  taxaNodes<-read.nodes('nodes.dmp')
@@ -46,4 +35,24 @@ library(taxonomizr)
 
 ## ----eval=FALSE----------------------------------------------------------
 #  getTaxonomy(taxaId,taxaNodes,taxaNames)
+
+## ----eval=FALSE----------------------------------------------------------
+#  read.accession2taxid(list.files('.','accession2taxid.gz$'),'accessionTaxa.sql',indexTaxa=TRUE)
+
+## ----eval=FALSE----------------------------------------------------------
+#  getAccessions(3702,'accessionTaxa.sql',limit=10)
+
+## ----eval=FALSE----------------------------------------------------------
+#  getNamesAndNodes()
+
+## ----eval=FALSE----------------------------------------------------------
+#  #this is a big download
+#  getAccession2taxid()
+
+## ----eval=FALSE----------------------------------------------------------
+#  #this is a big download
+#  getAccession2taxid(types='prot')
+
+## ----eval=FALSE----------------------------------------------------------
+#  read.accession2taxid(list.files('.','accession2taxid.gz$'),'accessionTaxa.sql')
 
