@@ -58,7 +58,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">taxonomizr</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.3.0</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.5.0</span>
       </span>
     </div>
 
@@ -112,7 +112,7 @@
     
     </div>
 
-    <pre class="usage"><span class='fu'>trimTaxa</span>(<span class='no'>inFile</span>, <span class='no'>outFile</span>)</pre>
+    <pre class="usage"><span class='fu'>trimTaxa</span>(<span class='no'>inFile</span>, <span class='no'>outFile</span>, <span class='kw'>desiredCols</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>2</span>, <span class='fl'>3</span>))</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -124,6 +124,10 @@
     <tr>
       <th>outFile</th>
       <td><p>a single string giving the file path to write to</p></td>
+    </tr>
+    <tr>
+      <th>desiredCols</th>
+      <td><p>the integer IDs for columns to pull out from file</p></td>
     </tr>
     </table>
     
