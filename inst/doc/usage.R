@@ -8,18 +8,14 @@
 library(taxonomizr)
 
 ## ----eval=FALSE----------------------------------------------------------
-#  prepareDatabase('nameNode.sqlite')
-
-## ----eval=FALSE----------------------------------------------------------
-#  taxaNodes<-read.nodes('nodes.dmp')
-#  taxaNames<-read.names('names.dmp')
+#  prepareDatabase('accessionTaxa.sql')
 
 ## ----eval=FALSE----------------------------------------------------------
 #  taxaId<-accessionToTaxa(c("LN847353.1","AL079352.3"),"accessionTaxa.sql")
 #  print(taxaId)
 
 ## ----eval=FALSE----------------------------------------------------------
-#  getTaxonomy(taxaId,taxaNodes,taxaNames)
+#  getTaxonomy(taxaId,'accessionTaxa.sql')
 
 ## ----eval=FALSE----------------------------------------------------------
 #  taxaId<-accessionToTaxa(c("LN847353","AL079352"),"accessionTaxa.sql")
@@ -30,11 +26,11 @@ library(taxonomizr)
 #  print(taxaId)
 
 ## ----eval=FALSE----------------------------------------------------------
-#  taxaId<-getId(c('Homo sapiens','Bos taurus','Homo'),taxaNames)
+#  taxaId<-getId(c('Homo sapiens','Bos taurus','Homo'),'accessionTaxa.sql')
 #  print(taxaId)
 
 ## ----eval=FALSE----------------------------------------------------------
-#  getTaxonomy(taxaId,taxaNodes,taxaNames)
+#  getTaxonomy(taxaId,'accessionTaxa.sql')
 
 ## ----eval=FALSE----------------------------------------------------------
 #  read.accession2taxid(list.files('.','accession2taxid.gz$'),'accessionTaxa.sql',indexTaxa=TRUE)
@@ -52,6 +48,10 @@ library(taxonomizr)
 ## ----eval=FALSE----------------------------------------------------------
 #  #this is a big download
 #  getAccession2taxid(types='prot')
+
+## ----eval=FALSE----------------------------------------------------------
+#  read.names.sql('names.dmp','accessionTaxa.sql')
+#  read.nodes.sql('nodes.dmp','accessionTaxa.sql')
 
 ## ----eval=FALSE----------------------------------------------------------
 #  read.accession2taxid(list.files('.','accession2taxid.gz$'),'accessionTaxa.sql')

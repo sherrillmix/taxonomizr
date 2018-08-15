@@ -29,10 +29,10 @@ library(taxonomizr)
 
 
 ## Preparation<a name="preparation"></a>
-Since version 0.5.0, there is a simple function to run all preparations. Note that you'll need a bit of time, download bandwith and hard drive space before running this command (we're downloading taxonomic assignments for every record in NCBI). To create a SQLite database called `nameNode.sqlite` in the current working directory (you may want to store this somewhere more centrally located so it does not need to be duplicated with every project), we can run:
+Since version 0.5.0, there is a simple function to run all preparations. Note that you'll need a bit of time, download bandwith and hard drive space before running this command (we're downloading taxonomic assignments for every record in NCBI). To create a SQLite database called `accessionTaxa.sql` in the current working directory (you may want to store this somewhere more centrally located so it does not need to be duplicated with every project), we can run:
 
 ```{r,eval=FALSE}
-prepareDatabase('nameNode.sqlite')
+prepareDatabase('accessionTaxa.sql')
 ```
 
 ```
@@ -84,7 +84,7 @@ prepareDatabase('nameNode.sqlite')
 ```
 
 ```
-## [1] "nameNode.sqlite"
+## [1] "accessionTaxa.sql"
 ```
 
 If everything works then that should have prepared a sqlite database ready for use. You can skip the "Manual preparation" steps below.
@@ -94,15 +94,7 @@ If everything works then that should have prepared a sqlite database ready for u
 
 ### Finding taxonomy for NCBI accession numbers
 
-First, load the nodes and names files into memory:
-
-```{r,eval=FALSE}
-taxaNodes<-read.nodes('nodes.dmp')
-taxaNames<-read.names('names.dmp')
-```
-
-
-Then we are ready to convert NCBI accession numbers to taxonomic IDs. For example, to find the taxonomic IDs associated with NCBI accession numbers "LN847353.1" and "AL079352.3":
+Now we are ready to convert NCBI accession numbers to taxonomic IDs. For example, to find the taxonomic IDs associated with NCBI accession numbers "LN847353.1" and "AL079352.3":
 ```{r,eval=FALSE}
 taxaId<-accessionToTaxa(c("LN847353.1","AL079352.3"),"accessionTaxa.sql")
 print(taxaId)
@@ -115,7 +107,7 @@ print(taxaId)
 And to get the taxonomy for those IDs:
 
 ```{r,eval=FALSE}
-getTaxonomy(taxaId,taxaNodes,taxaNames)
+getTaxonomy(taxaId,'accessionTaxa.sql')
 ```
 
 ```
@@ -154,7 +146,7 @@ print(taxaId)
 
 If you'd like to find IDs for taxonomic names then you can do something like:
 ```{r,eval=FALSE}
-taxaId<-getId(c('Homo sapiens','Bos taurus','Homo'),taxaNames)
+taxaId<-getId(c('Homo sapiens','Bos taurus','Homo'),'accessionTaxa.sql')
 print(taxaId)
 ```
 
@@ -165,7 +157,7 @@ print(taxaId)
 And again to get the taxonomy for those IDs use `getTaxonomy`:
 
 ```{r,eval=FALSE}
-getTaxonomy(taxaId,taxaNodes,taxaNames)
+getTaxonomy(taxaId,'accessionTaxa.sql')
 ```
 
 ```
@@ -247,9 +239,15 @@ getAccession2taxid(types='prot')
 ## [1] "./prot.accession2taxid.gz"
 ```
 
-### Convert accessions to database
+### Convert names, nodes and accessions to database
+Then process the downloaded names and nodes files into a more easily accessed form:
 
-Then process the downloaded accession files into a more easily accessed form (this could take a while):
+```{r,eval=FALSE}
+read.names.sql('names.dmp','accessionTaxa.sql')
+read.nodes.sql('nodes.dmp','accessionTaxa.sql')
+```
+
+Next process the downloaded accession files into the same database (this one could take a while):
 
 ```{r,eval=FALSE}
 read.accession2taxid(list.files('.','accession2taxid.gz$'),'accessionTaxa.sql')
@@ -277,10 +275,6 @@ read.accession2taxid(list.files('.','accession2taxid.gz$'),'accessionTaxa.sql')
 
 ```
 ## Adding index. This may also take a while.
-```
-
-```
-## [1] TRUE
 ```
 
 Now everything should be ready for processing. All files are cached locally and so the preparation is only required once (or whenever you would like to update the data). It is not necessary to manually check for the presence of these files since the functions automatically check to see if their output is present and if so skip downloading/processing. Delete the local files if you would like to redownload or reprocess them.
