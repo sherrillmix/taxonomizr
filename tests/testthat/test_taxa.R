@@ -161,9 +161,12 @@ test_that("Test read.accession2taxid",{
   result<-data.frame('base'=c('Z17427','Z17428','Z17429','Z17430'),'accession'=c('Z17427.1','Z17428.1','Z17429.1','Z17430.1'),taxa=3702,stringsAsFactors=FALSE)
   expect_true(file.exists(outFile))
   expect_equal(RSQLite::dbGetQuery(db,'SELECT * FROM accessionTaxa'),result)
-  RSQLite::dbDisconnect(db)
   file.remove(outFile)
   expect_error(read.accession2taxid(inFile,outFile,extraSqlCommand='pragma temp_store = 2;'),NA)
+  file.remove(outFile)
+  expect_error(read.accession2taxid(inFile,outFile,indexTaxa=TRUE),NA)
+  expect_equal(RSQLite::dbGetQuery(db,'SELECT * FROM accessionTaxa'),result)
+  RSQLite::dbDisconnect(db)
   file.remove(outFile)
   if(.Platform$OS.type == "unix"){
     #windows sqlite apparently doesn't catch this error
@@ -515,6 +518,7 @@ test_that("Test getAccession2taxid",{
   dir.create(tmp2)
   expect_error(getAccession2taxid(tmp2,baseUrl=sprintf('file://%s',tmp),types=c('nucl_XxXx','nucl_XyXyX')),NA)
   expect_equal(sort(list.files(tmp2,'accession2taxid.gz$')),sort(targets))
+  expect_message(getAccession2taxid(tmp2,baseUrl=sprintf('file://%s',tmp),types=c('nucl_XxXx','nucl_XyXyX')),'exist')
 })
 
 test_that("Test getId",{
