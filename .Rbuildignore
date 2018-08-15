@@ -6,3 +6,4 @@
 ^docs/
 ^usage.template$
 ^inst/extdata/*
+^accessionTaxa.sql$
