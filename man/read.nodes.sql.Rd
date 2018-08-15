@@ -9,7 +9,7 @@ read.nodes.sql(nodeFile, sqlFile = "nameNode.sqlite")
 \arguments{
 \item{nodeFile}{string giving the path to an NCBI node file to read from (both gzipped or uncompressed files are ok)}
 
-\item{sqlFile}{a string giving the path where the output sqlite file should be saved}
+\item{sqlFile}{a string giving the path where the output SQLite file should be saved}
 }
 \value{
 a data.table with columns id, parent and rank with a key on id

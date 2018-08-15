@@ -9,7 +9,7 @@ read.names.sql(nameFile, sqlFile = "nameNode.sqlite", overwrite = FALSE)
 \arguments{
 \item{nameFile}{string giving the path to an NCBI name file to read from (both gzipped or uncompressed files are ok)}
 
-\item{sqlFile}{a string giving the path where the output sqlite file should be saved}
+\item{sqlFile}{a string giving the path where the output SQLite file should be saved}
 
 \item{overwrite}{If TRUE, delete names table in database if present and regenerate}
 }

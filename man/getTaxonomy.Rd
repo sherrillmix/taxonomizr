@@ -4,30 +4,27 @@
 \alias{getTaxonomy}
 \title{Get taxonomic ranks for a taxa}
 \usage{
-getTaxonomy(ids, taxaNodes, taxaNames, desiredTaxa = c("superkingdom",
-  "phylum", "class", "order", "family", "genus", "species"), mc.cores = 1,
-  debug = FALSE)
+getTaxonomy(ids, sqlFile = "nameNode.sqlite", ...,
+  desiredTaxa = c("superkingdom", "phylum", "class", "order", "family",
+  "genus", "species"))
 }
 \arguments{
 \item{ids}{a vector of ids to find taxonomy for}
 
-\item{taxaNodes}{a nodes data.table from \code{\link{read.nodes}}}
+\item{sqlFile}{a string giving the path to a SQLite file containing names and nodes tables}
 
-\item{taxaNames}{a names data.table from \code{\link{read.names}}}
+\item{...}{legacy additional arguments to original data.table based getTaxonomy function. Used only for support for deprecated function, do not use in new code.}
 
 \item{desiredTaxa}{a vector of strings giving the desired taxa levels}
-
-\item{mc.cores}{the number of cores to use when processing}
-
-\item{debug}{if TRUE output node and name vectors with dput for each id (probably useful only for development)}
 }
 \value{
 a matrix of taxonomic strings with a row for each id and a column for each desiredTaxa rank
 }
 \description{
-Take NCBI taxa IDs and get the corresponding taxa ranks from name and node data.tables
+Take NCBI taxa IDs and get the corresponding taxa ranks from name and node SQLite database
 }
 \examples{
+sqlFile<-tempfile()
 namesText<-c(
   "1\\t|\\tall\\t|\\t\\t|\\tsynonym\\t|",
   "1\\t|\\troot\\t|\\t\\t|\\tscientific name\\t|",
@@ -68,7 +65,7 @@ namesText<-c(
 )
 tmpFile<-tempfile()
 writeLines(namesText,tmpFile)
-taxaNames<-read.names(tmpFile)
+taxaNames<-read.names.sql(tmpFile,sqlFile)
 nodesText<-c(
  "1\\t|\\t1\\t|\\tno rank\\t|\\t\\t|\\t8\\t|\\t0\\t|\\t1\\t|\\t0\\t|\\t0\\t|\\t0\\t|\\t0\\t|\\t0\\t|\\t\\t|",
   "2\\t|\\t131567\\t|\\tsuperkingdom\\t|\\t\\t|\\t0\\t|\\t0\\t|\\t11\\t|\\t0\\t|\\t0\\t|\\t0\\t|\\t0\\t|\\t0\\t|\\t\\t|",
@@ -91,8 +88,8 @@ nodesText<-c(
   "131567\\t|\\t1\\t|\\tno rank"
 )
 writeLines(nodesText,tmpFile)
-taxaNodes<-read.nodes(tmpFile)
-getTaxonomy(c(9606,9605),taxaNodes,taxaNames,mc.cores=1)
+taxaNodes<-read.nodes.sql(tmpFile,sqlFile)
+getTaxonomy(c(9606,9605),sqlFile)
 }
 \seealso{
 \code{\link{read.nodes}}, \code{\link{read.names}}

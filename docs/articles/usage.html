@@ -104,8 +104,8 @@
 <h2 class="hasAnchor">
 <a href="#preparation" class="anchor"></a>Preparation<a name="preparation"></a>
 </h2>
-<p>Since version 0.5.0, there is a simple function to run all preparations. Note that you’ll need a bit of time, download bandwith and hard drive space before running this command (we’re downloading taxonomic assignments for every record in NCBI). To create a SQLite database called <code>nameNode.sqlite</code> in the current working directory (you may want to store this somewhere more centrally located so it does not need to be duplicated with every project), we can run:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/prepareDatabase.html">prepareDatabase</a></span>(<span class="st">'nameNode.sqlite'</span>)</code></pre></div>
+<p>Since version 0.5.0, there is a simple function to run all preparations. Note that you’ll need a bit of time, download bandwith and hard drive space before running this command (we’re downloading taxonomic assignments for every record in NCBI). To create a SQLite database called <code>accessionTaxa.sql</code> in the current working directory (you may want to store this somewhere more centrally located so it does not need to be duplicated with every project), we can run:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/prepareDatabase.html">prepareDatabase</a></span>(<span class="st">'accessionTaxa.sql'</span>)</code></pre></div>
 <pre><code>## Downloading names and nodes with getNamesAndNodes()</code></pre>
 <pre><code>## Downloading accession2taxid with getAccession2taxid()</code></pre>
 <pre><code>## This can be a big (several gigabytes) download. Please be patient and use a fast connection.</code></pre>
@@ -118,7 +118,7 @@
 <pre><code>## Reading ./nucl_wgs.accession2taxid.gz.</code></pre>
 <pre><code>## Reading in values. This may take a while.</code></pre>
 <pre><code>## Adding index. This may also take a while.</code></pre>
-<pre><code>## [1] "nameNode.sqlite"</code></pre>
+<pre><code>## [1] "accessionTaxa.sql"</code></pre>
 <p>If everything works then that should have prepared a sqlite database ready for use. You can skip the “Manual preparation” steps below.</p>
 </div>
 <div id="assigning-taxonomy" class="section level2">
@@ -127,15 +127,12 @@
 <div id="finding-taxonomy-for-ncbi-accession-numbers" class="section level3">
 <h3 class="hasAnchor">
 <a href="#finding-taxonomy-for-ncbi-accession-numbers" class="anchor"></a>Finding taxonomy for NCBI accession numbers</h3>
-<p>First, load the nodes and names files into memory:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">taxaNodes&lt;-<span class="kw"><a href="../reference/read.nodes.html">read.nodes</a></span>(<span class="st">'nodes.dmp'</span>)
-taxaNames&lt;-<span class="kw"><a href="../reference/read.names.html">read.names</a></span>(<span class="st">'names.dmp'</span>)</code></pre></div>
-<p>Then we are ready to convert NCBI accession numbers to taxonomic IDs. For example, to find the taxonomic IDs associated with NCBI accession numbers “LN847353.1” and “AL079352.3”:</p>
+<p>Now we are ready to convert NCBI accession numbers to taxonomic IDs. For example, to find the taxonomic IDs associated with NCBI accession numbers “LN847353.1” and “AL079352.3”:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">taxaId&lt;-<span class="kw"><a href="../reference/accessionToTaxa.html">accessionToTaxa</a></span>(<span class="kw">c</span>(<span class="st">"LN847353.1"</span>,<span class="st">"AL079352.3"</span>),<span class="st">"accessionTaxa.sql"</span>)
 <span class="kw">print</span>(taxaId)</code></pre></div>
 <pre><code>## [1] 1313 9606</code></pre>
 <p>And to get the taxonomy for those IDs:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/getTaxonomy.html">getTaxonomy</a></span>(taxaId,taxaNodes,taxaNames)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/getTaxonomy.html">getTaxonomy</a></span>(taxaId,<span class="st">'accessionTaxa.sql'</span>)</code></pre></div>
 <pre><code>##      superkingdom phylum       class      order            
 ## 1313 "Bacteria"   "Firmicutes" "Bacilli"  "Lactobacillales"
 ## 9606 "Eukaryota"  "Chordata"   "Mammalia" "Primates"       
@@ -154,11 +151,11 @@ taxaNames&lt;-<span class="kw"><a href="../reference/read.names.html">read.names
 <h3 class="hasAnchor">
 <a href="#finding-taxonomy-for-taxonomic-names" class="anchor"></a>Finding taxonomy for taxonomic names</h3>
 <p>If you’d like to find IDs for taxonomic names then you can do something like:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">taxaId&lt;-<span class="kw"><a href="../reference/getId.html">getId</a></span>(<span class="kw">c</span>(<span class="st">'Homo sapiens'</span>,<span class="st">'Bos taurus'</span>,<span class="st">'Homo'</span>),taxaNames)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">taxaId&lt;-<span class="kw"><a href="../reference/getId.html">getId</a></span>(<span class="kw">c</span>(<span class="st">'Homo sapiens'</span>,<span class="st">'Bos taurus'</span>,<span class="st">'Homo'</span>),<span class="st">'accessionTaxa.sql'</span>)
 <span class="kw">print</span>(taxaId)</code></pre></div>
 <pre><code>## [1] "9606" "9913" "9605"</code></pre>
 <p>And again to get the taxonomy for those IDs use <code>getTaxonomy</code>:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/getTaxonomy.html">getTaxonomy</a></span>(taxaId,taxaNodes,taxaNames)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/getTaxonomy.html">getTaxonomy</a></span>(taxaId,<span class="st">'accessionTaxa.sql'</span>)</code></pre></div>
 <pre><code>##      superkingdom phylum     class      order      family      genus 
 ## 9606 "Eukaryota"  "Chordata" "Mammalia" "Primates" "Hominidae" "Homo"
 ## 9913 "Eukaryota"  "Chordata" "Mammalia" NA         "Bovidae"   "Bos" 
@@ -214,10 +211,13 @@ taxaNames&lt;-<span class="kw"><a href="../reference/read.names.html">read.names
 <span class="kw"><a href="../reference/getAccession2taxid.html">getAccession2taxid</a></span>(<span class="dt">types=</span><span class="st">'prot'</span>)</code></pre></div>
 <pre><code>## [1] "./prot.accession2taxid.gz"</code></pre>
 </div>
-<div id="convert-accessions-to-database" class="section level3">
+<div id="convert-names-nodes-and-accessions-to-database" class="section level3">
 <h3 class="hasAnchor">
-<a href="#convert-accessions-to-database" class="anchor"></a>Convert accessions to database</h3>
-<p>Then process the downloaded accession files into a more easily accessed form (this could take a while):</p>
+<a href="#convert-names-nodes-and-accessions-to-database" class="anchor"></a>Convert names, nodes and accessions to database</h3>
+<p>Then process the downloaded names and nodes files into a more easily accessed form:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/read.names.sql.html">read.names.sql</a></span>(<span class="st">'names.dmp'</span>,<span class="st">'accessionTaxa.sql'</span>)
+<span class="kw"><a href="../reference/read.nodes.sql.html">read.nodes.sql</a></span>(<span class="st">'nodes.dmp'</span>,<span class="st">'accessionTaxa.sql'</span>)</code></pre></div>
+<p>Next process the downloaded accession files into the same database (this one could take a while):</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/read.accession2taxid.html">read.accession2taxid</a></span>(<span class="kw">list.files</span>(<span class="st">'.'</span>,<span class="st">'accession2taxid.gz$'</span>),<span class="st">'accessionTaxa.sql'</span>)</code></pre></div>
 <pre><code>## Reading nucl_est.accession2taxid.gz.</code></pre>
 <pre><code>## Reading nucl_gb.accession2taxid.gz.</code></pre>
@@ -225,7 +225,6 @@ taxaNames&lt;-<span class="kw"><a href="../reference/read.names.html">read.names
 <pre><code>## Reading nucl_wgs.accession2taxid.gz.</code></pre>
 <pre><code>## Reading in values. This may take a while.</code></pre>
 <pre><code>## Adding index. This may also take a while.</code></pre>
-<pre><code>## [1] TRUE</code></pre>
 <p>Now everything should be ready for processing. All files are cached locally and so the preparation is only required once (or whenever you would like to update the data). It is not necessary to manually check for the presence of these files since the functions automatically check to see if their output is present and if so skip downloading/processing. Delete the local files if you would like to redownload or reprocess them.</p>
 </div>
 </div>

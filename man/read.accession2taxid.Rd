@@ -10,11 +10,11 @@ read.accession2taxid(taxaFiles, sqlFile, vocal = TRUE, extraSqlCommand = "",
 \arguments{
 \item{taxaFiles}{a string or vector of strings giving the path(s) to files to be read in}
 
-\item{sqlFile}{a string giving the path where the output sqlite file should be saved}
+\item{sqlFile}{a string giving the path where the output SQLite file should be saved}
 
 \item{vocal}{if TRUE output status messages}
 
-\item{extraSqlCommand}{for advanced use. A string giving a command to be called on the sqlite databse before loading data e.g. "pragma temp_store = 2;" to keep all temp files in memory (don't do this unless you have a lot (>100 Gb) of RAM)}
+\item{extraSqlCommand}{for advanced use. A string giving a command to be called on the SQLite databse before loading data e.g. "pragma temp_store = 2;" to keep all temp files in memory (don't do this unless you have a lot (>100 Gb) of RAM)}
 
 \item{indexTaxa}{if TRUE add an index for taxa ID. This would only be necessary if you want to look up accessions by taxa ID e.g. \code{\link{getAccessions}}}
 
@@ -24,7 +24,7 @@ read.accession2taxid(taxaFiles, sqlFile, vocal = TRUE, extraSqlCommand = "",
 TRUE if sucessful
 }
 \description{
-Take NCBI accession2taxid files, keep only accession and taxa and save it as a sqlite database
+Take NCBI accession2taxid files, keep only accession and taxa and save it as a SQLite database
 }
 \examples{
 taxa<-c(

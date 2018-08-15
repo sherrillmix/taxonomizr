@@ -9,7 +9,7 @@ getId(taxa, sqlFile = "nameNode.sqlite", onlyScientific = TRUE)
 \arguments{
 \item{taxa}{a vector of taxonomic names}
 
-\item{sqlFile}{a string giving the path to a sqlite file containing a names tables}
+\item{sqlFile}{a string giving the path to a SQLite file containing a names tables}
 
 \item{onlyScientific}{If TRUE then only match to scientific names. If FALSE use all names in database for matching (potentially increasing ambiguous matches).}
 }

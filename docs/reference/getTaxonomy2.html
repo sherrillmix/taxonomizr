@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Get taxonomic ranks for a taxa — getTaxonomy • taxonomizr</title>
+<title>Get taxonomic ranks for a taxa — getTaxonomy2 • taxonomizr</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -28,9 +28,9 @@
 
 
 
-<meta property="og:title" content="Get taxonomic ranks for a taxa — getTaxonomy" />
+<meta property="og:title" content="Get taxonomic ranks for a taxa — getTaxonomy2" />
 
-<meta property="og:description" content="Take NCBI taxa IDs and get the corresponding taxa ranks from name and node SQLite database" />
+<meta property="og:description" content="Take NCBI taxa IDs and get the corresponding taxa ranks from name and node data.tables" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -103,18 +103,18 @@
     <div class="page-header">
     <h1>Get taxonomic ranks for a taxa</h1>
     
-    <div class="hidden name"><code>getTaxonomy.Rd</code></div>
+    <div class="hidden name"><code>getTaxonomy2.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Take NCBI taxa IDs and get the corresponding taxa ranks from name and node SQLite database</p>
+    <p>Take NCBI taxa IDs and get the corresponding taxa ranks from name and node data.tables</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>getTaxonomy</span>(<span class='no'>ids</span>, <span class='kw'>sqlFile</span> <span class='kw'>=</span> <span class='st'>"nameNode.sqlite"</span>, <span class='no'>...</span>,
-  <span class='kw'>desiredTaxa</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"superkingdom"</span>, <span class='st'>"phylum"</span>, <span class='st'>"class"</span>, <span class='st'>"order"</span>, <span class='st'>"family"</span>,
-  <span class='st'>"genus"</span>, <span class='st'>"species"</span>))</pre>
+    <pre class="usage"><span class='fu'>getTaxonomy2</span>(<span class='no'>ids</span>, <span class='no'>taxaNodes</span>, <span class='no'>taxaNames</span>, <span class='kw'>desiredTaxa</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"superkingdom"</span>,
+  <span class='st'>"phylum"</span>, <span class='st'>"class"</span>, <span class='st'>"order"</span>, <span class='st'>"family"</span>, <span class='st'>"genus"</span>, <span class='st'>"species"</span>), <span class='kw'>mc.cores</span> <span class='kw'>=</span> <span class='fl'>1</span>,
+  <span class='kw'>debug</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -124,16 +124,24 @@
       <td><p>a vector of ids to find taxonomy for</p></td>
     </tr>
     <tr>
-      <th>sqlFile</th>
-      <td><p>a string giving the path to a SQLite file containing names and nodes tables</p></td>
+      <th>taxaNodes</th>
+      <td><p>a nodes data.table from <code><a href='read.nodes.html'>read.nodes</a></code></p></td>
     </tr>
     <tr>
-      <th>...</th>
-      <td><p>legacy additional arguments to original data.table based getTaxonomy function. Used only for support for deprecated function, do not use in new code.</p></td>
+      <th>taxaNames</th>
+      <td><p>a names data.table from <code><a href='read.names.html'>read.names</a></code></p></td>
     </tr>
     <tr>
       <th>desiredTaxa</th>
       <td><p>a vector of strings giving the desired taxa levels</p></td>
+    </tr>
+    <tr>
+      <th>mc.cores</th>
+      <td><p>the number of cores to use when processing</p></td>
+    </tr>
+    <tr>
+      <th>debug</th>
+      <td><p>if TRUE output node and name vectors with dput for each id (probably useful only for development)</p></td>
     </tr>
     </table>
     
@@ -147,8 +155,7 @@
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>sqlFile</span><span class='kw'>&lt;-</span><span class='fu'>tempfile</span>()
-<span class='no'>namesText</span><span class='kw'>&lt;-</span><span class='fu'>c</span>(
+    <pre class="examples"><div class='input'><span class='no'>namesText</span><span class='kw'>&lt;-</span><span class='fu'>c</span>(
   <span class='st'>"1\t|\tall\t|\t\t|\tsynonym\t|"</span>,
   <span class='st'>"1\t|\troot\t|\t\t|\tscientific name\t|"</span>,
   <span class='st'>"2\t|\tBacteria\t|\tBacteria &lt;prokaryotes&gt;\t|\tscientific name\t|"</span>,
@@ -188,8 +195,7 @@
 )
 <span class='no'>tmpFile</span><span class='kw'>&lt;-</span><span class='fu'>tempfile</span>()
 <span class='fu'>writeLines</span>(<span class='no'>namesText</span>,<span class='no'>tmpFile</span>)
-<span class='no'>taxaNames</span><span class='kw'>&lt;-</span><span class='fu'><a href='read.names.sql.html'>read.names.sql</a></span>(<span class='no'>tmpFile</span>,<span class='no'>sqlFile</span>)
-<span class='no'>nodesText</span><span class='kw'>&lt;-</span><span class='fu'>c</span>(
+<span class='no'>taxaNames</span><span class='kw'>&lt;-</span><span class='fu'><a href='read.names.html'>read.names</a></span>(<span class='no'>tmpFile</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: taxonomizr is moving from data.table to SQLite databases to improve performance. This will require changing nodes and names processing. Please see http://github.com/sherrillmix/taxonomizr/</span></div><div class='input'><span class='no'>nodesText</span><span class='kw'>&lt;-</span><span class='fu'>c</span>(
  <span class='st'>"1\t|\t1\t|\tno rank\t|\t\t|\t8\t|\t0\t|\t1\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|"</span>,
   <span class='st'>"2\t|\t131567\t|\tsuperkingdom\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|"</span>,
   <span class='st'>"6\t|\t335928\t|\tgenus\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\t\t|"</span>,
@@ -211,8 +217,7 @@
   <span class='st'>"131567\t|\t1\t|\tno rank"</span>
 )
 <span class='fu'>writeLines</span>(<span class='no'>nodesText</span>,<span class='no'>tmpFile</span>)
-<span class='no'>taxaNodes</span><span class='kw'>&lt;-</span><span class='fu'><a href='read.nodes.sql.html'>read.nodes.sql</a></span>(<span class='no'>tmpFile</span>,<span class='no'>sqlFile</span>)
-<span class='fu'>getTaxonomy</span>(<span class='fu'>c</span>(<span class='fl'>9606</span>,<span class='fl'>9605</span>),<span class='no'>sqlFile</span>)</div><div class='output co'>#&gt;      superkingdom phylum     class      order      family      genus 
+<span class='no'>taxaNodes</span><span class='kw'>&lt;-</span><span class='fu'><a href='read.nodes.html'>read.nodes</a></span>(<span class='no'>tmpFile</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: taxonomizr is moving from data.table to SQLite databases to improve performance. This will require changing nodes and names processing. Please see http://github.com/sherrillmix/taxonomizr/</span></div><div class='input'><span class='fu'>getTaxonomy2</span>(<span class='fu'>c</span>(<span class='fl'>9606</span>,<span class='fl'>9605</span>),<span class='no'>taxaNodes</span>,<span class='no'>taxaNames</span>,<span class='kw'>mc.cores</span><span class='kw'>=</span><span class='fl'>1</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: taxonomizr is moving from data.table to SQLite databases to improve performance. This will require changing nodes and names processing. Please see http://github.com/sherrillmix/taxonomizr/</span></div><div class='output co'>#&gt;      superkingdom phylum     class      order      family      genus 
 #&gt; 9606 "Eukaryota"  "Chordata" "Mammalia" "Primates" "Hominidae" "Homo"
 #&gt; 9605 "Eukaryota"  "Chordata" "Mammalia" "Primates" "Hominidae" "Homo"
 #&gt;      species       

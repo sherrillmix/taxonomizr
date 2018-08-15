@@ -123,7 +123,7 @@
     </tr>
     <tr>
       <th>sqlFile</th>
-      <td><p>a string giving the path to a sqlite file screated by <code><a href='read.accession2taxid.html'>read.accession2taxid</a></code></p></td>
+      <td><p>a string giving the path to a SQLite file screated by <code><a href='read.accession2taxid.html'>read.accession2taxid</a></code></p></td>
     </tr>
     <tr>
       <th>version</th>
@@ -157,7 +157,7 @@
 <span class='no'>sqlFile</span><span class='kw'>&lt;-</span><span class='fu'>tempfile</span>()
 <span class='fu'>writeLines</span>(<span class='no'>taxa</span>,<span class='no'>inFile</span>)
 <span class='fu'><a href='read.accession2taxid.html'>read.accession2taxid</a></span>(<span class='no'>inFile</span>,<span class='no'>sqlFile</span>,<span class='kw'>vocal</span><span class='kw'>=</span><span class='fl'>FALSE</span>)
-<span class='fu'>accessionToTaxa</span>(<span class='fu'>c</span>(<span class='st'>"Z17430.1"</span>,<span class='st'>"Z17429.1"</span>,<span class='st'>"X62402.1"</span>,<span class='st'>'NOTREAL'</span>),<span class='no'>sqlFile</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: cannot remove file '/tmp/RtmpB6JRle/file66b65328fdb7', reason 'No such file or directory'</span></div><div class='output co'>#&gt; [1] 3702 3702 9606   NA</div></pre>
+<span class='fu'>accessionToTaxa</span>(<span class='fu'>c</span>(<span class='st'>"Z17430.1"</span>,<span class='st'>"Z17429.1"</span>,<span class='st'>"X62402.1"</span>,<span class='st'>'NOTREAL'</span>),<span class='no'>sqlFile</span>)</div><div class='output co'>#&gt; [1] 3702 3702 9606   NA</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
