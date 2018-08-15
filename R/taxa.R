@@ -20,7 +20,7 @@
 #' writeLines(namesText,tmpFile)
 #' read.names(tmpFile)
 read.names<-function(nameFile,onlyScientific=TRUE){
-  .Deprecated('read.names.sql','taxonomizr',"taxonomizr is moving from data.table to sqlite databases to improve performance. This will require changing nodes and names processing. Please see http://github.com/sherrillmix/taxonomizr/")
+  .Deprecated('read.names.sql','taxonomizr',"taxonomizr is moving from data.table to SQLite databases to improve performance. This will require changing nodes and names processing. Please see http://github.com/sherrillmix/taxonomizr/")
   splitLines<-do.call(rbind,strsplit(readLines(nameFile),"\t\\|\t?"))
   if(onlyScientific)splitLines<-splitLines[splitLines[,4]=='scientific name',]
   splitLines<-splitLines[,-(3:4)]
@@ -36,7 +36,7 @@ read.names<-function(nameFile,onlyScientific=TRUE){
 #' Take an NCBI names file, keep only scientific names and convert it to a SQLite table
 #'
 #' @param nameFile string giving the path to an NCBI name file to read from (both gzipped or uncompressed files are ok)
-#' @param sqlFile a string giving the path where the output sqlite file should be saved
+#' @param sqlFile a string giving the path where the output SQLite file should be saved
 #' @param overwrite If TRUE, delete names table in database if present and regenerate
 #' @return invisibly returns a string with path to sqlfile
 #' @export
@@ -100,7 +100,7 @@ read.names.sql<-function(nameFile,sqlFile='nameNode.sqlite',overwrite=FALSE){
 #' writeLines(nodes,tmpFile)
 #' read.nodes(tmpFile)
 read.nodes<-function(nodeFile){
-  .Deprecated('read.nodes.sql','taxonomizr',"taxonomizr is moving from data.table to sqlite databases to improve performance. This will require changing nodes and names processing. Please see http://github.com/sherrillmix/taxonomizr/")
+  .Deprecated('read.nodes.sql','taxonomizr',"taxonomizr is moving from data.table to SQLite databases to improve performance. This will require changing nodes and names processing. Please see http://github.com/sherrillmix/taxonomizr/")
   splitLines<-do.call(rbind,lapply(strsplit(readLines(nodeFile),"\t\\|\t?"),'[',1:3))
   colnames(splitLines)<-c('id','parent','rank')
   splitLines<-data.frame('id'=as.numeric(splitLines[,'id']),'rank'=splitLines[,'rank'],'parent'=as.numeric(splitLines[,'parent']),stringsAsFactors=FALSE)
@@ -113,7 +113,7 @@ read.nodes<-function(nodeFile){
 #' Take an NCBI nodes file and convert it to a data.table
 #'
 #' @param nodeFile string giving the path to an NCBI node file to read from (both gzipped or uncompressed files are ok)
-#' @param sqlFile a string giving the path where the output sqlite file should be saved
+#' @param sqlFile a string giving the path where the output SQLite file should be saved
 #' @return a data.table with columns id, parent and rank with a key on id
 #' @references \url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/}
 #' @seealso \code{\link{read.names}}
@@ -231,12 +231,12 @@ trimTaxa<-function(inFile,outFile,desiredCols=c(2,3)){
 
 #' Read NCBI accession2taxid files
 #'
-#' Take NCBI accession2taxid files, keep only accession and taxa and save it as a sqlite database
+#' Take NCBI accession2taxid files, keep only accession and taxa and save it as a SQLite database
 #'
 #' @param taxaFiles a string or vector of strings giving the path(s) to files to be read in
-#' @param sqlFile a string giving the path where the output sqlite file should be saved
+#' @param sqlFile a string giving the path where the output SQLite file should be saved
 #' @param vocal if TRUE output status messages
-#' @param extraSqlCommand for advanced use. A string giving a command to be called on the sqlite databse before loading data e.g. "pragma temp_store = 2;" to keep all temp files in memory (don't do this unless you have a lot (>100 Gb) of RAM)
+#' @param extraSqlCommand for advanced use. A string giving a command to be called on the SQLite databse before loading data e.g. "pragma temp_store = 2;" to keep all temp files in memory (don't do this unless you have a lot (>100 Gb) of RAM)
 #' @param indexTaxa if TRUE add an index for taxa ID. This would only be necessary if you want to look up accessions by taxa ID e.g. \code{\link{getAccessions}}
 #' @param overwrite If TRUE, delete accessionTaxa table in database if present and regenerate
 #' @return TRUE if sucessful
@@ -368,9 +368,9 @@ read.accession2taxid<-function(taxaFiles,sqlFile,vocal=TRUE,extraSqlCommand='',i
 #' )
 #' writeLines(nodesText,tmpFile)
 #' taxaNodes<-read.nodes(tmpFile)
-#' getTaxonomy(c(9606,9605),taxaNodes,taxaNames,mc.cores=1)
-getTaxonomy<-function(ids,taxaNodes ,taxaNames, desiredTaxa=c('superkingdom','phylum','class','order','family','genus','species'),mc.cores=1,debug=FALSE){
-  .Deprecated('getTaxonomySql','taxonomizr',"taxonomizr is moving from data.table to sqlite databases to improve performance. This will require changing nodes and names processing. Please see http://github.com/sherrillmix/taxonomizr/")
+#' getTaxonomy2(c(9606,9605),taxaNodes,taxaNames,mc.cores=1)
+getTaxonomy2<-function(ids,taxaNodes ,taxaNames, desiredTaxa=c('superkingdom','phylum','class','order','family','genus','species'),mc.cores=1,debug=FALSE){
+  .Deprecated('getTaxonomy','taxonomizr',"taxonomizr is moving from data.table to SQLite databases to improve performance. This will require changing nodes and names processing. Please see http://github.com/sherrillmix/taxonomizr/")
   ids<-as.numeric(ids)
   if(length(ids)==0)return(NULL)
   uniqIds<-unique(ids)
@@ -423,11 +423,12 @@ getParentNodes<-function(ids,sqlFile='nameNode.sqlite'){
 
 #' Get taxonomic ranks for a taxa
 #'
-#' Take NCBI taxa IDs and get the corresponding taxa ranks from name and node sqlite database
+#' Take NCBI taxa IDs and get the corresponding taxa ranks from name and node SQLite database
 #'
 #' @param ids a vector of ids to find taxonomy for
-#' @param sqlFile a string giving the path to a sqlite file containing names and nodes tables
+#' @param sqlFile a string giving the path to a SQLite file containing names and nodes tables
 #' @param desiredTaxa a vector of strings giving the desired taxa levels
+#' @param ... legacy additional arguments to original data.table based getTaxonomy function. Used only for support for deprecated function, do not use in new code.
 #' @return a matrix of taxonomic strings with a row for each id and a column for each desiredTaxa rank
 #' @export
 #' @seealso \code{\link{read.nodes}}, \code{\link{read.names}}
@@ -497,12 +498,15 @@ getParentNodes<-function(ids,sqlFile='nameNode.sqlite'){
 #' )
 #' writeLines(nodesText,tmpFile)
 #' taxaNodes<-read.nodes.sql(tmpFile,sqlFile)
-#' getTaxonomySql(c(9606,9605),sqlFile)
-getTaxonomySql<-function (ids,sqlFile='nameNode.sqlite', desiredTaxa=c('superkingdom','phylum','class','order','family','genus','species')){
+#' getTaxonomy(c(9606,9605),sqlFile)
+getTaxonomy<-function (ids,sqlFile='nameNode.sqlite',..., desiredTaxa=c('superkingdom','phylum','class','order','family','genus','species')){
+  if('data.table' %in% class(sqlFile)){
+    return(getTaxonomy2(ids,sqlFile,...,desiredTaxa=desiredTaxa))
+  }
   ids<-as.numeric(ids)
   if(length(ids)==0)return(NULL)
   uniqIds<-unique(ids)
-  taxa<-matrix(NA,ncol=length(desiredTaxa),nrow=length(uniqIds),dimnames=list(format(uniqIds,scientific=FALSE),desiredTaxa))
+  taxa<-matrix(as.character(NA),ncol=length(desiredTaxa),nrow=length(uniqIds),dimnames=list(format(uniqIds,scientific=FALSE),desiredTaxa))
   rep<-0
   currentIds<-uniqIds
   while(any(stillWorking<-!is.na(currentIds)&currentIds!=1)){
@@ -524,7 +528,7 @@ getTaxonomySql<-function (ids,sqlFile='nameNode.sqlite', desiredTaxa=c('superkin
 #' Convert a vector of NCBI accession numbers to their assigned taxonomy
 #'
 #' @param accessions a vector of NCBI accession strings to convert to taxa
-#' @param sqlFile a string giving the path to a sqlite file screated by \code{\link{read.accession2taxid}}
+#' @param sqlFile a string giving the path to a SQLite file screated by \code{\link{read.accession2taxid}}
 #' @param version either 'version' indicating that taxaids are versioned e.g. Z17427.1 or 'base' indicating that taxaids do not have version numbers e.g. Z17427
 #' @return a vector of NCBI taxa ids
 #' @export
@@ -550,10 +554,10 @@ accessionToTaxa<-function(accessions,sqlFile,version=c('version','base')){
   if(!file.exists(sqlFile))stop(sqlFile,' does not exist.')
   if(length(accessions)==0)return(c())
   tmp<-tempfile()
-  on.exit(file.remove(tmp))
   #set up a new table of accessions in a temp db (avoiding concurrency issues)
   #some trouble with dbWriteTable writing to "tmp.xxx" in the main database if we do this inside the attach
   tmpDb <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=tmp)
+  on.exit(if(file.exists(tmp))file.remove(tmp))
   on.exit(RSQLite::dbDisconnect(tmpDb),add=TRUE)
   RSQLite::dbWriteTable(tmpDb,'query',data.frame('accession'=accessions,stringsAsFactors=FALSE),overwrite=TRUE)
   #load the big sql
@@ -707,7 +711,7 @@ getAccession2taxid<-function(outDir='.',baseUrl='ftp://ftp.ncbi.nih.gov/pub/taxo
 #' getId2('Not a real name',names)
 #' getId2('Multi',names)
 getId2<-function(taxa,taxaNames){
-  .Deprecated('getId','taxonomizr',"taxonomizr is moving from data.table to sqlite databases to improve performance. This will require changing nodes and names processing. Please see http://github.com/sherrillmix/taxonomizr/")
+  .Deprecated('getId','taxonomizr',"taxonomizr is moving from data.table to SQLite databases to improve performance. This will require changing nodes and names processing. Please see http://github.com/sherrillmix/taxonomizr/")
   uniqTaxa<-unique(taxa)
   out<-lapply(uniqTaxa,function(xx){
     ids<-taxaNames[as.list(xx),on='name']$id
@@ -727,7 +731,7 @@ getId2<-function(taxa,taxaNames){
 #' Find a taxa by string in the NCBI taxonomy. Note that NCBI species are stored as Genus species e.g. "Bos taurus". Ambiguous taxa names will return a comma concatenated string e.g. "123,234" and generate a warning.
 #'
 #' @param taxa a vector of taxonomic names
-#' @param sqlFile a string giving the path to a sqlite file containing a names tables
+#' @param sqlFile a string giving the path to a SQLite file containing a names tables
 #' @param onlyScientific If TRUE then only match to scientific names. If FALSE use all names in database for matching (potentially increasing ambiguous matches).
 #' @return a vector of character strings giving taxa IDs (potentially comma concatenated for any taxa with ambiguous names)
 #' @seealso \code{\link{read.names}}
@@ -812,7 +816,7 @@ prepareDatabase<-function(sqlFile='nameNode.sqlite',tmpDir='.',vocal=TRUE,...){
 #'
 #' Find accessions numbers for a given taxa ID the NCBI taxonomy. This will be pretty slow unless the database was built with indexTaxa=TRUE since the database would not have an index for taxaId.
 #' @param taxaId a vector of taxonomic IDs
-#' @param sqlFile a string giving the path to a sqlite file screated by \code{\link{read.accession2taxid}}
+#' @param sqlFile a string giving the path to a SQLite file created by \code{\link{read.accession2taxid}}
 #' @param version either 'version' indicating that taxaids are versioned e.g. Z17427.1 or 'base' indicating that taxaids do not have version numbers e.g. Z17427
 #' @param limit return only this number of accessions or NULL for no limits
 #' @return a vector of character strings giving taxa IDs (potentially comma concatenated for any taxa with ambiguous names)
