@@ -32,69 +32,51 @@ library(taxonomizr)
 
 
 ## Preparation<a name="preparation"></a>
-In order to avoid constant internet access and slow APIs, the first step in using the package is to downloads all necessary files from NCBI. This uses a bit of disk space but makes future access reliable and fast.
-
-**Note:** It is not necessary to manually check for the presence of these files since the functions automatically check to see if their output is present and if so skip downloading/processing. Delete the local files if you would like to redownload or reprocess them.
-
-### Download names and nodes
-First, download the necessary names and nodes files from [NCBI](ftp://ftp.ncbi.nih.gov/pub/taxonomy/):
-
-```r
-getNamesAndNodes()
-```
-
-```
-## [1] "./names.dmp" "./nodes.dmp"
-```
-
-### Download accession to taxa files
-
-Then download accession to taxa id conversion files from [NCBI](ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/). **Note:** this is a pretty _big_ download (several gigabytes):
-
-```r
-#this is a big download
-getAccession2taxid()
-```
-
-```
-## [1] "./nucl_gb.accession2taxid.gz"  "./nucl_est.accession2taxid.gz"
-## [3] "./nucl_gss.accession2taxid.gz" "./nucl_wgs.accession2taxid.gz"
-```
-
-If you would also like to identify protein accession numbers, also download the prot file from NCBI (again this is a _big_ download):
-
-```r
-#this is a big download
-getAccession2taxid(types='prot')
-```
-
-```
-## [1] "./prot.accession2taxid.gz"
-```
-
-### Convert accessions to database
-
-Then process the downloaded accession files into a more easily accessed form (this could take a while):
+Since version 0.5.0, there is a simple function to run all preparations. Note that you'll need a bit of time, download bandwith and hard drive space before running this command (we're downloading taxonomic assignments for every record in NCBI). To create a SQLite database called `nameNode.sqlite` in the current working directory (you may want to store this somewhere more centrally located so it does not need to be duplicated with every project), we can run:
 
 
 ```r
-read.accession2taxid(list.files('.','accession2taxid.gz$'),'accessionTaxa.sql')
+prepareDatabase('nameNode.sqlite')
 ```
 
 ```
-## Reading nucl_est.accession2taxid.gz.
+## Downloading names and nodes with getNamesAndNodes()
 ```
 
 ```
-## Reading nucl_gb.accession2taxid.gz.
+## Downloading accession2taxid with getAccession2taxid()
 ```
 
 ```
-## Reading nucl_gss.accession2taxid.gz.
+## This can be a big (several gigabytes) download. Please be patient and use a fast connection.
 ```
 
 ```
-## Reading nucl_wgs.accession2taxid.gz.
+## Preprocessing names with read.names.sql()
+```
+
+```
+## Preprocessing nodes with read.nodes.sql()
+```
+
+```
+## Preprocessing accession2taxid with read.accession2taxid()
+```
+
+```
+## Reading ./nucl_gb.accession2taxid.gz.
+```
+
+```
+## Reading ./nucl_est.accession2taxid.gz.
+```
+
+```
+## Reading ./nucl_gss.accession2taxid.gz.
+```
+
+```
+## Reading ./nucl_wgs.accession2taxid.gz.
 ```
 
 ```
@@ -106,10 +88,11 @@ read.accession2taxid(list.files('.','accession2taxid.gz$'),'accessionTaxa.sql')
 ```
 
 ```
-## [1] TRUE
+## [1] "nameNode.sqlite"
 ```
 
-Now everything should be ready for processing. All files are cached locally and so the preparation is only required once (or whenever you would like to update the data). It is not necessary to manually check for the presence of these files since the functions automatically check to see if their output is present and if so skip downloading/processing. Delete the local files if you would like to redownload or reprocess them.
+If everything works then that should have prepared a sqlite database ready for use. You can skip the "Manual preparation" steps below.
+
 
 ## Assigning taxonomy
 
@@ -237,6 +220,87 @@ getAccessions(3702,'accessionTaxa.sql',limit=10)
 ## 10 3702  Z17436.1
 ```
 
+## Manual preparation of database (usually not necessary)
+**Note:** Since version 0.5.0, it is usually not necessary to run the following manually, the function `prepareDatabase()` should do most of this automatically for you (see <a href='#preparation'>above</a>).
+
+In order to avoid constant internet access and slow APIs, the first step in using the package is to downloads all necessary files from NCBI. This uses a bit of disk space but makes future access reliable and fast.
+
+**Note:** It is not necessary to manually check for the presence of these files since the functions automatically check to see if their output is present and if so skip downloading/processing. Delete the local files if you would like to redownload or reprocess them.
+
+### Download names and nodes
+First, download the necessary names and nodes files from [NCBI](ftp://ftp.ncbi.nih.gov/pub/taxonomy/):
+
+```r
+getNamesAndNodes()
+```
+
+```
+## [1] "./names.dmp" "./nodes.dmp"
+```
+
+### Download accession to taxa files
+
+Then download accession to taxa id conversion files from [NCBI](ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/). **Note:** this is a pretty _big_ download (several gigabytes):
+
+```r
+#this is a big download
+getAccession2taxid()
+```
+
+```
+## [1] "./nucl_gb.accession2taxid.gz"  "./nucl_est.accession2taxid.gz"
+## [3] "./nucl_gss.accession2taxid.gz" "./nucl_wgs.accession2taxid.gz"
+```
+
+If you would also like to identify protein accession numbers, also download the prot file from NCBI (again this is a _big_ download):
+
+```r
+#this is a big download
+getAccession2taxid(types='prot')
+```
+
+```
+## [1] "./prot.accession2taxid.gz"
+```
+
+### Convert accessions to database
+
+Then process the downloaded accession files into a more easily accessed form (this could take a while):
+
+
+```r
+read.accession2taxid(list.files('.','accession2taxid.gz$'),'accessionTaxa.sql')
+```
+
+```
+## Reading nucl_est.accession2taxid.gz.
+```
+
+```
+## Reading nucl_gb.accession2taxid.gz.
+```
+
+```
+## Reading nucl_gss.accession2taxid.gz.
+```
+
+```
+## Reading nucl_wgs.accession2taxid.gz.
+```
+
+```
+## Reading in values. This may take a while.
+```
+
+```
+## Adding index. This may also take a while.
+```
+
+```
+## [1] TRUE
+```
+
+Now everything should be ready for processing. All files are cached locally and so the preparation is only required once (or whenever you would like to update the data). It is not necessary to manually check for the presence of these files since the functions automatically check to see if their output is present and if so skip downloading/processing. Delete the local files if you would like to redownload or reprocess them.
 
 
 
