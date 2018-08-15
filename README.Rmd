@@ -27,6 +27,13 @@ library(taxonomizr)
 
 
 ## Preparation<a name="preparation"></a>
+Since version
+```{r,eval=FALSE}
+getNamesAndNodes()
+```
+## Manual preparation (usually not necessary)
+**Note:** It is often not necessary to run the following manually, the function `prepareDatabase()` should do most of this automatically for you (see above).
+
 In order to avoid constant internet access and slow APIs, the first step in using the package is to downloads all necessary files from NCBI. This uses a bit of disk space but makes future access reliable and fast.
 
 **Note:** It is not necessary to manually check for the presence of these files since the functions automatically check to see if their output is present and if so skip downloading/processing. Delete the local files if you would like to redownload or reprocess them.

@@ -740,7 +740,7 @@ getId<-function(taxa,sqlFile='nameNode.sqlite',onlyScientific=TRUE){
 
 #' Download data from NCBI and set up SQLite database
 #'
-#' Download names, nodes and accession2taxid data from NCBI and preprocess into a SQLite database for downstream use.
+#' Convenience function to do all necessary preparations downloading names, nodes and accession2taxid data from NCBI and preprocessing into a SQLite database for downstream use.
 #'
 #' @param sqlFile character string giving the file location to store the SQLite database
 #' @param tmpDir location for storing the downloaded files from NCBI. (Note that it may be useful to store these somewhere convenient to avoid redownloading)
