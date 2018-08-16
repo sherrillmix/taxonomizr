@@ -243,6 +243,14 @@ test_that("Test getTaxonomy",{
   suppressWarnings(expect_equal(getTaxonomy(c(NA,9605,NA,'9604,9605'),tmp),rbind('  NA'=naDf[1,],'9605'=out[2,],'  NA'=naDf[1,],'  NA'=naDf[1,])))
   expect_equal(getTaxonomy('9605',tmp),getTaxonomy(9605,tmp))
   expect_warning(getTaxonomy('9605,123',tmp),'coercion')
+  cycle<-c(
+   "9606\t|\t9605\t|\tno rank\t|\t\t|\t8\t|\t0\t|\t1\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
+   "9605\t|\t9606\t|\tsuperkingdom\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|"
+  )
+  tmp2<-tempfile()
+  read.names.sql(textConnection(namesText),tmp2)
+  read.nodes.sql(textConnection(cycle),tmp2)
+  expect_error(getTaxonomy(9606,tmp2),'cycle')
 })
 
 test_that("Test getTaxonomy with deprecated data.tables",{

@@ -517,7 +517,7 @@ getTaxonomy<-function (ids,sqlFile='nameNode.sqlite',..., desiredTaxa=c('superki
     }
     rep<-rep+1 
     currentIds[stillWorking]<-parents$parent
-    if(rep>1000)stop('Found cycle in taxonomy')
+    if(rep>200)stop('Found cycle in taxonomy')
   }
   out<-taxa[format(ids,scientific=FALSE),,drop=FALSE]
   return(out)
