@@ -514,6 +514,7 @@ test_that("Test getNamesAndNodes",{
   expect_equal(sort(list.files(tmp,'^(names|nodes).dmp$')),c('names.dmp','nodes.dmp'))
   expect_message(getNamesAndNodes(tmp,'file://fakeNamesNodes.tar.gz'),'exist')
   expect_equal(getNamesAndNodes(tmp,'file://fakeNamesNodes.tar.gz'),file.path(tmp,c('names.dmp','nodes.dmp')))
+  expect_error(getNamesAndNodes(tmp,'file://fakeNamesNodes.tar.gz','NOTREAL.FILE'),'finding')
 })
 
 test_that("Test getAccession2taxid",{
@@ -529,7 +530,7 @@ test_that("Test getAccession2taxid",{
   expect_message(getAccession2taxid(tmp2,baseUrl=sprintf('file://%s',tmp),types=c('nucl_XxXx','nucl_XyXyX')),'exist')
 })
 
-test_that("Test getId",{
+test_that("Test getId with deprecated data.table",{
  namesText<-c(
    "1\t|\troot\t|\t\t|\tscientific name\t|",
    "4\t|\tMulti\t|\tBacteria <prokaryotes>\t|\tscientific name\t|",
@@ -542,6 +543,39 @@ test_that("Test getId",{
  expect_equal(getId('Not a real name',names),as.character(NA))
  suppressWarnings(expect_equal(getId('Multi',names),'3,4'))
  expect_warning(getId('Multi',names),'Multiple')
+ expect_warning(getId('Bacteria',names),'SQLite')
+})
+
+test_that("Test getId2",{
+ namesText<-c(
+   "1\t|\troot\t|\t\t|\tscientific name\t|",
+   "4\t|\tMulti\t|\tBacteria <prokaryotes>\t|\tscientific name\t|",
+   "3\t|\tMulti\t|\tBacteria <prokaryotes>\t|\tscientific name\t|",
+   "2\t|\tBacteria\t|\tBacteria <prokaryotes>\t|\tscientific name\t|"
+ )
+ names<-read.names(textConnection(namesText))
+ expect_equal(getId2('Bacteria',names),'2')
+ expect_equal(getId2(c('Bacteria','root','Bacteria','NOTREAL'),names),c('2','1','2',NA))
+ expect_equal(getId2('Not a real name',names),as.character(NA))
+ suppressWarnings(expect_equal(getId2('Multi',names),'3,4'))
+ expect_warning(getId2('Multi',names),'Multiple')
+ expect_warning(getId2('Bacteria',names),'SQLite')
+})
+
+test_that("Test getId",{
+ namesText<-c(
+   "1\t|\troot\t|\t\t|\tscientific name\t|",
+   "4\t|\tMulti\t|\tBacteria <prokaryotes>\t|\tscientific name\t|",
+   "3\t|\tMulti\t|\tBacteria <prokaryotes>\t|\tscientific name\t|",
+   "2\t|\tBacteria\t|\tBacteria <prokaryotes>\t|\tscientific name\t|"
+ )
+ tmp<-tempfile()
+ read.names.sql(textConnection(namesText),tmp)
+ expect_equal(getId('Bacteria',tmp),'2')
+ expect_equal(getId(c('Bacteria','root','Bacteria','NOTREAL'),tmp),c('2','1','2',NA))
+ expect_equal(getId('Not a real name',tmp),as.character(NA))
+ suppressWarnings(expect_equal(getId(c('Bacteria','Multi','NOTREAL'),tmp),c('2','3,4',NA)))
+ expect_warning(getId('Multi',tmp),'Multiple')
 })
 
 test_that("Test getAccessions",{

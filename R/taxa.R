@@ -766,10 +766,10 @@ getId<-function(taxa,sqlFile='nameNode.sqlite',onlyScientific=TRUE){
   taxaDf<-RSQLite::dbGetQuery(db,sprintf('SELECT tmp.query.name, id FROM tmp.query LEFT OUTER JOIN names ON tmp.query.name=names.name%s',ifelse(onlyScientific,' WHERE names.scientific','')))
   taxaN<-stats::ave(taxaDf$id,taxaDf$name,FUN=length)
   if(any(taxaN>1)){
-    warning('Multiple taxa ids found for ',paste(names(taxaN)[taxaN>1],collapse=', '),'. Collapsing with commas')
+    warning('Multiple taxa ids found for ',paste(names(taxaN)[taxaN>1],collapse=','),'. Collapsing with commas')
   }
-  out<-tapply(taxaDf$id,taxaDf$name,FUN=function(xx)paste(xx,collapse=', '))
-  return(unname(out[taxa]))
+  out<-tapply(taxaDf$id,taxaDf$name,FUN=function(xx)paste(sort(xx),collapse=','))
+  return(as.character(unname(out[taxa])))
 }
 
 
