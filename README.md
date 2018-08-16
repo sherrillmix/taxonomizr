@@ -211,6 +211,17 @@ getAccessions(3702,'accessionTaxa.sql',limit=10)
 ## 10 3702  Z17436.1
 ```
 
+## Switch from data.table to SQLite
+Version 0.5.0 marked a change for name and node lookups using data.table to using SQLite. This was necessary to increase performance (10-100x speedup for `getTaxonomy`) and create a simpler interface (a single SQLite database contains all necessary data). Unfortunately, this switch requires a couple breaking changes: 
+  * `getTaxonomy` changes from `getTaxonomy(ids,namesDT,nodesDT)` to `getTaxonomy(ids,sqlFile)`
+  * `getId` changes from  `getId(taxa,namesDT)` to `getId(taxa,sqlFile)`
+  * `read.names` is deprecated, instead use `read.names.sql`. e.g. instead of calling `names<-read.names('names.dmp')` in every session, simply call `read.names.sql('names.dmp','accessionTaxa.sql')` once (or use the convenient `prepareDatabase` as <a href='#preparation'>above</a>)).
+  * `read.nodes` is deprecated, instead use `read.names.sql`. e.g. instead of calling `nodes<-read.names('nodes.dmp')` in every session, simply call `read.nodes.sql('nodes.dmp','accessionTaxa.sql')` once (or use the convenient `prepareDatabase` as <a href='#preparation'>above</a>).
+  I've tried to ease any problems with this by overloading `getTaxonomy` and `getId` to still function (with a warning) if passed a data.table names and nodes argument and providing a simpler `prepareDatabase` function for completing all setup steps (hopefully avoiding direct calls to `read.names` and `read.nodes` for most users). 
+
+I plan to eventually remove data.table functionality to avoid a split codebase so please switch to the new SQLite format in all new code.
+ 
+
 ## Manual preparation of database (usually not necessary)
 **Note:** Since version 0.5.0, it is usually not necessary to run the following manually, the function `prepareDatabase()` should do most of this automatically for you (see <a href='#preparation'>above</a>).
 
