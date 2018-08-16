@@ -80,11 +80,11 @@
 <h2 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h2>
 <p><code>taxonomizr</code> provides some simple functions to parse NCBI taxonomy files and accession dumps and efficiently use them to assign <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/taxonomyhome.html/">taxonomy</a> to accession numbers or taxonomic IDs. This is useful for example to assign taxonomy to BLAST results. This is all done locally after downloading the appropriate files from NCBI using included functions (see <a href="#preparation">below</a>).</p>
-<p>The major functions are: * <code>prepareDatabase</code>: download data from NCBI and prepare SQLite database * <code>accessionToTaxa</code>: convert accession numbers to taxonomic IDs * <code>getTaxonomy</code>: convert taxonmic IDs to taxonomy</p>
+<p>The major functions are: * <code>prepareDatabase</code>: download data from NCBI and prepare SQLite database * <code>accessionToTaxa</code>: convert accession numbers to taxonomic IDs * <code>getTaxonomy</code>: convert taxonomic IDs to taxonomy</p>
 <p>More specialized functions are: * <code>getId</code>: convert a biological name to taxonomic ID * <code>getAccessions</code>: find accessions for a given taxonomic ID</p>
 <p>And a simple use case might look like (see below for more details):</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#note this will require a lot of hard drive space, bandwidth and time to process all the data from NCBI</span>
-<span class="kw">library</span>(taxonomizr)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(taxonomizr)
+<span class="co">#note this will require a lot of hard drive space, bandwidth and time to process all the data from NCBI</span>
 <span class="kw"><a href="reference/prepareDatabase.html">prepareDatabase</a></span>(<span class="st">'accessionTaxa.sql'</span>)
 blastAccessions&lt;-<span class="kw">c</span>(<span class="st">"Z17430.1"</span>,<span class="st">"Z17429.1"</span>,<span class="st">"X62402.1"</span>) 
 ids&lt;-<span class="kw"><a href="reference/accessionToTaxa.html">accessionToTaxa</a></span>(blastAccessions,<span class="st">'accessionTaxa.sql'</span>)

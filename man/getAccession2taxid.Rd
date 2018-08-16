@@ -28,6 +28,7 @@ Download a nucl_xxx.accession2taxid.gz from NCBI servers. These can then be used
      Make sure you have space and bandwidth. Type y to continue: "
   )!='y')
     stop('This is a stop to make sure no one downloads a bunch of data unintentionally')
+
   getAccession2taxid()
 }
 }

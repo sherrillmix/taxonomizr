@@ -115,13 +115,14 @@
         
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>taxonomizr provides some simple functions to parse NCBI taxonomy files and accession dumps and efficiently use them to assign taxonomy to accession numbers or taxonomic IDs (<a href='https://www.ncbi.nlm.nih.gov/Taxonomy/taxonomyhome.html/'>https://www.ncbi.nlm.nih.gov/Taxonomy/taxonomyhome.html/</a>). This is useful for example to assign taxonomy to BLAST results. This is all done locally after downloading the appropriate files from NCBI using included functions. The major functions are:
-* <code><a href='prepareDatabase.html'>prepareDatabase</a></code>: download data from NCBI and prepare SQLite database
-* <code>link{accessionToTaxa}</code>: convert accession numbers to taxonomic IDs
-* <code><a href='getTaxonomy.html'>getTaxonomy</a></code>: convert taxonmic IDs to taxonomy
-More specialized functions are:
-* <code><a href='getId.html'>getId</a></code>: convert a biological name to taxonomic ID
-* <code><a href='getAccessions.html'>getAccessions</a></code>: find accessions for a given taxonomic ID</p>
+    <p>taxonomizr provides some simple functions to parse NCBI taxonomy files and accession dumps and efficiently use them to assign taxonomy to accession numbers or taxonomic IDs (<a href='https://www.ncbi.nlm.nih.gov/Taxonomy/taxonomyhome.html/'>https://www.ncbi.nlm.nih.gov/Taxonomy/taxonomyhome.html/</a>). This is useful for example to assign taxonomy to BLAST results. This is all done locally after downloading the appropriate files from NCBI using included functions. The major functions are:</p><ul>
+<li><p><code><a href='prepareDatabase.html'>prepareDatabase</a></code>: download data from NCBI and prepare SQLite database</p></li>
+<li><p><code>link{accessionToTaxa}</code>: convert accession numbers to taxonomic IDs</p></li>
+<li><p><code><a href='getTaxonomy.html'>getTaxonomy</a></code>: convert taxonomic IDs to taxonomy</p></li>
+</ul><p>More specialized functions are:</p><ul>
+<li><p><code><a href='getId.html'>getId</a></code>: convert a biological name to taxonomic ID</p></li>
+<li><p><code><a href='getAccessions.html'>getAccessions</a></code>: find accessions for a given taxonomic ID</p></li>
+</ul>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
@@ -135,6 +136,7 @@ More specialized functions are:
      Make sure you have space and bandwidth. Type y to continue: "</span>
   )<span class='kw'>!=</span><span class='st'>'y'</span>)
     <span class='fu'>stop</span>(<span class='st'>'This is a stop to make sure no one downloads a bunch of data unintentionally'</span>)
+
   <span class='fu'><a href='prepareDatabase.html'>prepareDatabase</a></span>(<span class='st'>'accessionTaxa.sql'</span>)
   <span class='no'>blastAccessions</span><span class='kw'>&lt;-</span><span class='fu'>c</span>(<span class='st'>"Z17430.1"</span>,<span class='st'>"Z17429.1"</span>,<span class='st'>"X62402.1"</span>)
   <span class='no'>ids</span><span class='kw'>&lt;-</span><span class='fu'><a href='accessionToTaxa.html'>accessionToTaxa</a></span>(<span class='no'>blastAccessions</span>,<span class='st'>'accessionTaxa.sql'</span>)
