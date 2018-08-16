@@ -4,12 +4,14 @@
 \alias{read.nodes.sql}
 \title{Read NCBI nodes file}
 \usage{
-read.nodes.sql(nodeFile, sqlFile = "nameNode.sqlite")
+read.nodes.sql(nodeFile, sqlFile = "nameNode.sqlite", overwrite = FALSE)
 }
 \arguments{
 \item{nodeFile}{string giving the path to an NCBI node file to read from (both gzipped or uncompressed files are ok)}
 
 \item{sqlFile}{a string giving the path where the output SQLite file should be saved}
+
+\item{overwrite}{If TRUE, delete nodes table in database if present and regenerate}
 }
 \value{
 a data.table with columns id, parent and rank with a key on id
