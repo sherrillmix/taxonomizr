@@ -724,7 +724,7 @@ getId2<-function(taxa,taxaNames){
   multiHits<-sapply(out,length)>1
   if(any(multiHits)){
     warning('Multiple taxa ids found for ',paste(taxa[multiHits],collapse=', '),'. Collapsing with commas')
-    out<-sapply(out,paste,collapse=',')
+    out<-sapply(out,function(xx)ifelse(is.na(xx)||is.null(xx),NA,paste(xx,collapse=',')))
   }
   out<-as.character(unlist(out))
   names(out)<-uniqTaxa
@@ -769,9 +769,9 @@ getId<-function(taxa,sqlFile='nameNode.sqlite',onlyScientific=TRUE){
   on.exit(RSQLite::dbDisconnect(db),add=TRUE)
   RSQLite::dbExecute(db, sprintf("ATTACH '%s' AS tmp",tmp))
   taxaDf<-RSQLite::dbGetQuery(db,sprintf('SELECT tmp.query.name, id FROM tmp.query LEFT OUTER JOIN names ON tmp.query.name=names.name%s',ifelse(onlyScientific,' WHERE names.scientific','')))
-  taxaN<-stats::ave(taxaDf$id,taxaDf$name,FUN=length)
+  taxaN<-tapply(taxaDf$id,taxaDf$name,length)
   if(any(taxaN>1)){
-    warning('Multiple taxa ids found for ',paste(names(taxaN)[taxaN>1],collapse=','),'. Collapsing with commas')
+    warning('Multiple taxa ids found for ',paste(names(taxaN)[taxaN>1],collapse=', '),'. Collapsing with commas')
   }
   out<-tapply(taxaDf$id,taxaDf$name,FUN=function(xx)paste(sort(xx),collapse=','))
   return(as.character(unname(out[taxa])))

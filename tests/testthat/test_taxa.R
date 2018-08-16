@@ -553,33 +553,37 @@ test_that("Test getId with deprecated data.table",{
 test_that("Test getId2",{
  namesText<-c(
    "1\t|\troot\t|\t\t|\tscientific name\t|",
-   "4\t|\tMulti\t|\tBacteria <prokaryotes>\t|\tscientific name\t|",
-   "3\t|\tMulti\t|\tBacteria <prokaryotes>\t|\tscientific name\t|",
-   "2\t|\tBacteria\t|\tBacteria <prokaryotes>\t|\tscientific name\t|"
+   "4\t|\tMulti1\t|\tBacteria <prokaryotes>\t|\tscientific name\t|",
+   "3\t|\tMulti1\t|\tBacteria <prokaryotes>\t|\tscientific name\t|",
+   "2\t|\tBacteria\t|\tBacteria <prokaryotes>\t|\tscientific name\t|",
+   "5\t|\tMulti2\t|\tBacteria <prokaryotes>\t|\tscientific name\t|",
+   "6\t|\tMulti2\t|\tBacteria <prokaryotes>\t|\tscientific name\t|"
  )
  names<-read.names(textConnection(namesText))
  expect_equal(getId2('Bacteria',names),'2')
  expect_equal(getId2(c('Bacteria','root','Bacteria','NOTREAL'),names),c('2','1','2',NA))
  expect_equal(getId2('Not a real name',names),as.character(NA))
- suppressWarnings(expect_equal(getId2('Multi',names),'3,4'))
- expect_warning(getId2('Multi',names),'Multiple')
+ suppressWarnings(expect_equal(getId2(c('Bacteria','Multi1','NOTREAL'),names),c('2','3,4',NA)))
+ expect_warning(getId2(c('Multi1','Bacteria','Multi2'),names),'Multiple.*Multi1, Multi2')
  expect_warning(getId2('Bacteria',names),'SQLite')
 })
 
 test_that("Test getId",{
  namesText<-c(
    "1\t|\troot\t|\t\t|\tscientific name\t|",
-   "4\t|\tMulti\t|\tBacteria <prokaryotes>\t|\tscientific name\t|",
-   "3\t|\tMulti\t|\tBacteria <prokaryotes>\t|\tscientific name\t|",
-   "2\t|\tBacteria\t|\tBacteria <prokaryotes>\t|\tscientific name\t|"
+   "4\t|\tMulti1\t|\tBacteria <prokaryotes>\t|\tscientific name\t|",
+   "3\t|\tMulti1\t|\tBacteria <prokaryotes>\t|\tscientific name\t|",
+   "2\t|\tBacteria\t|\tBacteria <prokaryotes>\t|\tscientific name\t|",
+   "5\t|\tMulti2\t|\tBacteria <prokaryotes>\t|\tscientific name\t|",
+   "6\t|\tMulti2\t|\tBacteria <prokaryotes>\t|\tscientific name\t|"
  )
  tmp<-tempfile()
  read.names.sql(textConnection(namesText),tmp)
  expect_equal(getId('Bacteria',tmp),'2')
  expect_equal(getId(c('Bacteria','root','Bacteria','NOTREAL'),tmp),c('2','1','2',NA))
  expect_equal(getId('Not a real name',tmp),as.character(NA))
- suppressWarnings(expect_equal(getId(c('Bacteria','Multi','NOTREAL'),tmp),c('2','3,4',NA)))
- expect_warning(getId('Multi',tmp),'Multiple')
+ suppressWarnings(expect_equal(getId(c('Bacteria','Multi1','NOTREAL'),tmp),c('2','3,4',NA)))
+ expect_warning(getId(c('Multi1','Bacteria','Multi2'),tmp),'Multiple.*Multi1, Multi2')
 })
 
 test_that("Test getAccessions",{
