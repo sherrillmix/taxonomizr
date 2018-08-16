@@ -614,3 +614,29 @@ test_that("Test getAccessions",{
   expect_equal(getAccessions(c(3702,9606),sqlFile,limit=3),data.frame('taxa'=rep(c(3702,9606),c(3,0)),'accession'=c("Z17427.1","Z17428.1","Z17429.1"),stringsAsFactors=FALSE))
   expect_equal(getAccessions(c(),sqlFile),NULL)
 })
+
+
+test_that("Test prepareDatabase",{
+  tmp<-tempfile()
+  tmpDir<-tempfile()
+  dir.create(tmpDir)
+  types<-c('XxXx','XyXyX')
+  taxa<-list(c(
+      "accession\taccession.version\ttaxid\tgi",
+      "Z17427\tZ17427.1\t3702\t16569",
+      "Z17428\tZ17428.1\t3702\t16570"
+    ),c(
+      "accession\taccession.version\ttaxid\tgi",
+      "Z17429\tZ17429.1\t3702\t16571",
+      "Z17430\tZ17430.1\t3702\t16572"
+  ))
+  targets<-sprintf('nucl_%s.accession2taxid.gz',types)
+  mapply(function(xx,yy)writeLines(xx,file.path(tmpDir,yy)),taxa,targets)
+  expect_error(prepareDatabase(tmp,tmpDir,url='file://fakeNamesNodes.tar.gz',baseUrl=sprintf('file://%s',tmpDir),types=c('nucl_XxXx','nucl_XyXyX')),NA)
+  db<-RSQLite::dbConnect(RSQLite::SQLite(),tmp)
+  expect_equal(sort(RSQLite::dbListTables(db)),c('accessionTaxa','names','nodes'))
+  expect_equal(colnames(RSQLite::dbGetQuery(db,'SELECT * FROM names LIMIT 1')),c('id','name','scientific'))
+  expect_equal(colnames(RSQLite::dbGetQuery(db,'SELECT * FROM nodes LIMIT 1')),c('id','rank','parent'))
+  expect_equal(colnames(RSQLite::dbGetQuery(db,'SELECT * FROM accessionTaxa LIMIT 1')),c('base','accession','taxa'))
+  expect_message(prepareDatabase(tmp,tmpDir,url='file://fakeNamesNodes.tar.gz',baseUrl=sprintf('file://%s',tmpDir),types=c('nucl_XxXx','nucl_XyXyX')),'exists')
+})
