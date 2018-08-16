@@ -112,7 +112,7 @@
     
     </div>
 
-    <pre class="usage"><span class='fu'>read.nodes.sql</span>(<span class='no'>nodeFile</span>, <span class='kw'>sqlFile</span> <span class='kw'>=</span> <span class='st'>"nameNode.sqlite"</span>)</pre>
+    <pre class="usage"><span class='fu'>read.nodes.sql</span>(<span class='no'>nodeFile</span>, <span class='kw'>sqlFile</span> <span class='kw'>=</span> <span class='st'>"nameNode.sqlite"</span>, <span class='kw'>overwrite</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -124,6 +124,10 @@
     <tr>
       <th>sqlFile</th>
       <td><p>a string giving the path where the output SQLite file should be saved</p></td>
+    </tr>
+    <tr>
+      <th>overwrite</th>
+      <td><p>If TRUE, delete nodes table in database if present and regenerate</p></td>
     </tr>
     </table>
     
