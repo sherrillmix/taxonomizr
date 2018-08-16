@@ -20,7 +20,7 @@
 #' writeLines(namesText,tmpFile)
 #' read.names(tmpFile)
 read.names<-function(nameFile,onlyScientific=TRUE){
-  .Deprecated('read.names.sql','taxonomizr',"taxonomizr is moving from data.table to SQLite databases to improve performance. This will require changing nodes and names processing. Please see http://github.com/sherrillmix/taxonomizr/")
+  .Deprecated('read.names.sql','taxonomizr',"taxonomizr is moving from data.table to SQLite databases to improve performance. This will require changing nodes and names processing. Please see ?read.names.sql or http://github.com/sherrillmix/taxonomizr/")
   splitLines<-do.call(rbind,strsplit(readLines(nameFile),"\t\\|\t?"))
   if(onlyScientific)splitLines<-splitLines[splitLines[,4]=='scientific name',]
   splitLines<-splitLines[,-(3:4)]
@@ -100,7 +100,7 @@ read.names.sql<-function(nameFile,sqlFile='nameNode.sqlite',overwrite=FALSE){
 #' writeLines(nodes,tmpFile)
 #' read.nodes(tmpFile)
 read.nodes<-function(nodeFile){
-  .Deprecated('read.nodes.sql','taxonomizr',"taxonomizr is moving from data.table to SQLite databases to improve performance. This will require changing nodes and names processing. Please see http://github.com/sherrillmix/taxonomizr/")
+  .Deprecated('read.nodes.sql','taxonomizr',"taxonomizr is moving from data.table to SQLite databases to improve performance. This will require changing nodes and names processing. Please see ?read.nodes.sql or http://github.com/sherrillmix/taxonomizr/")
   splitLines<-do.call(rbind,lapply(strsplit(readLines(nodeFile),"\t\\|\t?"),'[',1:3))
   colnames(splitLines)<-c('id','parent','rank')
   splitLines<-data.frame('id'=as.numeric(splitLines[,'id']),'rank'=splitLines[,'rank'],'parent'=as.numeric(splitLines[,'parent']),stringsAsFactors=FALSE)
@@ -114,6 +114,7 @@ read.nodes<-function(nodeFile){
 #'
 #' @param nodeFile string giving the path to an NCBI node file to read from (both gzipped or uncompressed files are ok)
 #' @param sqlFile a string giving the path where the output SQLite file should be saved
+#' @param overwrite If TRUE, delete nodes table in database if present and regenerate
 #' @return a data.table with columns id, parent and rank with a key on id
 #' @references \url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/}
 #' @seealso \code{\link{read.names}}
@@ -130,13 +131,17 @@ read.nodes<-function(nodeFile){
 #' outFile<-tempfile()
 #' writeLines(nodes,tmpFile)
 #' read.nodes.sql(tmpFile,outFile)
-read.nodes.sql<-function(nodeFile,sqlFile='nameNode.sqlite'){
+read.nodes.sql<-function(nodeFile,sqlFile='nameNode.sqlite',overwrite=FALSE){
   if(file.exists(sqlFile)){
     dbTest <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
     on.exit(RSQLite::dbDisconnect(dbTest))
-    if('nodes' %in% RSQLite::dbListTables(dbTest)){
-      message(sqlFile,' already contains table nodes. Delete file (or table) to reload')
-      return(invisible(sqlFile))
+    if('names' %in% RSQLite::dbListTables(dbTest)){
+      if(overwrite){
+        RSQLite::dbExecute(dbTest,'DROP TABLE nodes')
+      }else{
+        message(sqlFile,' already contains table nodes. Delete file or set overwrite=TRUE to reload')
+        return(invisible(sqlFile))
+      }
     }
   }
   splitLines<-do.call(rbind,lapply(strsplit(readLines(nodeFile),'\\s*\\|\\s*'),'[',1:3))
@@ -370,7 +375,7 @@ read.accession2taxid<-function(taxaFiles,sqlFile,vocal=TRUE,extraSqlCommand='',i
 #' taxaNodes<-read.nodes(tmpFile)
 #' getTaxonomy2(c(9606,9605),taxaNodes,taxaNames,mc.cores=1)
 getTaxonomy2<-function(ids,taxaNodes ,taxaNames, desiredTaxa=c('superkingdom','phylum','class','order','family','genus','species'),mc.cores=1,debug=FALSE){
-  .Deprecated('getTaxonomy','taxonomizr',"taxonomizr is moving from data.table to SQLite databases to improve performance. This will require changing nodes and names processing. Please see http://github.com/sherrillmix/taxonomizr/")
+  .Deprecated('getTaxonomy','taxonomizr',"taxonomizr is moving from data.table to SQLite databases to improve performance. This will require changing nodes and names processing. Please see ?getTaxonomy or http://github.com/sherrillmix/taxonomizr/")
   ids<-as.numeric(ids)
   if(length(ids)==0)return(NULL)
   uniqIds<-unique(ids)
