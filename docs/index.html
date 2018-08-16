@@ -29,7 +29,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">taxonomizr</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.4.1</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.5.0</span>
       </span>
     </div>
 
@@ -80,11 +80,20 @@
 <h2 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h2>
 <p><code>taxonomizr</code> provides some simple functions to parse NCBI taxonomy files and accession dumps and efficiently use them to assign <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/taxonomyhome.html/">taxonomy</a> to accession numbers or taxonomic IDs. This is useful for example to assign taxonomy to BLAST results. This is all done locally after downloading the appropriate files from NCBI using included functions (see <a href="#preparation">below</a>).</p>
+<p>The major functions are: * <code>prepareDatabase</code>: download data from NCBI and prepare SQLite database * <code>accessionToTaxa</code>: convert accession numbers to taxonomic IDs * <code>getTaxonomy</code>: convert taxonomic IDs to taxonomy</p>
+<p>More specialized functions are: * <code>getId</code>: convert a biological name to taxonomic ID * <code>getAccessions</code>: find accessions for a given taxonomic ID</p>
+<p>And a simple use case might look like (see below for more details):</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(taxonomizr)
+<span class="co">#note this will require a lot of hard drive space, bandwidth and time to process all the data from NCBI</span>
+<span class="kw"><a href="reference/prepareDatabase.html">prepareDatabase</a></span>(<span class="st">'accessionTaxa.sql'</span>)
+blastAccessions&lt;-<span class="kw">c</span>(<span class="st">"Z17430.1"</span>,<span class="st">"Z17429.1"</span>,<span class="st">"X62402.1"</span>) 
+ids&lt;-<span class="kw"><a href="reference/accessionToTaxa.html">accessionToTaxa</a></span>(blastAccessions,<span class="st">'accessionTaxa.sql'</span>)
+<span class="kw"><a href="reference/getTaxonomy.html">getTaxonomy</a></span>(ids,<span class="st">'accessionTaxa.sql'</span>)</code></pre></div>
 </div>
 <div id="requirements" class="section level2">
 <h2 class="hasAnchor">
 <a href="#requirements" class="anchor"></a>Requirements</h2>
-<p>This package downloads a few databases from NCBI and stores them in an easily accessible form on the hardrive. This ends up taking a decent amount of space so you’ll probably want around 75 Gb of free hard drive space.</p>
+<p>This package downloads a few databases from NCBI and stores them in an easily accessible form on the hard drive. This ends up taking a decent amount of space so you’ll probably want around 75 Gb of free hard drive space.</p>
 </div>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
@@ -100,6 +109,102 @@
 <h2 class="hasAnchor">
 <a href="#preparation" class="anchor"></a>Preparation<a name="preparation"></a>
 </h2>
+<p>Since version 0.5.0, there is a simple function to run all preparations. Note that you’ll need a bit of time, download bandwidth and hard drive space before running this command (we’re downloading taxonomic assignments for every record in NCBI). To create a SQLite database called <code>accessionTaxa.sql</code> in the current working directory (you may want to store this somewhere more centrally located so it does not need to be duplicated with every project), we can run:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="reference/prepareDatabase.html">prepareDatabase</a></span>(<span class="st">'accessionTaxa.sql'</span>)</code></pre></div>
+<pre><code>## Downloading names and nodes with getNamesAndNodes()</code></pre>
+<pre><code>## Downloading accession2taxid with getAccession2taxid()</code></pre>
+<pre><code>## This can be a big (several gigabytes) download. Please be patient and use a fast connection.</code></pre>
+<pre><code>## Preprocessing names with read.names.sql()</code></pre>
+<pre><code>## Preprocessing nodes with read.nodes.sql()</code></pre>
+<pre><code>## Preprocessing accession2taxid with read.accession2taxid()</code></pre>
+<pre><code>## Reading ./nucl_gb.accession2taxid.gz.</code></pre>
+<pre><code>## Reading ./nucl_est.accession2taxid.gz.</code></pre>
+<pre><code>## Reading ./nucl_gss.accession2taxid.gz.</code></pre>
+<pre><code>## Reading ./nucl_wgs.accession2taxid.gz.</code></pre>
+<pre><code>## Reading in values. This may take a while.</code></pre>
+<pre><code>## Adding index. This may also take a while.</code></pre>
+<pre><code>## [1] "accessionTaxa.sql"</code></pre>
+<p>If everything works then that should have prepared a SQLite database ready for use. You can skip the “Manual preparation” steps below.</p>
+<p>All files are cached locally and so the preparation is only required once (delete/rename the SQLite database and call the function to regenerate the database). It is not necessary to manually check for the presence of the database since the function checks to see if SQLite database is present and if so skips downloading/processing. For example, running the command again produces:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="reference/prepareDatabase.html">prepareDatabase</a></span>(<span class="st">'accessionTaxa.sql'</span>)</code></pre></div>
+<pre><code>## SQLite database accessionTaxa.sql already exists. Delete to regenerate</code></pre>
+<pre><code>## [1] "accessionTaxa.sql"</code></pre>
+</div>
+<div id="assigning-taxonomy" class="section level2">
+<h2 class="hasAnchor">
+<a href="#assigning-taxonomy" class="anchor"></a>Assigning taxonomy</h2>
+<div id="finding-taxonomy-for-ncbi-accession-numbers" class="section level3">
+<h3 class="hasAnchor">
+<a href="#finding-taxonomy-for-ncbi-accession-numbers" class="anchor"></a>Finding taxonomy for NCBI accession numbers</h3>
+<p>Now we are ready to convert NCBI accession numbers to taxonomic IDs. For example, to find the taxonomic IDs associated with NCBI accession numbers “LN847353.1” and “AL079352.3”:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">taxaId&lt;-<span class="kw"><a href="reference/accessionToTaxa.html">accessionToTaxa</a></span>(<span class="kw">c</span>(<span class="st">"LN847353.1"</span>,<span class="st">"AL079352.3"</span>),<span class="st">"accessionTaxa.sql"</span>)
+<span class="kw">print</span>(taxaId)</code></pre></div>
+<pre><code>## [1] 1313 9606</code></pre>
+<p>And to get the taxonomy for those IDs:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="reference/getTaxonomy.html">getTaxonomy</a></span>(taxaId,<span class="st">'accessionTaxa.sql'</span>)</code></pre></div>
+<pre><code>##      superkingdom phylum       class      order            
+## 1313 "Bacteria"   "Firmicutes" "Bacilli"  "Lactobacillales"
+## 9606 "Eukaryota"  "Chordata"   "Mammalia" "Primates"       
+##      family             genus           species                   
+## 1313 "Streptococcaceae" "Streptococcus" "Streptococcus pneumoniae"
+## 9606 "Hominidae"        "Homo"          "Homo sapiens"</code></pre>
+<p>You can also get taxonomy for NCBI accession numbers without versions (the .X following the main number e.g. the “.1” in LN847353.1) using the <code>version='base'</code> argument of <code>accessionToTaxa</code>:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">taxaId&lt;-<span class="kw"><a href="reference/accessionToTaxa.html">accessionToTaxa</a></span>(<span class="kw">c</span>(<span class="st">"LN847353"</span>,<span class="st">"AL079352"</span>),<span class="st">"accessionTaxa.sql"</span>)
+<span class="kw">print</span>(taxaId)</code></pre></div>
+<pre><code>## [1] NA NA</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">taxaId&lt;-<span class="kw"><a href="reference/accessionToTaxa.html">accessionToTaxa</a></span>(<span class="kw">c</span>(<span class="st">"LN847353"</span>,<span class="st">"AL079352"</span>),<span class="st">"accessionTaxa.sql"</span>,<span class="dt">version=</span><span class="st">'base'</span>)
+<span class="kw">print</span>(taxaId)</code></pre></div>
+<pre><code>## [1] 1313 9606</code></pre>
+</div>
+<div id="finding-taxonomy-for-taxonomic-names" class="section level3">
+<h3 class="hasAnchor">
+<a href="#finding-taxonomy-for-taxonomic-names" class="anchor"></a>Finding taxonomy for taxonomic names</h3>
+<p>If you’d like to find IDs for taxonomic names then you can do something like:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">taxaId&lt;-<span class="kw"><a href="reference/getId.html">getId</a></span>(<span class="kw">c</span>(<span class="st">'Homo sapiens'</span>,<span class="st">'Bos taurus'</span>,<span class="st">'Homo'</span>),<span class="st">'accessionTaxa.sql'</span>)
+<span class="kw">print</span>(taxaId)</code></pre></div>
+<pre><code>## [1] "9606" "9913" "9605"</code></pre>
+<p>And again to get the taxonomy for those IDs use <code>getTaxonomy</code>:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="reference/getTaxonomy.html">getTaxonomy</a></span>(taxaId,<span class="st">'accessionTaxa.sql'</span>)</code></pre></div>
+<pre><code>##      superkingdom phylum     class      order      family      genus 
+## 9606 "Eukaryota"  "Chordata" "Mammalia" "Primates" "Hominidae" "Homo"
+## 9913 "Eukaryota"  "Chordata" "Mammalia" NA         "Bovidae"   "Bos" 
+## 9605 "Eukaryota"  "Chordata" "Mammalia" "Primates" "Hominidae" "Homo"
+##      species       
+## 9606 "Homo sapiens"
+## 9913 "Bos taurus"  
+## 9605 NA</code></pre>
+</div>
+<div id="finding-accessions-for-a-given-taxonomic-id" class="section level3">
+<h3 class="hasAnchor">
+<a href="#finding-accessions-for-a-given-taxonomic-id" class="anchor"></a>Finding accessions for a given taxonomic ID</h3>
+<p>To find all the accessions for a given taxonomic ID, you can use the <code>getAccessions</code> function. This is a bit of an unusual use case so to preserve space, an index is not created by default in <code>read.accession2taxid</code>. If you are going to use this function, you will want to rebuild the SQLite database with the <code>indexTaxa</code> argument set to true with something like:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="reference/read.accession2taxid.html">read.accession2taxid</a></span>(<span class="kw">list.files</span>(<span class="st">'.'</span>,<span class="st">'accession2taxid.gz$'</span>),<span class="st">'accessionTaxa.sql'</span>,<span class="dt">indexTaxa=</span><span class="ot">TRUE</span>)</code></pre></div>
+<p>Then you can get the accessions for taxa 3702 with a command like (note that the limit argument is used here in order to preserve space):</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="reference/getAccessions.html">getAccessions</a></span>(<span class="dv">3702</span>,<span class="st">'accessionTaxa.sql'</span>,<span class="dt">limit=</span><span class="dv">10</span>)</code></pre></div>
+<pre><code>##    taxa accession
+## 1  3702  Z17427.1
+## 2  3702  Z17428.1
+## 3  3702  Z17429.1
+## 4  3702  Z17430.1
+## 5  3702  Z17431.1
+## 6  3702  Z17432.1
+## 7  3702  Z17433.1
+## 8  3702  Z17434.1
+## 9  3702  Z17435.1
+## 10 3702  Z17436.1</code></pre>
+</div>
+</div>
+<div id="switch-from-data-table-to-sqlite" class="section level2">
+<h2 class="hasAnchor">
+<a href="#switch-from-data-table-to-sqlite" class="anchor"></a>Switch from data.table to SQLite</h2>
+<p>Version 0.5.0 marked a change for name and node lookups from using data.table to using SQLite. This was necessary to increase performance (10-100x speedup for <code>getTaxonomy</code>) and create a simpler interface (a single SQLite database contains all necessary data). Unfortunately, this switch requires a couple breaking changes: * <code>getTaxonomy</code> changes from <code><a href="reference/getTaxonomy.html">getTaxonomy(ids,namesDT,nodesDT)</a></code> to <code><a href="reference/getTaxonomy.html">getTaxonomy(ids,sqlFile)</a></code> * <code>getId</code> changes from <code><a href="reference/getId.html">getId(taxa,namesDT)</a></code> to <code><a href="reference/getId.html">getId(taxa,sqlFile)</a></code> * <code>read.names</code> is deprecated, instead use <code>read.names.sql</code>. For example, instead of calling <code>names&lt;-read.names('names.dmp')</code> in every session, simply call <code><a href="reference/read.names.sql.html">read.names.sql('names.dmp','accessionTaxa.sql')</a></code> once (or use the convenient <code>prepareDatabase</code> as <a href="#preparation">above</a>)). * <code>read.nodes</code> is deprecated, instead use <code>read.names.sql</code>. For example. instead of calling <code>nodes&lt;-read.names('nodes.dmp')</code> in every session, simply call <code><a href="reference/read.nodes.sql.html">read.nodes.sql('nodes.dmp','accessionTaxa.sql')</a></code> once (or use the convenient <code>prepareDatabase</code> as <a href="#preparation">above</a>).</p>
+<p>I’ve tried to ease any problems with this by overloading <code>getTaxonomy</code> and <code>getId</code> to still function (with a warning) if passed a data.table names and nodes argument and providing a simpler <code>prepareDatabase</code> function for completing all setup steps (hopefully avoiding direct calls to <code>read.names</code> and <code>read.nodes</code> for most users).</p>
+<p>I plan to eventually remove data.table functionality to avoid a split codebase so please switch to the new SQLite format in all new code.</p>
+</div>
+<div id="manual-preparation-of-database-usually-not-necessary" class="section level2">
+<h2 class="hasAnchor">
+<a href="#manual-preparation-of-database-usually-not-necessary" class="anchor"></a>Manual preparation of database (usually not necessary)</h2>
+<p><strong>Note:</strong> Since version 0.5.0, it is usually not necessary to run the following manually, the function <code><a href="reference/prepareDatabase.html">prepareDatabase()</a></code> should do most of this automatically for you (see <a href="#preparation">above</a>).</p>
 <p>In order to avoid constant internet access and slow APIs, the first step in using the package is to downloads all necessary files from NCBI. This uses a bit of disk space but makes future access reliable and fast.</p>
 <p><strong>Note:</strong> It is not necessary to manually check for the presence of these files since the functions automatically check to see if their output is present and if so skip downloading/processing. Delete the local files if you would like to redownload or reprocess them.</p>
 <div id="download-names-and-nodes" class="section level3">
@@ -122,10 +227,13 @@
 <span class="kw"><a href="reference/getAccession2taxid.html">getAccession2taxid</a></span>(<span class="dt">types=</span><span class="st">'prot'</span>)</code></pre></div>
 <pre><code>## [1] "./prot.accession2taxid.gz"</code></pre>
 </div>
-<div id="convert-accessions-to-database" class="section level3">
+<div id="convert-names-nodes-and-accessions-to-database" class="section level3">
 <h3 class="hasAnchor">
-<a href="#convert-accessions-to-database" class="anchor"></a>Convert accessions to database</h3>
-<p>Then process the downloaded accession files into a more easily accessed form (this could take a while):</p>
+<a href="#convert-names-nodes-and-accessions-to-database" class="anchor"></a>Convert names, nodes and accessions to database</h3>
+<p>Then process the downloaded names and nodes files into a more easily accessed form:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="reference/read.names.sql.html">read.names.sql</a></span>(<span class="st">'names.dmp'</span>,<span class="st">'accessionTaxa.sql'</span>)
+<span class="kw"><a href="reference/read.nodes.sql.html">read.nodes.sql</a></span>(<span class="st">'nodes.dmp'</span>,<span class="st">'accessionTaxa.sql'</span>)</code></pre></div>
+<p>Next process the downloaded accession files into the same database (this one could take a while):</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="reference/read.accession2taxid.html">read.accession2taxid</a></span>(<span class="kw">list.files</span>(<span class="st">'.'</span>,<span class="st">'accession2taxid.gz$'</span>),<span class="st">'accessionTaxa.sql'</span>)</code></pre></div>
 <pre><code>## Reading nucl_est.accession2taxid.gz.</code></pre>
 <pre><code>## Reading nucl_gb.accession2taxid.gz.</code></pre>
@@ -133,56 +241,7 @@
 <pre><code>## Reading nucl_wgs.accession2taxid.gz.</code></pre>
 <pre><code>## Reading in values. This may take a while.</code></pre>
 <pre><code>## Adding index. This may also take a while.</code></pre>
-<pre><code>## [1] TRUE</code></pre>
 <p>Now everything should be ready for processing. All files are cached locally and so the preparation is only required once (or whenever you would like to update the data). It is not necessary to manually check for the presence of these files since the functions automatically check to see if their output is present and if so skip downloading/processing. Delete the local files if you would like to redownload or reprocess them.</p>
-</div>
-</div>
-<div id="assigning-taxonomy" class="section level2">
-<h2 class="hasAnchor">
-<a href="#assigning-taxonomy" class="anchor"></a>Assigning taxonomy</h2>
-<div id="finding-taxonomy-for-ncbi-accession-numbers" class="section level3">
-<h3 class="hasAnchor">
-<a href="#finding-taxonomy-for-ncbi-accession-numbers" class="anchor"></a>Finding taxonomy for NCBI accession numbers</h3>
-<p>First, load the nodes and names files into memory:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">taxaNodes&lt;-<span class="kw"><a href="reference/read.nodes.html">read.nodes</a></span>(<span class="st">'nodes.dmp'</span>)
-taxaNames&lt;-<span class="kw"><a href="reference/read.names.html">read.names</a></span>(<span class="st">'names.dmp'</span>)</code></pre></div>
-<p>Then we are ready to convert NCBI accession numbers to taxonomic IDs. For example, to find the taxonomic IDs associated with NCBI accession numbers “LN847353.1” and “AL079352.3”:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">taxaId&lt;-<span class="kw"><a href="reference/accessionToTaxa.html">accessionToTaxa</a></span>(<span class="kw">c</span>(<span class="st">"LN847353.1"</span>,<span class="st">"AL079352.3"</span>),<span class="st">"accessionTaxa.sql"</span>)
-<span class="kw">print</span>(taxaId)</code></pre></div>
-<pre><code>## [1] 1313 9606</code></pre>
-<p>And to get the taxonomy for those IDs:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="reference/getTaxonomy.html">getTaxonomy</a></span>(taxaId,taxaNodes,taxaNames)</code></pre></div>
-<pre><code>##      superkingdom phylum       class      order            
-## 1313 "Bacteria"   "Firmicutes" "Bacilli"  "Lactobacillales"
-## 9606 "Eukaryota"  "Chordata"   "Mammalia" "Primates"       
-##      family             genus           species                   
-## 1313 "Streptococcaceae" "Streptococcus" "Streptococcus pneumoniae"
-## 9606 "Hominidae"        "Homo"          "Homo sapiens"</code></pre>
-<p>You can also get taxonomy for NCBI accession numbers without versions (the .X following the main number e.g. the the “.1” in LN847353.1) using the <code>version='base'</code> argument of <code>accessionToTaxa</code>:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">taxaId&lt;-<span class="kw"><a href="reference/accessionToTaxa.html">accessionToTaxa</a></span>(<span class="kw">c</span>(<span class="st">"LN847353"</span>,<span class="st">"AL079352"</span>),<span class="st">"accessionTaxa.sql"</span>)
-<span class="kw">print</span>(taxaId)</code></pre></div>
-<pre><code>## [1] NA NA</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">taxaId&lt;-<span class="kw"><a href="reference/accessionToTaxa.html">accessionToTaxa</a></span>(<span class="kw">c</span>(<span class="st">"LN847353"</span>,<span class="st">"AL079352"</span>),<span class="st">"accessionTaxa.sql"</span>,<span class="dt">version=</span><span class="st">'base'</span>)
-<span class="kw">print</span>(taxaId)</code></pre></div>
-<pre><code>## [1] 1313 9606</code></pre>
-</div>
-<div id="finding-taxonomy-for-taxonomic-names" class="section level3">
-<h3 class="hasAnchor">
-<a href="#finding-taxonomy-for-taxonomic-names" class="anchor"></a>Finding taxonomy for taxonomic names</h3>
-<p>If you’d like to find IDs for taxonomic names then you can do something like:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">taxaId&lt;-<span class="kw"><a href="reference/getId.html">getId</a></span>(<span class="kw">c</span>(<span class="st">'Homo sapiens'</span>,<span class="st">'Bos taurus'</span>,<span class="st">'Homo'</span>),taxaNames)
-<span class="kw">print</span>(taxaId)</code></pre></div>
-<pre><code>## [1] "9606" "9913" "9605"</code></pre>
-<p>And again to get the taxonomy for those IDs use <code>getTaxonomy</code>:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="reference/getTaxonomy.html">getTaxonomy</a></span>(taxaId,taxaNodes,taxaNames)</code></pre></div>
-<pre><code>##      superkingdom phylum     class      order      family      genus 
-## 9606 "Eukaryota"  "Chordata" "Mammalia" "Primates" "Hominidae" "Homo"
-## 9913 "Eukaryota"  "Chordata" "Mammalia" NA         "Bovidae"   "Bos" 
-## 9605 "Eukaryota"  "Chordata" "Mammalia" "Primates" "Hominidae" "Homo"
-##      species       
-## 9606 "Homo sapiens"
-## 9913 "Bos taurus"  
-## 9605 NA</code></pre>
 </div>
 </div>
 </div>
@@ -194,7 +253,7 @@ taxaNames&lt;-<span class="kw"><a href="reference/read.names.html">read.names</a
 <ul class="list-unstyled">
 <li>Download from CRAN at <br><a href="https://cloud.r-project.org/package=taxonomizr">https://​cloud.r-project.org/​package=taxonomizr</a>
 </li>
-<li>Report a bug at <br><a href="NA">NA</a>
+<li>Report a bug at <br><a href="https://github.com/sherrillmix/taxonomizr/issues">https://​github.com/​sherrillmix/​taxonomizr/​issues</a>
 </li>
 </ul>
 </div>

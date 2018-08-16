@@ -9,7 +9,7 @@ accessionToTaxa(accessions, sqlFile, version = c("version", "base"))
 \arguments{
 \item{accessions}{a vector of NCBI accession strings to convert to taxa}
 
-\item{sqlFile}{a string giving the path to a sqlite file screated by \code{\link{read.accession2taxid}}}
+\item{sqlFile}{a string giving the path to a SQLite file screated by \code{\link{read.accession2taxid}}}
 
 \item{version}{either 'version' indicating that taxaids are versioned e.g. Z17427.1 or 'base' indicating that taxaids do not have version numbers e.g. Z17427}
 }
@@ -31,7 +31,7 @@ taxa<-c(
 inFile<-tempfile()
 sqlFile<-tempfile()
 writeLines(taxa,inFile)
-read.accession2taxid(inFile,sqlFile)
+read.accession2taxid(inFile,sqlFile,vocal=FALSE)
 accessionToTaxa(c("Z17430.1","Z17429.1","X62402.1",'NOTREAL'),sqlFile)
 }
 \references{

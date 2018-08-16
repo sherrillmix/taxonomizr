@@ -30,7 +30,7 @@
 
 <meta property="og:title" content="Read NCBI accession2taxid files — read.accession2taxid" />
 
-<meta property="og:description" content="Take NCBI accession2taxid files, keep only accession and taxa and save it as a sqlite database" />
+<meta property="og:description" content="Take NCBI accession2taxid files, keep only accession and taxa and save it as a SQLite database" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -58,7 +58,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">taxonomizr</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.4.1</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.5.0</span>
       </span>
     </div>
 
@@ -108,12 +108,12 @@
 
     <div class="ref-description">
     
-    <p>Take NCBI accession2taxid files, keep only accession and taxa and save it as a sqlite database</p>
+    <p>Take NCBI accession2taxid files, keep only accession and taxa and save it as a SQLite database</p>
     
     </div>
 
     <pre class="usage"><span class='fu'>read.accession2taxid</span>(<span class='no'>taxaFiles</span>, <span class='no'>sqlFile</span>, <span class='kw'>vocal</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>extraSqlCommand</span> <span class='kw'>=</span> <span class='st'>""</span>,
-  <span class='kw'>indexTaxa</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
+  <span class='kw'>indexTaxa</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>overwrite</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -124,7 +124,7 @@
     </tr>
     <tr>
       <th>sqlFile</th>
-      <td><p>a string giving the path where the output sqlite file should be saved</p></td>
+      <td><p>a string giving the path where the output SQLite file should be saved</p></td>
     </tr>
     <tr>
       <th>vocal</th>
@@ -132,11 +132,15 @@
     </tr>
     <tr>
       <th>extraSqlCommand</th>
-      <td><p>for advanced use. A string giving a command to be called on the sqlite databse before loading data e.g. "pragma temp_store = 2;" to keep all temp files in memory (don't do this unless you have a lot (&gt;100 Gb) of RAM)</p></td>
+      <td><p>for advanced use. A string giving a command to be called on the SQLite databse before loading data e.g. "pragma temp_store = 2;" to keep all temp files in memory (don't do this unless you have a lot (&gt;100 Gb) of RAM)</p></td>
     </tr>
     <tr>
       <th>indexTaxa</th>
       <td><p>if TRUE add an index for taxa ID. This would only be necessary if you want to look up accessions by taxa ID e.g. <code><a href='getAccessions.html'>getAccessions</a></code></p></td>
+    </tr>
+    <tr>
+      <th>overwrite</th>
+      <td><p>If TRUE, delete accessionTaxa table in database if present and regenerate</p></td>
     </tr>
     </table>
     
@@ -150,7 +154,7 @@
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='read.nodes.html'>read.nodes</a></code>, <code><a href='read.names.html'>read.names</a></code></p></div>
+    <div class='dont-index'><p><code><a href='read.nodes.sql.html'>read.nodes.sql</a></code>, <code><a href='read.names.sql.html'>read.names.sql</a></code></p></div>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
@@ -164,7 +168,8 @@
 <span class='no'>inFile</span><span class='kw'>&lt;-</span><span class='fu'>tempfile</span>()
 <span class='no'>outFile</span><span class='kw'>&lt;-</span><span class='fu'>tempfile</span>()
 <span class='fu'>writeLines</span>(<span class='no'>taxa</span>,<span class='no'>inFile</span>)
-<span class='fu'>read.accession2taxid</span>(<span class='no'>inFile</span>,<span class='no'>outFile</span>)</div><div class='output co'>#&gt; <span class='message'>Reading /tmp/RtmpM406lF/file26377e73faab.</span></div><div class='output co'>#&gt; <span class='message'>Reading in values. This may take a while.</span></div><div class='output co'>#&gt; <span class='message'>Adding index. This may also take a while.</span></div><div class='output co'>#&gt; [1] TRUE</div><div class='input'><span class='no'>db</span><span class='kw'>&lt;-</span><span class='kw pkg'>RSQLite</span><span class='kw ns'>::</span><span class='fu'>dbConnect</span>(<span class='kw pkg'>RSQLite</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/RSQLite/topics/SQLite'>SQLite</a></span>(),<span class='kw'>dbname</span><span class='kw'>=</span><span class='no'>outFile</span>)
+<span class='fu'>read.accession2taxid</span>(<span class='no'>inFile</span>,<span class='no'>outFile</span>,<span class='kw'>vocal</span><span class='kw'>=</span><span class='fl'>FALSE</span>)
+<span class='no'>db</span><span class='kw'>&lt;-</span><span class='kw pkg'>RSQLite</span><span class='kw ns'>::</span><span class='fu'>dbConnect</span>(<span class='kw pkg'>RSQLite</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/RSQLite/topics/SQLite'>SQLite</a></span>(),<span class='kw'>dbname</span><span class='kw'>=</span><span class='no'>outFile</span>)
 <span class='kw pkg'>RSQLite</span><span class='kw ns'>::</span><span class='fu'>dbGetQuery</span>(<span class='no'>db</span>,<span class='st'>'SELECT * FROM accessionTaxa'</span>)</div><div class='output co'>#&gt;     base accession taxa
 #&gt; 1 Z17427  Z17427.1 3702
 #&gt; 2 Z17428  Z17428.1 3702

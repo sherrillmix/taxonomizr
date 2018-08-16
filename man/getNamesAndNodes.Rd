@@ -19,7 +19,7 @@ getNamesAndNodes(outDir = ".",
 a vector of file path strings of the locations of the output files
 }
 \description{
-Download a taxdump.tar.gz file from NCBI servers and extract the names.dmp and nodes.dmp files from it. These can then be used to create data.tables with \code{\link{read.names}} and \code{\link{read.nodes}}. Note that if the files already exist in the target directory then this function will not redownload them. Delete the files if a fresh download is desired.
+Download a taxdump.tar.gz file from NCBI servers and extract the names.dmp and nodes.dmp files from it. These can then be used to create a SQLite database with \code{\link{read.names.sql}} and \code{\link{read.nodes.sql}}. Note that if the files already exist in the target directory then this function will not redownload them. Delete the files if a fresh download is desired.
 }
 \examples{
 \dontrun{
@@ -30,5 +30,5 @@ Download a taxdump.tar.gz file from NCBI servers and extract the names.dmp and n
 \url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/}, \url{https://www.ncbi.nlm.nih.gov/Taxonomy/taxonomyhome.html/}
 }
 \seealso{
-\code{\link{read.nodes}}, \code{\link{read.names}}
+\code{\link{read.nodes.sql}}, \code{\link{read.names.sql}}
 }

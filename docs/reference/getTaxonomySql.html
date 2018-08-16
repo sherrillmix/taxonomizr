@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Get taxonomic ranks for a taxa — getTaxonomy • taxonomizr</title>
+<title>Get taxonomic ranks for a taxa — getTaxonomySql • taxonomizr</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -28,9 +28,9 @@
 
 
 
-<meta property="og:title" content="Get taxonomic ranks for a taxa — getTaxonomy" />
+<meta property="og:title" content="Get taxonomic ranks for a taxa — getTaxonomySql" />
 
-<meta property="og:description" content="Take NCBI taxa IDs and get the corresponding taxa ranks from name and node SQLite database" />
+<meta property="og:description" content="Take NCBI taxa IDs and get the corresponding taxa ranks from name and node sqlite database" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -103,16 +103,16 @@
     <div class="page-header">
     <h1>Get taxonomic ranks for a taxa</h1>
     
-    <div class="hidden name"><code>getTaxonomy.Rd</code></div>
+    <div class="hidden name"><code>getTaxonomySql.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Take NCBI taxa IDs and get the corresponding taxa ranks from name and node SQLite database</p>
+    <p>Take NCBI taxa IDs and get the corresponding taxa ranks from name and node sqlite database</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>getTaxonomy</span>(<span class='no'>ids</span>, <span class='kw'>sqlFile</span> <span class='kw'>=</span> <span class='st'>"nameNode.sqlite"</span>, <span class='no'>...</span>,
+    <pre class="usage"><span class='fu'>getTaxonomySql</span>(<span class='no'>ids</span>, <span class='kw'>sqlFile</span> <span class='kw'>=</span> <span class='st'>"nameNode.sqlite"</span>,
   <span class='kw'>desiredTaxa</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"superkingdom"</span>, <span class='st'>"phylum"</span>, <span class='st'>"class"</span>, <span class='st'>"order"</span>, <span class='st'>"family"</span>,
   <span class='st'>"genus"</span>, <span class='st'>"species"</span>))</pre>
     
@@ -125,11 +125,7 @@
     </tr>
     <tr>
       <th>sqlFile</th>
-      <td><p>a string giving the path to a SQLite file containing names and nodes tables</p></td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td><p>legacy additional arguments to original data.table based getTaxonomy function. Used only for support for deprecated function, do not use in new code.</p></td>
+      <td><p>a string giving the path to a sqlite file containing names and nodes tables</p></td>
     </tr>
     <tr>
       <th>desiredTaxa</th>
@@ -143,7 +139,7 @@
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='read.nodes.sql.html'>read.nodes.sql</a></code>, <code><a href='read.names.sql.html'>read.names.sql</a></code></p></div>
+    <div class='dont-index'><p><code><a href='read.nodes.html'>read.nodes</a></code>, <code><a href='read.names.html'>read.names</a></code></p></div>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
@@ -212,7 +208,7 @@
 )
 <span class='fu'>writeLines</span>(<span class='no'>nodesText</span>,<span class='no'>tmpFile</span>)
 <span class='no'>taxaNodes</span><span class='kw'>&lt;-</span><span class='fu'><a href='read.nodes.sql.html'>read.nodes.sql</a></span>(<span class='no'>tmpFile</span>,<span class='no'>sqlFile</span>)
-<span class='fu'>getTaxonomy</span>(<span class='fu'>c</span>(<span class='fl'>9606</span>,<span class='fl'>9605</span>),<span class='no'>sqlFile</span>)</div><div class='output co'>#&gt;      superkingdom phylum     class      order      family      genus 
+<span class='fu'>getTaxonomySql</span>(<span class='fu'>c</span>(<span class='fl'>9606</span>,<span class='fl'>9605</span>),<span class='no'>sqlFile</span>)</div><div class='output co'>#&gt;      superkingdom phylum     class      order      family      genus 
 #&gt; 9606 "Eukaryota"  "Chordata" "Mammalia" "Primates" "Hominidae" "Homo"
 #&gt; 9605 "Eukaryota"  "Chordata" "Mammalia" "Primates" "Hominidae" "Homo"
 #&gt;      species       

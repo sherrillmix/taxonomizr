@@ -30,7 +30,7 @@
 
 <meta property="og:title" content="Read NCBI nodes file — read.nodes" />
 
-<meta property="og:description" content="Take an NCBI nodes file and convert it to a data.table" />
+<meta property="og:description" content="Take an NCBI nodes file and convert it to a data.table. NOTE: This function is now deprecated for read.nodes.sql (using SQLite rather than data.table)." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -58,7 +58,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">taxonomizr</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.4.1</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.5.0</span>
       </span>
     </div>
 
@@ -108,7 +108,7 @@
 
     <div class="ref-description">
     
-    <p>Take an NCBI nodes file and convert it to a data.table</p>
+    <p>Take an NCBI nodes file and convert it to a data.table. NOTE: This function is now deprecated for <code><a href='read.nodes.sql.html'>read.nodes.sql</a></code> (using SQLite rather than data.table).</p>
     
     </div>
 
@@ -133,7 +133,7 @@
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='read.names.html'>read.names</a></code></p></div>
+    <div class='dont-index'><p><code><a href='read.names.html'>read.names</a></code>, <code><a href='read.nodes.sql.html'>read.nodes.sql</a></code></p></div>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
@@ -144,7 +144,9 @@
  <span class='st'>"7\t|\t6\t|\tspecies\t|\tAC\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|"</span>,
  <span class='st'>"9\t|\t32199\t|\tspecies\t|\tBA\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|"</span>
 )
-<span class='fu'>read.nodes</span>(<span class='fu'>textConnection</span>(<span class='no'>nodes</span>))</div><div class='output co'>#&gt;    id         rank parent
+<span class='no'>tmpFile</span><span class='kw'>&lt;-</span><span class='fu'>tempfile</span>()
+<span class='fu'>writeLines</span>(<span class='no'>nodes</span>,<span class='no'>tmpFile</span>)
+<span class='fu'>read.nodes</span>(<span class='no'>tmpFile</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: taxonomizr is moving from data.table to SQLite databases to improve performance. This will require changing nodes and names processing. Please see ?read.nodes.sql or ?taxonomizrSwitch</span></div><div class='output co'>#&gt;    id         rank parent
 #&gt; 1:  1      no rank      1
 #&gt; 2:  2 superkingdom 131567
 #&gt; 3:  6        genus 335928

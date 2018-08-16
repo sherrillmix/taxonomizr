@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Read NCBI names file — read.names • taxonomizr</title>
+<title>Read NCBI nodes file — read.nodes.sql • taxonomizr</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -28,9 +28,9 @@
 
 
 
-<meta property="og:title" content="Read NCBI names file — read.names" />
+<meta property="og:title" content="Read NCBI nodes file — read.nodes.sql" />
 
-<meta property="og:description" content="Take an NCBI names file, keep only scientific names and convert it to a data.table. NOTE: This function is now deprecated for read.names.sql (using SQLite rather than data.table)." />
+<meta property="og:description" content="Take an NCBI nodes file and convert it to a data.table" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -101,35 +101,39 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Read NCBI names file</h1>
+    <h1>Read NCBI nodes file</h1>
     
-    <div class="hidden name"><code>read.names.Rd</code></div>
+    <div class="hidden name"><code>read.nodes.sql.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Take an NCBI names file, keep only scientific names and convert it to a data.table. NOTE: This function is now deprecated for <code><a href='read.names.sql.html'>read.names.sql</a></code> (using SQLite rather than data.table).</p>
+    <p>Take an NCBI nodes file and convert it to a data.table</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>read.names</span>(<span class='no'>nameFile</span>, <span class='kw'>onlyScientific</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+    <pre class="usage"><span class='fu'>read.nodes.sql</span>(<span class='no'>nodeFile</span>, <span class='kw'>sqlFile</span> <span class='kw'>=</span> <span class='st'>"nameNode.sqlite"</span>, <span class='kw'>overwrite</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>nameFile</th>
-      <td><p>string giving the path to an NCBI name file to read from (both gzipped or uncompressed files are ok)</p></td>
+      <th>nodeFile</th>
+      <td><p>string giving the path to an NCBI node file to read from (both gzipped or uncompressed files are ok)</p></td>
     </tr>
     <tr>
-      <th>onlyScientific</th>
-      <td><p>If TRUE, only store scientific names. If FALSE, synonyms and other types are included (increasing the potential for ambiguous taxonomic assignments).</p></td>
+      <th>sqlFile</th>
+      <td><p>a string giving the path where the output SQLite file should be saved</p></td>
+    </tr>
+    <tr>
+      <th>overwrite</th>
+      <td><p>If TRUE, delete nodes table in database if present and regenerate</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a data.table with columns id and name with a key on id</p>
+    <p>a data.table with columns id, parent and rank with a key on id</p>
     
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
@@ -137,22 +141,21 @@
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='read.nodes.html'>read.nodes</a></code>, <code><a href='read.names.sql.html'>read.names.sql</a></code></p></div>
+    <div class='dont-index'><p><code><a href='read.names.sql.html'>read.names.sql</a></code></p></div>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>namesText</span><span class='kw'>&lt;-</span><span class='fu'>c</span>(
-  <span class='st'>"1\t|\tall\t|\t\t|\tsynonym\t|"</span>,
-  <span class='st'>"1\t|\troot\t|\t\t|\tscientific name\t|"</span>,
-  <span class='st'>"2\t|\tBacteria\t|\tBacteria &lt;prokaryotes&gt;\t|\tscientific name\t|"</span>,
-  <span class='st'>"2\t|\tMonera\t|\tMonera &lt;Bacteria&gt;\t|\tin-part\t|"</span>,
-  <span class='st'>"2\t|\tProcaryotae\t|\tProcaryotae &lt;Bacteria&gt;\t|\tin-part\t|"</span>
+    <pre class="examples"><div class='input'><span class='no'>nodes</span><span class='kw'>&lt;-</span><span class='fu'>c</span>(
+ <span class='st'>"1\t|\t1\t|\tno rank\t|\t\t|\t8\t|\t0\t|\t1\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|"</span>,
+ <span class='st'>"2\t|\t131567\t|\tsuperkingdom\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|"</span>,
+ <span class='st'>"6\t|\t335928\t|\tgenus\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\t\t|"</span>,
+ <span class='st'>"7\t|\t6\t|\tspecies\t|\tAC\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|"</span>,
+ <span class='st'>"9\t|\t32199\t|\tspecies\t|\tBA\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|"</span>
 )
 <span class='no'>tmpFile</span><span class='kw'>&lt;-</span><span class='fu'>tempfile</span>()
-<span class='fu'>writeLines</span>(<span class='no'>namesText</span>,<span class='no'>tmpFile</span>)
-<span class='fu'>read.names</span>(<span class='no'>tmpFile</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: taxonomizr is moving from data.table to SQLite databases to improve performance. This will require changing nodes and names processing. Please see ?read.names.sql or ?taxonomizrSwitch</span></div><div class='output co'>#&gt;    id     name
-#&gt; 1:  1     root
-#&gt; 2:  2 Bacteria</div></pre>
+<span class='no'>outFile</span><span class='kw'>&lt;-</span><span class='fu'>tempfile</span>()
+<span class='fu'>writeLines</span>(<span class='no'>nodes</span>,<span class='no'>tmpFile</span>)
+<span class='fu'>read.nodes.sql</span>(<span class='no'>tmpFile</span>,<span class='no'>outFile</span>)</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
