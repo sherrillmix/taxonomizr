@@ -48,9 +48,9 @@ test_that("Test read.names.sql",{
   expect_equal(RSQLite::dbGetQuery(db,"SELECT * FROM names WHERE scientific"),out)
   expect_equal(RSQLite::dbGetQuery(db,"SELECT * FROM names"),out2)
   RSQLite::dbDisconnect(db)
-  expect_equal(read.names.sql(textConnection(names),tmp,TRUE),tmp)
+  expect_equal(read.names.sql(textConnection(names[-length(names)]),tmp,overwrite=TRUE),tmp)
   expect_error(db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=tmp),NA)
-  expect_equal(RSQLite::dbGetQuery(db,"SELECT * FROM names"),out2)
+  expect_equal(RSQLite::dbGetQuery(db,"SELECT * FROM names"),out2[-length(names),])
   RSQLite::dbDisconnect(db)
 })
 
@@ -70,6 +70,10 @@ test_that("Test read.nodes.sql",{
   expect_equal(read.nodes.sql(textConnection(nodes),tmp),tmp)
   expect_error(db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=tmp),NA)
   expect_equal(RSQLite::dbGetQuery(db,"SELECT * FROM nodes"),out)
+  RSQLite::dbDisconnect(db)
+  expect_equal(read.nodes.sql(textConnection(nodes[-length(nodes)]),tmp,overwrite=TRUE),tmp)
+  expect_error(db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=tmp),NA)
+  expect_equal(RSQLite::dbGetQuery(db,"SELECT * FROM nodes"),out[-length(nodes),])
   RSQLite::dbDisconnect(db)
 })
 

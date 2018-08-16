@@ -135,7 +135,7 @@ read.nodes.sql<-function(nodeFile,sqlFile='nameNode.sqlite',overwrite=FALSE){
   if(file.exists(sqlFile)){
     dbTest <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
     on.exit(RSQLite::dbDisconnect(dbTest))
-    if('names' %in% RSQLite::dbListTables(dbTest)){
+    if('nodes' %in% RSQLite::dbListTables(dbTest)){
       if(overwrite){
         RSQLite::dbExecute(dbTest,'DROP TABLE nodes')
       }else{
