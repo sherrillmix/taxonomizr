@@ -552,7 +552,7 @@ accessionToTaxa<-function(accessions,sqlFile,version=c('version','base')){
   version<-match.arg(version)
   if(version=='version')version<-'accession'
   if(!file.exists(sqlFile))stop(sqlFile,' does not exist.')
-  if(length(accessions)==0)return(c())
+  if(length(accessions)==0)return(NULL)
   tmp<-tempfile()
   #set up a new table of accessions in a temp db (avoiding concurrency issues)
   #some trouble with dbWriteTable writing to "tmp.xxx" in the main database if we do this inside the attach
@@ -839,7 +839,7 @@ getAccessions<-function(taxaId,sqlFile,version=c('version','base'),limit=NULL){
   version<-match.arg(version)
   if(version=='version')version<-'accession'
   if(!file.exists(sqlFile))stop(sqlFile,' does not exist.')
-  if(length(taxaId)==0)return(c())
+  if(length(taxaId)==0)return(NULL)
   tmp<-tempfile()
   #set up a new table of accessions in a temp db (avoiding concurrency issues)
   #some trouble with dbWriteTable writing to "tmp.xxx" in the main database if we do this inside the attach

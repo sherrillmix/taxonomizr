@@ -612,4 +612,5 @@ test_that("Test getAccessions",{
   expect_equal(getAccessions(c(3702,9999,'NOTREAL'),sqlFile,'version'),data.frame('taxa'=rep(c(3702,9999,'NOTREAL'),c(4,1,1)),'accession'=c("Z17427.1","Z17428.1","Z17429.1","Z17430.1",NA,NA),stringsAsFactors=FALSE))
   #check limit
   expect_equal(getAccessions(c(3702,9606),sqlFile,limit=3),data.frame('taxa'=rep(c(3702,9606),c(3,0)),'accession'=c("Z17427.1","Z17428.1","Z17429.1"),stringsAsFactors=FALSE))
+  expect_equal(getAccessions(c(),sqlFile),NULL)
 })
