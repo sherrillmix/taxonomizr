@@ -13,7 +13,7 @@ read.nodes(nodeFile)
 a data.table with columns id, parent and rank with a key on id
 }
 \description{
-Take an NCBI nodes file and convert it to a data.table
+Take an NCBI nodes file and convert it to a data.table. NOTE: This function is now deprecated for \code{\link{read.nodes.sql}} (using SQLite rather than data.table).
 }
 \examples{
 nodes<-c(
@@ -31,5 +31,5 @@ read.nodes(tmpFile)
 \url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/}
 }
 \seealso{
-\code{\link{read.names}}
+\code{\link{read.names}}, \code{\link{read.nodes.sql}}
 }

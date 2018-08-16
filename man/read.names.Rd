@@ -15,7 +15,7 @@ read.names(nameFile, onlyScientific = TRUE)
 a data.table with columns id and name with a key on id
 }
 \description{
-Take an NCBI names file, keep only scientific names and convert it to a data.table
+Take an NCBI names file, keep only scientific names and convert it to a data.table. NOTE: This function is now deprecated for \code{\link{read.names.sql}} (using SQLite rather than data.table).
 }
 \examples{
 namesText<-c(
@@ -33,5 +33,5 @@ read.names(tmpFile)
 \url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/}
 }
 \seealso{
-\code{\link{read.nodes}}
+\code{\link{read.nodes}}, \code{\link{read.names.sql}}
 }

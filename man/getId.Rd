@@ -37,5 +37,5 @@ getId('Not a real name',names)
 getId('Multi',names)
 }
 \seealso{
-\code{\link{read.names}}
+\code{\link{getTaxonomy}}, \code{\link{read.names.sql}}
 }

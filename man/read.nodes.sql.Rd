@@ -36,5 +36,5 @@ read.nodes.sql(tmpFile,outFile)
 \url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/}
 }
 \seealso{
-\code{\link{read.names}}
+\code{\link{read.names.sql}}
 }

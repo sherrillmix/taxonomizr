@@ -25,7 +25,7 @@ getTaxonomy2(ids, taxaNodes, taxaNames, desiredTaxa = c("superkingdom",
 a matrix of taxonomic strings with a row for each id and a column for each desiredTaxa rank
 }
 \description{
-Take NCBI taxa IDs and get the corresponding taxa ranks from name and node data.tables
+Take NCBI taxa IDs and get the corresponding taxa ranks from name and node data.tables. NOTE: This function is now deprecated for \code{\link{getTaxonomy}} (using SQLite rather than data.table).
 }
 \examples{
 namesText<-c(
@@ -95,5 +95,5 @@ taxaNodes<-read.nodes(tmpFile)
 getTaxonomy2(c(9606,9605),taxaNodes,taxaNames,mc.cores=1)
 }
 \seealso{
-\code{\link{read.nodes}}, \code{\link{read.names}}
+\code{\link{read.nodes}}, \code{\link{read.names}}, \code{\link{getTaxonomy}}
 }

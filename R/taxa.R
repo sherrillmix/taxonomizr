@@ -1,13 +1,13 @@
 #' Read NCBI names file
 #'
-#' Take an NCBI names file, keep only scientific names and convert it to a data.table
+#' Take an NCBI names file, keep only scientific names and convert it to a data.table. NOTE: This function is now deprecated for \code{\link{read.names.sql}} (using SQLite rather than data.table).
 #'
 #' @param nameFile string giving the path to an NCBI name file to read from (both gzipped or uncompressed files are ok)
 #' @param onlyScientific If TRUE, only store scientific names. If FALSE, synonyms and other types are included (increasing the potential for ambiguous taxonomic assignments).
 #' @return a data.table with columns id and name with a key on id
 #' @export
 #' @references \url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/}
-#' @seealso \code{\link{read.nodes}}
+#' @seealso \code{\link{read.nodes}}, \code{\link{read.names.sql}}
 #' @examples
 #' namesText<-c(
 #'   "1\t|\tall\t|\t\t|\tsynonym\t|",
@@ -81,12 +81,12 @@ read.names.sql<-function(nameFile,sqlFile='nameNode.sqlite',overwrite=FALSE){
 
 #' Read NCBI nodes file
 #'
-#' Take an NCBI nodes file and convert it to a data.table
+#' Take an NCBI nodes file and convert it to a data.table. NOTE: This function is now deprecated for \code{\link{read.nodes.sql}} (using SQLite rather than data.table).
 #'
 #' @param nodeFile string giving the path to an NCBI node file to read from (both gzipped or uncompressed files are ok)
 #' @return a data.table with columns id, parent and rank with a key on id
 #' @references \url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/}
-#' @seealso \code{\link{read.names}}
+#' @seealso \code{\link{read.names}}, \code{\link{read.nodes.sql}}
 #' @export
 #' @examples
 #' nodes<-c(
@@ -117,7 +117,7 @@ read.nodes<-function(nodeFile){
 #' @param overwrite If TRUE, delete nodes table in database if present and regenerate
 #' @return a data.table with columns id, parent and rank with a key on id
 #' @references \url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/}
-#' @seealso \code{\link{read.names}}
+#' @seealso \code{\link{read.names.sql}}
 #' @export
 #' @examples
 #' nodes<-c(
@@ -247,7 +247,7 @@ trimTaxa<-function(inFile,outFile,desiredCols=c(2,3)){
 #' @return TRUE if sucessful
 #' @export
 #' @references \url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid}
-#' @seealso \code{\link{read.nodes}}, \code{\link{read.names}}
+#' @seealso \code{\link{read.nodes.sql}}, \code{\link{read.names.sql}}
 #' @examples
 #' taxa<-c(
 #'   "accession\taccession.version\ttaxid\tgi",
@@ -296,7 +296,7 @@ read.accession2taxid<-function(taxaFiles,sqlFile,vocal=TRUE,extraSqlCommand='',i
 
 #' Get taxonomic ranks for a taxa
 #'
-#' Take NCBI taxa IDs and get the corresponding taxa ranks from name and node data.tables
+#' Take NCBI taxa IDs and get the corresponding taxa ranks from name and node data.tables. NOTE: This function is now deprecated for \code{\link{getTaxonomy}} (using SQLite rather than data.table).
 #'
 #' @param ids a vector of ids to find taxonomy for
 #' @param taxaNodes a nodes data.table from \code{\link{read.nodes}}
@@ -307,7 +307,7 @@ read.accession2taxid<-function(taxaFiles,sqlFile,vocal=TRUE,extraSqlCommand='',i
 #' @return a matrix of taxonomic strings with a row for each id and a column for each desiredTaxa rank
 #' @import data.table
 #' @export
-#' @seealso \code{\link{read.nodes}}, \code{\link{read.names}}
+#' @seealso \code{\link{read.nodes}}, \code{\link{read.names}}, \code{\link{getTaxonomy}}
 #' @examples
 #' namesText<-c(
 #'   "1\t|\tall\t|\t\t|\tsynonym\t|",
@@ -436,7 +436,7 @@ getParentNodes<-function(ids,sqlFile='nameNode.sqlite'){
 #' @param ... legacy additional arguments to original data.table based getTaxonomy function. Used only for support for deprecated function, do not use in new code.
 #' @return a matrix of taxonomic strings with a row for each id and a column for each desiredTaxa rank
 #' @export
-#' @seealso \code{\link{read.nodes}}, \code{\link{read.names}}
+#' @seealso \code{\link{read.nodes.sql}}, \code{\link{read.names.sql}}
 #' @examples
 #' sqlFile<-tempfile()
 #' namesText<-c(
@@ -631,13 +631,13 @@ condenseTaxa<-function(taxaTable,groupings=rep(1,nrow(taxaTable))){
 
 #' Download names and nodes files from NCBI
 #'
-#' Download a taxdump.tar.gz file from NCBI servers and extract the names.dmp and nodes.dmp files from it. These can then be used to create data.tables with \code{\link{read.names}} and \code{\link{read.nodes}}. Note that if the files already exist in the target directory then this function will not redownload them. Delete the files if a fresh download is desired.
+#' Download a taxdump.tar.gz file from NCBI servers and extract the names.dmp and nodes.dmp files from it. These can then be used to create a SQLite database with \code{\link{read.names.sql}} and \code{\link{read.nodes.sql}}. Note that if the files already exist in the target directory then this function will not redownload them. Delete the files if a fresh download is desired.
 #'
 #' @param outDir the directory to put names.dmp and nodes.dmp in
 #' @param url the url where taxdump.tar.gz is located
 #' @param fileNames the filenames desired from the tar.gz file
 #' @return a vector of file path strings of the locations of the output files
-#' @seealso \code{\link{read.nodes}}, \code{\link{read.names}}
+#' @seealso \code{\link{read.nodes.sql}}, \code{\link{read.names.sql}}
 #' @references \url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/}, \url{https://www.ncbi.nlm.nih.gov/Taxonomy/taxonomyhome.html/}
 #' @export
 #' @examples
@@ -692,12 +692,12 @@ getAccession2taxid<-function(outDir='.',baseUrl='ftp://ftp.ncbi.nih.gov/pub/taxo
 
 #' Find a given taxa by name
 #'
-#' Find a taxa by string in the NCBI taxonomy. Note that NCBI species are stored as Genus species e.g. "Bos taurus". Ambiguous taxa names will return a comma concatenated string e.g. "123,234" and generate a warning.
+#' Find a taxa by string in the NCBI taxonomy. Note that NCBI species are stored as Genus species e.g. "Bos taurus". Ambiguous taxa names will return a comma concatenated string e.g. "123,234" and generate a warning. NOTE: This function is now deprecated for \code{\link{getId}} (using SQLite rather than data.table).
 #'
 #' @param taxa a vector of taxonomic names
 #' @param taxaNames a names data.table from \code{\link{read.names}}
 #' @return a vector of character strings giving taxa IDs (potentially comma concatenated for any taxa with ambiguous names)
-#' @seealso \code{\link{read.names}}
+#' @seealso \code{\link{getId}}
 #' @export
 #' @examples
 #' namesText<-c(
@@ -716,7 +716,7 @@ getAccession2taxid<-function(outDir='.',baseUrl='ftp://ftp.ncbi.nih.gov/pub/taxo
 #' getId2('Not a real name',names)
 #' getId2('Multi',names)
 getId2<-function(taxa,taxaNames){
-  .Deprecated('getId','taxonomizr',"taxonomizr is moving from data.table to SQLite databases to improve performance. This will require changing nodes and names processing. Please see http://github.com/sherrillmix/taxonomizr/")
+  .Deprecated('getId','taxonomizr',"taxonomizr is moving from data.table to SQLite databases to improve performance. This will require changing nodes and names processing. Please see ?getId or http://github.com/sherrillmix/taxonomizr/")
   uniqTaxa<-unique(taxa)
   out<-lapply(uniqTaxa,function(xx){
     ids<-taxaNames[as.list(xx),on='name']$id
@@ -739,7 +739,7 @@ getId2<-function(taxa,taxaNames){
 #' @param sqlFile a string giving the path to a SQLite file containing a names tables
 #' @param onlyScientific If TRUE then only match to scientific names. If FALSE use all names in database for matching (potentially increasing ambiguous matches).
 #' @return a vector of character strings giving taxa IDs (potentially comma concatenated for any taxa with ambiguous names)
-#' @seealso \code{\link{read.names}}
+#' @seealso \code{\link{getTaxonomy}}, \code{\link{read.names.sql}}
 #' @export
 #' @examples
 #' namesText<-c(

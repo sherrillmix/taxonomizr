@@ -15,7 +15,7 @@ getId2(taxa, taxaNames)
 a vector of character strings giving taxa IDs (potentially comma concatenated for any taxa with ambiguous names)
 }
 \description{
-Find a taxa by string in the NCBI taxonomy. Note that NCBI species are stored as Genus species e.g. "Bos taurus". Ambiguous taxa names will return a comma concatenated string e.g. "123,234" and generate a warning.
+Find a taxa by string in the NCBI taxonomy. Note that NCBI species are stored as Genus species e.g. "Bos taurus". Ambiguous taxa names will return a comma concatenated string e.g. "123,234" and generate a warning. NOTE: This function is now deprecated for \code{\link{getId}} (using SQLite rather than data.table).
 }
 \examples{
 namesText<-c(
@@ -35,5 +35,5 @@ getId2('Not a real name',names)
 getId2('Multi',names)
 }
 \seealso{
-\code{\link{read.names}}
+\code{\link{getId}}
 }

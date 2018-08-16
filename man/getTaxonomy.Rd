@@ -92,5 +92,5 @@ taxaNodes<-read.nodes.sql(tmpFile,sqlFile)
 getTaxonomy(c(9606,9605),sqlFile)
 }
 \seealso{
-\code{\link{read.nodes}}, \code{\link{read.names}}
+\code{\link{read.nodes.sql}}, \code{\link{read.names.sql}}
 }

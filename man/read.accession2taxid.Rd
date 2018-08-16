@@ -46,5 +46,5 @@ RSQLite::dbDisconnect(db)
 \url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid}
 }
 \seealso{
-\code{\link{read.nodes}}, \code{\link{read.names}}
+\code{\link{read.nodes.sql}}, \code{\link{read.names.sql}}
 }
