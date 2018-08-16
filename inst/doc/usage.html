@@ -75,10 +75,19 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
 <p><code>taxonomizr</code> provides some simple functions to parse NCBI taxonomy files and accession dumps and efficiently use them to assign <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/taxonomyhome.html/">taxonomy</a> to accession numbers or taxonomic IDs. This is useful for example to assign taxonomy to BLAST results. This is all done locally after downloading the appropriate files from NCBI using included functions (see <a href="#preparation">below</a>).</p>
+<p>The major functions are: * <code>prepareDatabase</code>: download data from NCBI and prepare SQLite database * <code>accessionToTaxa</code>: convert accession numbers to taxonomic IDs * <code>getTaxonomy</code>: convert taxonmic IDs to taxonomy</p>
+<p>More specialized functions are: * <code>getId</code>: convert a biological name to taxonomic ID * <code>getAccessions</code>: find accessions for a given taxonomic ID</p>
+<p>And a simple use case might look like (see below for more details):</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#note this will require a lot of hard drive space, bandwidth and time to process all the data from NCBI</span>
+<span class="kw">library</span>(taxonomizr)
+<span class="kw">prepareDatabase</span>(<span class="st">'accessionTaxa.sql'</span>)
+blastAccessions&lt;-<span class="kw">c</span>(<span class="st">&quot;Z17430.1&quot;</span>,<span class="st">&quot;Z17429.1&quot;</span>,<span class="st">&quot;X62402.1&quot;</span>) 
+ids&lt;-<span class="kw">accessionToTaxa</span>(blastAccessions,<span class="st">'accessionTaxa.sql'</span>)
+<span class="kw">getTaxonomy</span>(ids,<span class="st">'accessionTaxa.sql'</span>)</code></pre></div>
 </div>
 <div id="requirements" class="section level2">
 <h2>Requirements</h2>
-<p>This package downloads a few databases from NCBI and stores them in an easily accessible form on the hardrive. This ends up taking a decent amount of space so you’ll probably want around 75 Gb of free hard drive space.</p>
+<p>This package downloads a few databases from NCBI and stores them in an easily accessible form on the hard drive. This ends up taking a decent amount of space so you’ll probably want around 75 Gb of free hard drive space.</p>
 </div>
 <div id="installation" class="section level2">
 <h2>Installation</h2>
@@ -91,7 +100,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </div>
 <div id="preparation" class="section level2">
 <h2>Preparation<a name="preparation"></a></h2>
-<p>Since version 0.5.0, there is a simple function to run all preparations. Note that you’ll need a bit of time, download bandwith and hard drive space before running this command (we’re downloading taxonomic assignments for every record in NCBI). To create a SQLite database called <code>accessionTaxa.sql</code> in the current working directory (you may want to store this somewhere more centrally located so it does not need to be duplicated with every project), we can run:</p>
+<p>Since version 0.5.0, there is a simple function to run all preparations. Note that you’ll need a bit of time, download bandwidth and hard drive space before running this command (we’re downloading taxonomic assignments for every record in NCBI). To create a SQLite database called <code>accessionTaxa.sql</code> in the current working directory (you may want to store this somewhere more centrally located so it does not need to be duplicated with every project), we can run:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">prepareDatabase</span>(<span class="st">'accessionTaxa.sql'</span>)</code></pre></div>
 <pre><code>## Downloading names and nodes with getNamesAndNodes()</code></pre>
 <pre><code>## Downloading accession2taxid with getAccession2taxid()</code></pre>
@@ -106,7 +115,11 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <pre><code>## Reading in values. This may take a while.</code></pre>
 <pre><code>## Adding index. This may also take a while.</code></pre>
 <pre><code>## [1] &quot;accessionTaxa.sql&quot;</code></pre>
-<p>If everything works then that should have prepared a sqlite database ready for use. You can skip the “Manual preparation” steps below.</p>
+<p>If everything works then that should have prepared a SQLite database ready for use. You can skip the “Manual preparation” steps below.</p>
+<p>All files are cached locally and so the preparation is only required once (delete/rename the SQLite database and call the function to regenerate the database). It is not necessary to manually check for the presence of the database since the function checks to see if SQLite database is present and if so skips downloading/processing. For example, running the command again produces:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">prepareDatabase</span>(<span class="st">'accessionTaxa.sql'</span>)</code></pre></div>
+<pre><code>## SQLite database accessionTaxa.sql already exists. Delete to regenerate</code></pre>
+<pre><code>## [1] &quot;accessionTaxa.sql&quot;</code></pre>
 </div>
 <div id="assigning-taxonomy" class="section level2">
 <h2>Assigning taxonomy</h2>
@@ -124,7 +137,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ##      family             genus           species                   
 ## 1313 &quot;Streptococcaceae&quot; &quot;Streptococcus&quot; &quot;Streptococcus pneumoniae&quot;
 ## 9606 &quot;Hominidae&quot;        &quot;Homo&quot;          &quot;Homo sapiens&quot;</code></pre>
-<p>You can also get taxonomy for NCBI accession numbers without versions (the .X following the main number e.g. the the “.1” in LN847353.1) using the <code>version='base'</code> argument of <code>accessionToTaxa</code>:</p>
+<p>You can also get taxonomy for NCBI accession numbers without versions (the .X following the main number e.g. the “.1” in LN847353.1) using the <code>version='base'</code> argument of <code>accessionToTaxa</code>:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">taxaId&lt;-<span class="kw">accessionToTaxa</span>(<span class="kw">c</span>(<span class="st">&quot;LN847353&quot;</span>,<span class="st">&quot;AL079352&quot;</span>),<span class="st">&quot;accessionTaxa.sql&quot;</span>)
 <span class="kw">print</span>(taxaId)</code></pre></div>
 <pre><code>## [1] NA NA</code></pre>
@@ -170,7 +183,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </div>
 <div id="switch-from-data.table-to-sqlite" class="section level2">
 <h2>Switch from data.table to SQLite</h2>
-<p>Version 0.5.0 marked a change for name and node lookups using data.table to using SQLite. This was necessary to increase performance (10-100x speedup for <code>getTaxonomy</code>) and create a simpler interface (a single SQLite database contains all necessary data). Unfortunately, this switch requires a couple breaking changes: * <code>getTaxonomy</code> changes from <code>getTaxonomy(ids,namesDT,nodesDT)</code> to <code>getTaxonomy(ids,sqlFile)</code> * <code>getId</code> changes from <code>getId(taxa,namesDT)</code> to <code>getId(taxa,sqlFile)</code> * <code>read.names</code> is deprecated, instead use <code>read.names.sql</code>. e.g. instead of calling <code>names&lt;-read.names('names.dmp')</code> in every session, simply call <code>read.names.sql('names.dmp','accessionTaxa.sql')</code> once (or use the convenient <code>prepareDatabase</code> as <a href="#preparation">above</a>)). * <code>read.nodes</code> is deprecated, instead use <code>read.names.sql</code>. e.g. instead of calling <code>nodes&lt;-read.names('nodes.dmp')</code> in every session, simply call <code>read.nodes.sql('nodes.dmp','accessionTaxa.sql')</code> once (or use the convenient <code>prepareDatabase</code> as <a href="#preparation">above</a>). I’ve tried to ease any problems with this by overloading <code>getTaxonomy</code> and <code>getId</code> to still function (with a warning) if passed a data.table names and nodes argument and providing a simpler <code>prepareDatabase</code> function for completing all setup steps (hopefully avoiding direct calls to <code>read.names</code> and <code>read.nodes</code> for most users).</p>
+<p>Version 0.5.0 marked a change for name and node lookups from using data.table to using SQLite. This was necessary to increase performance (10-100x speedup for <code>getTaxonomy</code>) and create a simpler interface (a single SQLite database contains all necessary data). Unfortunately, this switch requires a couple breaking changes: * <code>getTaxonomy</code> changes from <code>getTaxonomy(ids,namesDT,nodesDT)</code> to <code>getTaxonomy(ids,sqlFile)</code> * <code>getId</code> changes from <code>getId(taxa,namesDT)</code> to <code>getId(taxa,sqlFile)</code> * <code>read.names</code> is deprecated, instead use <code>read.names.sql</code>. For example, instead of calling <code>names&lt;-read.names('names.dmp')</code> in every session, simply call <code>read.names.sql('names.dmp','accessionTaxa.sql')</code> once (or use the convenient <code>prepareDatabase</code> as <a href="#preparation">above</a>)). * <code>read.nodes</code> is deprecated, instead use <code>read.names.sql</code>. For example. instead of calling <code>nodes&lt;-read.names('nodes.dmp')</code> in every session, simply call <code>read.nodes.sql('nodes.dmp','accessionTaxa.sql')</code> once (or use the convenient <code>prepareDatabase</code> as <a href="#preparation">above</a>).</p>
+<p>I’ve tried to ease any problems with this by overloading <code>getTaxonomy</code> and <code>getId</code> to still function (with a warning) if passed a data.table names and nodes argument and providing a simpler <code>prepareDatabase</code> function for completing all setup steps (hopefully avoiding direct calls to <code>read.names</code> and <code>read.nodes</code> for most users).</p>
 <p>I plan to eventually remove data.table functionality to avoid a split codebase so please switch to the new SQLite format in all new code.</p>
 </div>
 <div id="manual-preparation-of-database-usually-not-necessary" class="section level2">

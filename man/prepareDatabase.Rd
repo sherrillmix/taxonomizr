@@ -24,7 +24,12 @@ Convenience function to do all necessary preparations downloading names, nodes a
 }
 \examples{
 \dontrun{
-prepareDatabase()
+  if(readline(
+    "This will download a lot data and take a while to process.
+     Make sure you have space and bandwidth. Type y to continue: "
+  )!='y')
+    stop('This is a stop to make sure no one downloads a bunch of data unintentionally')
+  prepareDatabase()
 }
 }
 \seealso{

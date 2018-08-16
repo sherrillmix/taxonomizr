@@ -1,3 +1,29 @@
+#' @details
+#' taxonomizr provides some simple functions to parse NCBI taxonomy files and accession dumps and efficiently use them to assign taxonomy to accession numbers or taxonomic IDs (\url{https://www.ncbi.nlm.nih.gov/Taxonomy/taxonomyhome.html/}). This is useful for example to assign taxonomy to BLAST results. This is all done locally after downloading the appropriate files from NCBI using included functions. The major functions are:
+#' * \code{\link{prepareDatabase}}: download data from NCBI and prepare SQLite database
+#' * \code{link{accessionToTaxa}}: convert accession numbers to taxonomic IDs
+#' * \code{\link{getTaxonomy}}: convert taxonmic IDs to taxonomy
+#' More specialized functions are:
+#' * \code{\link{getId}}: convert a biological name to taxonomic ID
+#' * \code{\link{getAccessions}}: find accessions for a given taxonomic ID
+#'
+#' @examples
+#' \dontrun{
+#'   if(readline(
+#'     "This will download a lot data and take a while to process.
+#'      Make sure you have space and bandwidth. Type y to continue: "
+#'   )!='y')
+#'     stop('This is a stop to make sure no one downloads a bunch of data unintentionally')
+#'   prepareDatabase('accessionTaxa.sql')
+#'   blastAccessions<-c("Z17430.1","Z17429.1","X62402.1") 
+#'   ids<-accessionToTaxa(blastAccessions,'accessionTaxa.sql')
+#'   getTaxonomy(ids,'accessionTaxa.sql')
+#' }
+#' @keywords internal
+#' @seealso  \code{\link{prepareDatabase}}, \code{\link{accessionToTaxa}}, \code{\link{getTaxonomy}}
+"_PACKAGE"
+#> [1] "_PACKAGE"
+
 #' Read NCBI names file
 #'
 #' Take an NCBI names file, keep only scientific names and convert it to a data.table. NOTE: This function is now deprecated for \code{\link{read.names.sql}} (using SQLite rather than data.table).
@@ -20,7 +46,7 @@
 #' writeLines(namesText,tmpFile)
 #' read.names(tmpFile)
 read.names<-function(nameFile,onlyScientific=TRUE){
-  .Deprecated('read.names.sql','taxonomizr',"taxonomizr is moving from data.table to SQLite databases to improve performance. This will require changing nodes and names processing. Please see ?read.names.sql or http://github.com/sherrillmix/taxonomizr/")
+  .Deprecated('read.names.sql','taxonomizr',"taxonomizr is moving from data.table to SQLite databases to improve performance. This will require changing nodes and names processing. Please see ?read.names.sql or ?taxonomizrSwitch")
   splitLines<-do.call(rbind,strsplit(readLines(nameFile),"\t\\|\t?"))
   if(onlyScientific)splitLines<-splitLines[splitLines[,4]=='scientific name',]
   splitLines<-splitLines[,-(3:4)]
@@ -100,7 +126,7 @@ read.names.sql<-function(nameFile,sqlFile='nameNode.sqlite',overwrite=FALSE){
 #' writeLines(nodes,tmpFile)
 #' read.nodes(tmpFile)
 read.nodes<-function(nodeFile){
-  .Deprecated('read.nodes.sql','taxonomizr',"taxonomizr is moving from data.table to SQLite databases to improve performance. This will require changing nodes and names processing. Please see ?read.nodes.sql or http://github.com/sherrillmix/taxonomizr/")
+  .Deprecated('read.nodes.sql','taxonomizr',"taxonomizr is moving from data.table to SQLite databases to improve performance. This will require changing nodes and names processing. Please see ?read.nodes.sql or ?taxonomizrSwitch")
   splitLines<-do.call(rbind,lapply(strsplit(readLines(nodeFile),"\t\\|\t?"),'[',1:3))
   colnames(splitLines)<-c('id','parent','rank')
   splitLines<-data.frame('id'=as.numeric(splitLines[,'id']),'rank'=splitLines[,'rank'],'parent'=as.numeric(splitLines[,'parent']),stringsAsFactors=FALSE)
@@ -375,7 +401,7 @@ read.accession2taxid<-function(taxaFiles,sqlFile,vocal=TRUE,extraSqlCommand='',i
 #' taxaNodes<-read.nodes(tmpFile)
 #' getTaxonomy2(c(9606,9605),taxaNodes,taxaNames,mc.cores=1)
 getTaxonomy2<-function(ids,taxaNodes ,taxaNames, desiredTaxa=c('superkingdom','phylum','class','order','family','genus','species'),mc.cores=1,debug=FALSE){
-  .Deprecated('getTaxonomy','taxonomizr',"taxonomizr is moving from data.table to SQLite databases to improve performance. This will require changing nodes and names processing. Please see ?getTaxonomy or http://github.com/sherrillmix/taxonomizr/")
+  .Deprecated('getTaxonomy','taxonomizr',"taxonomizr is moving from data.table to SQLite databases to improve performance. This will require changing nodes and names processing. Please see ?getTaxonomy or ?taxonomizrSwitch")
   ids<-as.numeric(ids)
   if(length(ids)==0)return(NULL)
   uniqIds<-unique(ids)
@@ -675,6 +701,11 @@ getNamesAndNodes<-function(outDir='.',url='ftp://ftp.ncbi.nih.gov/pub/taxonomy/t
 #' @export
 #' @examples
 #' \dontrun{
+#'   if(readline(
+#'     "This will download a lot data and take a while to process.
+#'      Make sure you have space and bandwidth. Type y to continue: "
+#'   )!='y')
+#'     stop('This is a stop to make sure no one downloads a bunch of data unintentionally')
 #'   getAccession2taxid()
 #' }
 getAccession2taxid<-function(outDir='.',baseUrl='ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/',types=c('nucl_gb','nucl_est','nucl_gss','nucl_wgs')){
@@ -716,7 +747,7 @@ getAccession2taxid<-function(outDir='.',baseUrl='ftp://ftp.ncbi.nih.gov/pub/taxo
 #' getId2('Not a real name',names)
 #' getId2('Multi',names)
 getId2<-function(taxa,taxaNames){
-  .Deprecated('getId','taxonomizr',"taxonomizr is moving from data.table to SQLite databases to improve performance. This will require changing nodes and names processing. Please see ?getId or http://github.com/sherrillmix/taxonomizr/")
+  .Deprecated('getId','taxonomizr',"taxonomizr is moving from data.table to SQLite databases to improve performance. This will require changing nodes and names processing. Please see ?getId or ?taxonomizrSwitch")
   uniqTaxa<-unique(taxa)
   out<-lapply(uniqTaxa,function(xx){
     ids<-taxaNames[as.list(xx),on='name']$id
@@ -791,7 +822,12 @@ getId<-function(taxa,sqlFile='nameNode.sqlite',onlyScientific=TRUE){
 #' @export
 #' @examples
 #' \dontrun{
-#' prepareDatabase()
+#'   if(readline(
+#'     "This will download a lot data and take a while to process.
+#'      Make sure you have space and bandwidth. Type y to continue: "
+#'   )!='y')
+#'     stop('This is a stop to make sure no one downloads a bunch of data unintentionally')
+#'   prepareDatabase()
 #' }
 prepareDatabase<-function(sqlFile='nameNode.sqlite',tmpDir='.',vocal=TRUE,...){
   if(file.exists(sqlFile)){
@@ -863,4 +899,23 @@ getAccessions<-function(taxaId,sqlFile,version=c('version','base'),limit=NULL){
   colnames(taxaDf)<-c('taxa','accession')
   return(taxaDf)
 }
+
+#' Switch from data.table to SQLite
+#'
+#' In version 0.5.0, taxonomizr switched from data.table to SQLite name and node lookups. See below for more details.
+#'
+#' Version 0.5.0 marked a change for name and node lookups from using data.table to using SQLite. This was necessary to increase performance (10-100x speedup for \code{\link{getTaxonomy}}) and create a simpler interface (a single SQLite database contains all necessary data). Unfortunately, this switch requires a couple breaking changes: 
+#'  * \code{\link{getTaxonomy}} changes from \code{getTaxonomy(ids,namesDT,nodesDT)} to \code{getTaxonomy(ids,sqlFile)}
+#'  *  \code{\link{getId}} changes from  \code{getId(taxa,namesDT)} to \code{getId(taxa,sqlFile)}
+#'  * \code{\link{read.names}} is deprecated, instead use \code{\link{read.names.sql}}. For example, instead of calling \code{names<-read.names('names.dmp')} in every session, simply call \code{read.names.sql('names.dmp','accessionTaxa.sql')} once (or use the convenient \code{\link{prepareDatabase}})).
+#'  * \code{\link{read.nodes}} is deprecated, instead use \code{\link{read.names.sql}}. For example. instead of calling \code{nodes<-read.names('nodes.dmp')} in every session, simply call \code{read.nodes.sql('nodes.dmp','accessionTaxa.sql')} once (or use the convenient \code{\link{prepareDatabase}}).
+#' 
+#' I've tried to ease any problems with this by overloading \code{\link{getTaxonomy}} and \code{\link{getId}} to still function (with a warning) if passed a data.table names and nodes argument and providing a simpler \code{\link{prepareDatabase}} function for completing all setup steps (hopefully avoiding direct calls to \code{\link{read.names}} and \code{\link{read.nodes}} for most users). 
+#' 
+#' I plan to eventually remove data.table functionality to avoid a split codebase so please switch to the new SQLite format in all new code.
+#'
+#' @seealso \code{\link{getTaxonomy}}, \code{\link{read.names.sql}}, \code{\link{read.nodes.sql}}, \code{\link{prepareDatabase}}, \code{\link{getId}}
+#' @keywords interal
+#' @name taxonomizrSwitch
+NULL
 

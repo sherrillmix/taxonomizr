@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Read NCBI names file — read.names • taxonomizr</title>
+<title>Switch from data.table to SQLite — taxonomizrSwitch • taxonomizr</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -28,9 +28,9 @@
 
 
 
-<meta property="og:title" content="Read NCBI names file — read.names" />
+<meta property="og:title" content="Switch from data.table to SQLite — taxonomizrSwitch" />
 
-<meta property="og:description" content="Take an NCBI names file, keep only scientific names and convert it to a data.table. NOTE: This function is now deprecated for read.names.sql (using SQLite rather than data.table)." />
+<meta property="og:description" content="In version 0.5.0, taxonomizr switched from data.table to SQLite name and node lookups. See below for more details." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -101,72 +101,42 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Read NCBI names file</h1>
+    <h1>Switch from data.table to SQLite</h1>
     
-    <div class="hidden name"><code>read.names.Rd</code></div>
+    <div class="hidden name"><code>taxonomizrSwitch.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Take an NCBI names file, keep only scientific names and convert it to a data.table. NOTE: This function is now deprecated for <code><a href='read.names.sql.html'>read.names.sql</a></code> (using SQLite rather than data.table).</p>
+    <p>In version 0.5.0, taxonomizr switched from data.table to SQLite name and node lookups. See below for more details.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>read.names</span>(<span class='no'>nameFile</span>, <span class='kw'>onlyScientific</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
-    
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>nameFile</th>
-      <td><p>string giving the path to an NCBI name file to read from (both gzipped or uncompressed files are ok)</p></td>
-    </tr>
-    <tr>
-      <th>onlyScientific</th>
-      <td><p>If TRUE, only store scientific names. If FALSE, synonyms and other types are included (increasing the potential for ambiguous taxonomic assignments).</p></td>
-    </tr>
-    </table>
-    
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+        
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>a data.table with columns id and name with a key on id</p>
-    
-    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
-
-    <p><a href='ftp://ftp.ncbi.nih.gov/pub/taxonomy/'>ftp://ftp.ncbi.nih.gov/pub/taxonomy/</a></p>
+    <p>Version 0.5.0 marked a change for name and node lookups from using data.table to using SQLite. This was necessary to increase performance (10-100x speedup for <code><a href='getTaxonomy.html'>getTaxonomy</a></code>) and create a simpler interface (a single SQLite database contains all necessary data). Unfortunately, this switch requires a couple breaking changes: 
+ * <code><a href='getTaxonomy.html'>getTaxonomy</a></code> changes from <code><a href='getTaxonomy.html'>getTaxonomy(ids,namesDT,nodesDT)</a></code> to <code><a href='getTaxonomy.html'>getTaxonomy(ids,sqlFile)</a></code>
+ *  <code><a href='getId.html'>getId</a></code> changes from  <code><a href='getId.html'>getId(taxa,namesDT)</a></code> to <code><a href='getId.html'>getId(taxa,sqlFile)</a></code>
+ * <code><a href='read.names.html'>read.names</a></code> is deprecated, instead use <code><a href='read.names.sql.html'>read.names.sql</a></code>. For example, instead of calling <code>names&lt;-read.names('names.dmp')</code> in every session, simply call <code><a href='read.names.sql.html'>read.names.sql('names.dmp','accessionTaxa.sql')</a></code> once (or use the convenient <code><a href='prepareDatabase.html'>prepareDatabase</a></code>)).
+ * <code><a href='read.nodes.html'>read.nodes</a></code> is deprecated, instead use <code><a href='read.names.sql.html'>read.names.sql</a></code>. For example. instead of calling <code>nodes&lt;-read.names('nodes.dmp')</code> in every session, simply call <code><a href='read.nodes.sql.html'>read.nodes.sql('nodes.dmp','accessionTaxa.sql')</a></code> once (or use the convenient <code><a href='prepareDatabase.html'>prepareDatabase</a></code>).</p>
+<p>I've tried to ease any problems with this by overloading <code><a href='getTaxonomy.html'>getTaxonomy</a></code> and <code><a href='getId.html'>getId</a></code> to still function (with a warning) if passed a data.table names and nodes argument and providing a simpler <code><a href='prepareDatabase.html'>prepareDatabase</a></code> function for completing all setup steps (hopefully avoiding direct calls to <code><a href='read.names.html'>read.names</a></code> and <code><a href='read.nodes.html'>read.nodes</a></code> for most users).</p>
+<p>I plan to eventually remove data.table functionality to avoid a split codebase so please switch to the new SQLite format in all new code.</p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='read.nodes.html'>read.nodes</a></code>, <code><a href='read.names.sql.html'>read.names.sql</a></code></p></div>
+    <div class='dont-index'><p><code><a href='getTaxonomy.html'>getTaxonomy</a></code>, <code><a href='read.names.sql.html'>read.names.sql</a></code>, <code><a href='read.nodes.sql.html'>read.nodes.sql</a></code>, <code><a href='prepareDatabase.html'>prepareDatabase</a></code>, <code><a href='getId.html'>getId</a></code></p></div>
     
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>namesText</span><span class='kw'>&lt;-</span><span class='fu'>c</span>(
-  <span class='st'>"1\t|\tall\t|\t\t|\tsynonym\t|"</span>,
-  <span class='st'>"1\t|\troot\t|\t\t|\tscientific name\t|"</span>,
-  <span class='st'>"2\t|\tBacteria\t|\tBacteria &lt;prokaryotes&gt;\t|\tscientific name\t|"</span>,
-  <span class='st'>"2\t|\tMonera\t|\tMonera &lt;Bacteria&gt;\t|\tin-part\t|"</span>,
-  <span class='st'>"2\t|\tProcaryotae\t|\tProcaryotae &lt;Bacteria&gt;\t|\tin-part\t|"</span>
-)
-<span class='no'>tmpFile</span><span class='kw'>&lt;-</span><span class='fu'>tempfile</span>()
-<span class='fu'>writeLines</span>(<span class='no'>namesText</span>,<span class='no'>tmpFile</span>)
-<span class='fu'>read.names</span>(<span class='no'>tmpFile</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: taxonomizr is moving from data.table to SQLite databases to improve performance. This will require changing nodes and names processing. Please see ?read.names.sql or ?taxonomizrSwitch</span></div><div class='output co'>#&gt;    id     name
-#&gt; 1:  1     root
-#&gt; 2:  2 Bacteria</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
       
-      <li><a href="#value">Value</a></li>
-
-      <li><a href="#references">References</a></li>
+      <li><a href="#details">Details</a></li>
 
       <li><a href="#see-also">See also</a></li>
-      
-      <li><a href="#examples">Examples</a></li>
-    </ul>
+          </ul>
 
   </div>
 </div>

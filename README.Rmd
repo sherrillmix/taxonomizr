@@ -8,8 +8,28 @@
 
 `taxonomizr` provides some simple functions to parse NCBI taxonomy files and accession dumps and efficiently use them to assign [taxonomy](https://www.ncbi.nlm.nih.gov/Taxonomy/taxonomyhome.html/) to accession numbers or taxonomic IDs. This is useful for example to assign taxonomy to BLAST results. This is all done locally after downloading the appropriate files from NCBI using included functions (see [below](#preparation)). 
 
+The major functions are:
+ * `prepareDatabase`: download data from NCBI and prepare SQLite database
+ * `accessionToTaxa`: convert accession numbers to taxonomic IDs
+ * `getTaxonomy`: convert taxonmic IDs to taxonomy
+
+More specialized functions are:
+ * `getId`: convert a biological name to taxonomic ID
+ * `getAccessions`: find accessions for a given taxonomic ID
+
+And a simple use case might look like (see below for more details):
+
+```{r,eval=FALSE}
+#note this will require a lot of hard drive space, bandwidth and time to process all the data from NCBI
+library(taxonomizr)
+prepareDatabase('accessionTaxa.sql')
+blastAccessions<-c("Z17430.1","Z17429.1","X62402.1") 
+ids<-accessionToTaxa(blastAccessions,'accessionTaxa.sql')
+getTaxonomy(ids,'accessionTaxa.sql')
+```
+
 ## Requirements
-This package downloads a few databases from NCBI and stores them in an easily accessible form on the hardrive. This ends up taking a decent amount of space so you'll probably want around 75 Gb of free hard drive space. 
+This package downloads a few databases from NCBI and stores them in an easily accessible form on the hard drive. This ends up taking a decent amount of space so you'll probably want around 75 Gb of free hard drive space. 
 
 ## Installation
 The package is on CRAN, so it should install with a simple:
@@ -26,10 +46,8 @@ To use the library, load it in R:
 library(taxonomizr)
 ```
 
-
-
 ## Preparation<a name="preparation"></a>
-Since version 0.5.0, there is a simple function to run all preparations. Note that you'll need a bit of time, download bandwith and hard drive space before running this command (we're downloading taxonomic assignments for every record in NCBI). To create a SQLite database called `accessionTaxa.sql` in the current working directory (you may want to store this somewhere more centrally located so it does not need to be duplicated with every project), we can run:
+Since version 0.5.0, there is a simple function to run all preparations. Note that you'll need a bit of time, download bandwidth and hard drive space before running this command (we're downloading taxonomic assignments for every record in NCBI). To create a SQLite database called `accessionTaxa.sql` in the current working directory (you may want to store this somewhere more centrally located so it does not need to be duplicated with every project), we can run:
 
 ```{r,eval=FALSE}
 prepareDatabase('accessionTaxa.sql')
@@ -87,7 +105,22 @@ prepareDatabase('accessionTaxa.sql')
 ## [1] "accessionTaxa.sql"
 ```
 
-If everything works then that should have prepared a sqlite database ready for use. You can skip the "Manual preparation" steps below.
+If everything works then that should have prepared a SQLite database ready for use. You can skip the "Manual preparation" steps below.
+
+All files are cached locally and so the preparation is only required once (delete/rename the SQLite database and call the function to regenerate the database). It is not necessary to manually check for the presence of the database since the function checks to see if SQLite database is present and if so skips downloading/processing. For example, running the command again produces:
+
+```{r,eval=FALSE}
+prepareDatabase('accessionTaxa.sql')
+```
+
+```
+## SQLite database accessionTaxa.sql already exists. Delete to regenerate
+```
+
+```
+## [1] "accessionTaxa.sql"
+```
+
 
 
 ## Assigning taxonomy
@@ -119,7 +152,7 @@ getTaxonomy(taxaId,'accessionTaxa.sql')
 ## 9606 "Hominidae"        "Homo"          "Homo sapiens"
 ```
 
-You can also get taxonomy for NCBI accession numbers without versions (the .X following the main number e.g. the the ".1" in LN847353.1) using the `version='base'` argument of `accessionToTaxa`:
+You can also get taxonomy for NCBI accession numbers without versions (the .X following the main number e.g. the ".1" in LN847353.1) using the `version='base'` argument of `accessionToTaxa`:
 
 
 ```{r,eval=FALSE}
@@ -200,11 +233,12 @@ getAccessions(3702,'accessionTaxa.sql',limit=10)
 ```
 
 ## Switch from data.table to SQLite
-Version 0.5.0 marked a change for name and node lookups using data.table to using SQLite. This was necessary to increase performance (10-100x speedup for `getTaxonomy`) and create a simpler interface (a single SQLite database contains all necessary data). Unfortunately, this switch requires a couple breaking changes: 
+Version 0.5.0 marked a change for name and node lookups from using data.table to using SQLite. This was necessary to increase performance (10-100x speedup for `getTaxonomy`) and create a simpler interface (a single SQLite database contains all necessary data). Unfortunately, this switch requires a couple breaking changes: 
   * `getTaxonomy` changes from `getTaxonomy(ids,namesDT,nodesDT)` to `getTaxonomy(ids,sqlFile)`
   * `getId` changes from  `getId(taxa,namesDT)` to `getId(taxa,sqlFile)`
-  * `read.names` is deprecated, instead use `read.names.sql`. e.g. instead of calling `names<-read.names('names.dmp')` in every session, simply call `read.names.sql('names.dmp','accessionTaxa.sql')` once (or use the convenient `prepareDatabase` as <a href='#preparation'>above</a>)).
-  * `read.nodes` is deprecated, instead use `read.names.sql`. e.g. instead of calling `nodes<-read.names('nodes.dmp')` in every session, simply call `read.nodes.sql('nodes.dmp','accessionTaxa.sql')` once (or use the convenient `prepareDatabase` as <a href='#preparation'>above</a>).
+  * `read.names` is deprecated, instead use `read.names.sql`. For example, instead of calling `names<-read.names('names.dmp')` in every session, simply call `read.names.sql('names.dmp','accessionTaxa.sql')` once (or use the convenient `prepareDatabase` as <a href='#preparation'>above</a>)).
+  * `read.nodes` is deprecated, instead use `read.names.sql`. For example. instead of calling `nodes<-read.names('nodes.dmp')` in every session, simply call `read.nodes.sql('nodes.dmp','accessionTaxa.sql')` once (or use the convenient `prepareDatabase` as <a href='#preparation'>above</a>).
+
   I've tried to ease any problems with this by overloading `getTaxonomy` and `getId` to still function (with a warning) if passed a data.table names and nodes argument and providing a simpler `prepareDatabase` function for completing all setup steps (hopefully avoiding direct calls to `read.names` and `read.nodes` for most users). 
 
 I plan to eventually remove data.table functionality to avoid a split codebase so please switch to the new SQLite format in all new code.

@@ -147,7 +147,12 @@
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><span class='co'># NOT RUN {</span>
-<span class='fu'>prepareDatabase</span>()
+  <span class='kw'>if</span>(<span class='fu'>readline</span>(
+    <span class='st'>"This will download a lot data and take a while to process.
+     Make sure you have space and bandwidth. Type y to continue: "</span>
+  )<span class='kw'>!=</span><span class='st'>'y'</span>)
+    <span class='fu'>stop</span>(<span class='st'>'This is a stop to make sure no one downloads a bunch of data unintentionally'</span>)
+  <span class='fu'>prepareDatabase</span>()
 <span class='co'># }</span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

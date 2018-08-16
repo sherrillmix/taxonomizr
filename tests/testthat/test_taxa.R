@@ -647,4 +647,5 @@ test_that("Test prepareDatabase",{
   expect_equal(colnames(RSQLite::dbGetQuery(db,'SELECT * FROM nodes LIMIT 1')),c('id','rank','parent'))
   expect_equal(colnames(RSQLite::dbGetQuery(db,'SELECT * FROM accessionTaxa LIMIT 1')),c('base','accession','taxa'))
   expect_message(prepareDatabase(tmp,tmpDir,url='file://fakeNamesNodes.tar.gz',baseUrl=sprintf('file://%s',tmpDir),types=c('nucl_XxXx','nucl_XyXyX')),'exists')
+  expect_message(prepareDatabase(tmp,tmpDir,url='file://NOTAREALFILE',baseUrl='ALSONOTAREALFILE',types=c('NOTREAL','NOTREAL2')),'exists')
 })
