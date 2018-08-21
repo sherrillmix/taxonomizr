@@ -129,7 +129,7 @@ ids&lt;-<span class="kw"><a href="../reference/accessionToTaxa.html">accessionTo
 <pre><code>## Adding index. This may also take a while.</code></pre>
 <pre><code>## [1] "accessionTaxa.sql"</code></pre>
 <p>If everything works then that should have prepared a SQLite database ready for use. You can skip the “Manual preparation” steps below.</p>
-<p>All files are cached locally and so the preparation is only required once (delete/rename the SQLite database and call the function to regenerate the database). It is not necessary to manually check for the presence of the database since the function checks to see if SQLite database is present and if so skips downloading/processing. For example, running the command again produces:</p>
+<p>All files are cached locally and so the preparation is only required once (delete/rename the SQLite database and recall the function to regenerate the database). It is not necessary to manually check for the presence of the database since the function checks to see if SQLite database is present and if so skips downloading/processing. For example, running the command again produces:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/prepareDatabase.html">prepareDatabase</a></span>(<span class="st">'accessionTaxa.sql'</span>)</code></pre></div>
 <pre><code>## SQLite database accessionTaxa.sql already exists. Delete to regenerate</code></pre>
 <pre><code>## [1] "accessionTaxa.sql"</code></pre>

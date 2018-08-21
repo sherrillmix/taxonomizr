@@ -112,7 +112,7 @@ prepareDatabase('accessionTaxa.sql')
 
 If everything works then that should have prepared a SQLite database ready for use. You can skip the "Manual preparation" steps below.
 
-All files are cached locally and so the preparation is only required once (delete/rename the SQLite database and call the function to regenerate the database). It is not necessary to manually check for the presence of the database since the function checks to see if SQLite database is present and if so skips downloading/processing. For example, running the command again produces:
+All files are cached locally and so the preparation is only required once (delete/rename the SQLite database and recall the function to regenerate the database). It is not necessary to manually check for the presence of the database since the function checks to see if SQLite database is present and if so skips downloading/processing. For example, running the command again produces:
 
 ```{r,eval=FALSE}
 prepareDatabase('accessionTaxa.sql')
