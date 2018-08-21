@@ -486,28 +486,27 @@ test_that("Test condenseTaxa",{
    'a','b','c','e',
    'a','b','d','e'
   ),nrow=2,byrow=TRUE)
-  expect_equal(condenseTaxa(taxas),matrix(c('1','a','b',NA,NA),nrow=1,dimnames=list(NULL,c('id','V1','V2','V3','V4'))))
-  expect_equal(condenseTaxa(taxas[c(1,1,1),]),matrix(c('1','a','b','c','e'),nrow=1,dimnames=list(NULL,c('id','V1','V2','V3','V4'))))
-  expect_equal(condenseTaxa(taxas[1,,drop=FALSE]),matrix(c('1','a','b','c','e'),nrow=1,dimnames=list(NULL,c('id','V1','V2','V3','V4'))))
-  expect_equal(condenseTaxa(taxas[,1,drop=FALSE]),matrix(c('1','a'),nrow=1,dimnames=list(NULL,c('id','V1'))))
-  expect_equal(condenseTaxa(taxas[1,1,drop=FALSE]),matrix(c('1','a'),nrow=1,dimnames=list(NULL,c('id','V1'))))
-  expect_equal(condenseTaxa(taxas[c(1,1,1,2),]),matrix(c('1','a','b',NA,NA),nrow=1,dimnames=list(NULL,c('id','V1','V2','V3','V4'))))
-  expect_equal(condenseTaxa(taxas[,3,drop=FALSE]),matrix(c('1',NA),nrow=1,dimnames=list(NULL,c('id','V1'))))
-  expect_equal(condenseTaxa(taxas[,3,drop=FALSE],1:2),matrix(c('1','2','c','d'),nrow=2,dimnames=list(NULL,c('id','V1'))))
+  expect_equal(condenseTaxa(taxas),matrix(c('a','b',NA,NA),nrow=1,dimnames=list('1',c('V1','V2','V3','V4'))))
+  expect_equal(condenseTaxa(taxas[c(1,1,1),]),matrix(c('a','b','c','e'),nrow=1,dimnames=list('1',c('V1','V2','V3','V4'))))
+  expect_equal(condenseTaxa(taxas[1,,drop=FALSE]),matrix(c('a','b','c','e'),nrow=1,dimnames=list('1',c('V1','V2','V3','V4'))))
+  expect_equal(condenseTaxa(taxas[,1,drop=FALSE]),matrix(c('a'),nrow=1,dimnames=list('1',c('V1'))))
+  expect_equal(condenseTaxa(taxas[1,1,drop=FALSE]),matrix(c('a'),nrow=1,dimnames=list('1',c('V1'))))
+  expect_equal(condenseTaxa(taxas[c(1,1,1,2),]),matrix(c('a','b',NA,NA),nrow=1,dimnames=list('1',c('V1','V2','V3','V4'))))
+  expect_equal(condenseTaxa(taxas[,3,drop=FALSE]),matrix(c(as.character(NA)),nrow=1,dimnames=list('1',c('V1'))))
+  expect_equal(condenseTaxa(taxas[,3,drop=FALSE],1:2),matrix(c('c','d'),nrow=2,dimnames=list(c('1','2'),c('V1'))))
   expect_equal(condenseTaxa(taxas[0,]),NULL)
-  expect_equal(condenseTaxa(taxas[c(1:2,1),],c(1,1,2)),matrix(c('1','2','a','a','b','b',NA,'c',NA,'e'),nrow=2,dimnames=list(NULL,c('id','V1','V2','V3','V4'))))
-  expect_equal(condenseTaxa(taxas[c(1:2,rep(1,10)),],c(1,1,rep(2,10))),matrix(c('1','2','a','a','b','b',NA,'c',NA,'e'),nrow=2,dimnames=list(NULL,c('id','V1','V2','V3','V4'))))
+  expect_equal(condenseTaxa(taxas[c(1:2,1),],c(1,1,2)),matrix(c('a','a','b','b',NA,'c',NA,'e'),nrow=2,dimnames=list(c('1','2'),c('V1','V2','V3','V4'))))
+  expect_equal(condenseTaxa(taxas[c(1:2,rep(1,10)),],c(1,1,rep(2,10))),matrix(c('a','a','b','b',NA,'c',NA,'e'),nrow=2,dimnames=list(c('1','2'),c('V1','V2','V3','V4'))))
   taxas<-matrix(c(
    'a','b',NA,'e',
    'a','b','d','e'
   ),nrow=2,byrow=TRUE,dimnames=list(NULL,c('a','b','c','d')))
-  expect_equal(condenseTaxa(taxas),matrix(c('1','a','b',NA,NA),nrow=1,dimnames=list(NULL,c('id','a','b','c','d'))))
-  expect_equal(condenseTaxa(taxas[1,,drop=FALSE]),matrix(c('1','a','b',NA,'e'),nrow=1,dimnames=list(NULL,c('id','a','b','c','d'))))
-  expect_equal(condenseTaxa(taxas[c(1,1,1),,drop=FALSE]),matrix(c('1','a','b',NA,'e'),nrow=1,dimnames=list(NULL,c('id','a','b','c','d'))))
-  out<-matrix(c('1','a','b',NA,NA),byrow=TRUE,nrow=10,ncol=5,dimnames=list(NULL,c('id','a','b','c','d')))
-  out[,'id']<-1:10
+  expect_equal(condenseTaxa(taxas),matrix(c('a','b',NA,NA),nrow=1,dimnames=list('1',c('a','b','c','d'))))
+  expect_equal(condenseTaxa(taxas[1,,drop=FALSE]),matrix(c('a','b',NA,'e'),nrow=1,dimnames=list('1',c('a','b','c','d'))))
+  expect_equal(condenseTaxa(taxas[c(1,1,1),,drop=FALSE]),matrix(c('a','b',NA,'e'),nrow=1,dimnames=list('1',c('a','b','c','d'))))
+  out<-matrix(c('a','b',NA,NA),byrow=TRUE,nrow=10,ncol=4,dimnames=list(as.character(1:10),c('a','b','c','d')))
   expect_equal(condenseTaxa(taxas[rep(1:2,each=10),,drop=FALSE],rep(1:10,2)),out)
-  out[,'id']<-letters[1:10]
+  rownames(out)<-letters[1:10]
   expect_equal(condenseTaxa(taxas[rep(1:2,each=10),,drop=FALSE],rep(letters[1:10],2)),out)
 })
 

@@ -37,11 +37,19 @@ library(taxonomizr)
 #  print(taxaId)
 
 ## ----eval=FALSE----------------------------------------------------------
-#  taxaId<-getId(c('Homo sapiens','Bos taurus','Homo'),'accessionTaxa.sql')
+#  taxaId<-getId(c('Homo sapiens','Bos taurus','Homo','Alces alces'),'accessionTaxa.sql')
 #  print(taxaId)
 
 ## ----eval=FALSE----------------------------------------------------------
-#  getTaxonomy(taxaId,'accessionTaxa.sql')
+#  taxa<-getTaxonomy(taxaId,'accessionTaxa.sql')
+#  print(taxa)
+
+## ----eval=FALSE----------------------------------------------------------
+#  condenseTaxa(taxa)
+
+## ----eval=FALSE----------------------------------------------------------
+#  groupings<-c('read1','read2','read1','read2')
+#  condenseTaxa(taxa,groupings)
 
 ## ----eval=FALSE----------------------------------------------------------
 #  read.accession2taxid(list.files('.','accession2taxid.gz$'),'accessionTaxa.sql',indexTaxa=TRUE)

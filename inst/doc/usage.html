@@ -148,19 +148,38 @@ ids&lt;-<span class="kw">accessionToTaxa</span>(blastAccessions,<span class="st"
 <div id="finding-taxonomy-for-taxonomic-names" class="section level3">
 <h3>Finding taxonomy for taxonomic names</h3>
 <p>If you’d like to find IDs for taxonomic names then you can do something like:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">taxaId&lt;-<span class="kw">getId</span>(<span class="kw">c</span>(<span class="st">'Homo sapiens'</span>,<span class="st">'Bos taurus'</span>,<span class="st">'Homo'</span>),<span class="st">'accessionTaxa.sql'</span>)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">taxaId&lt;-<span class="kw">getId</span>(<span class="kw">c</span>(<span class="st">'Homo sapiens'</span>,<span class="st">'Bos taurus'</span>,<span class="st">'Homo'</span>,<span class="st">'Alces alces'</span>),<span class="st">'accessionTaxa.sql'</span>)
 <span class="kw">print</span>(taxaId)</code></pre></div>
-<pre><code>## [1] &quot;9606&quot; &quot;9913&quot; &quot;9605&quot;</code></pre>
+<pre><code>## [1] &quot;9606&quot; &quot;9913&quot; &quot;9605&quot; &quot;9852&quot;</code></pre>
 <p>And again to get the taxonomy for those IDs use <code>getTaxonomy</code>:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">getTaxonomy</span>(taxaId,<span class="st">'accessionTaxa.sql'</span>)</code></pre></div>
-<pre><code>##      superkingdom phylum     class      order      family      genus 
-## 9606 &quot;Eukaryota&quot;  &quot;Chordata&quot; &quot;Mammalia&quot; &quot;Primates&quot; &quot;Hominidae&quot; &quot;Homo&quot;
-## 9913 &quot;Eukaryota&quot;  &quot;Chordata&quot; &quot;Mammalia&quot; NA         &quot;Bovidae&quot;   &quot;Bos&quot; 
-## 9605 &quot;Eukaryota&quot;  &quot;Chordata&quot; &quot;Mammalia&quot; &quot;Primates&quot; &quot;Hominidae&quot; &quot;Homo&quot;
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">taxa&lt;-<span class="kw">getTaxonomy</span>(taxaId,<span class="st">'accessionTaxa.sql'</span>)
+<span class="kw">print</span>(taxa)</code></pre></div>
+<pre><code>##      superkingdom phylum     class      order      family      genus  
+## 9606 &quot;Eukaryota&quot;  &quot;Chordata&quot; &quot;Mammalia&quot; &quot;Primates&quot; &quot;Hominidae&quot; &quot;Homo&quot; 
+## 9913 &quot;Eukaryota&quot;  &quot;Chordata&quot; &quot;Mammalia&quot; NA         &quot;Bovidae&quot;   &quot;Bos&quot;  
+## 9605 &quot;Eukaryota&quot;  &quot;Chordata&quot; &quot;Mammalia&quot; &quot;Primates&quot; &quot;Hominidae&quot; &quot;Homo&quot; 
+## 9852 &quot;Eukaryota&quot;  &quot;Chordata&quot; &quot;Mammalia&quot; NA         &quot;Cervidae&quot;  &quot;Alces&quot;
 ##      species       
 ## 9606 &quot;Homo sapiens&quot;
 ## 9913 &quot;Bos taurus&quot;  
-## 9605 NA</code></pre>
+## 9605 NA            
+## 9852 &quot;Alces alces&quot;</code></pre>
+</div>
+<div id="condensing-taxonomy" class="section level3">
+<h3>Condensing taxonomy</h3>
+<p>You can use the <code>condenseTaxa</code> function to find the agreements among taxonomic hits. For example to condense the taxonomy from the previous section to the lowest taxonomic rank shared by all three taxa:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">condenseTaxa</span>(taxa)</code></pre></div>
+<pre><code>##   superkingdom phylum     class      order family genus species
+## 1 &quot;Eukaryota&quot;  &quot;Chordata&quot; &quot;Mammalia&quot; NA    NA     NA    NA</code></pre>
+<p>This function can also be fed a large number of grouped hits, e.g. BLAST hits for high throughput sequencing reads after filtering for the best hits for each read, and output a condensed taxonomy for each grouping:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">groupings&lt;-<span class="kw">c</span>(<span class="st">'read1'</span>,<span class="st">'read2'</span>,<span class="st">'read1'</span>,<span class="st">'read2'</span>)
+<span class="kw">condenseTaxa</span>(taxa,groupings)</code></pre></div>
+<pre><code>##       superkingdom phylum     class      order      family      genus 
+## read1 &quot;Eukaryota&quot;  &quot;Chordata&quot; &quot;Mammalia&quot; &quot;Primates&quot; &quot;Hominidae&quot; &quot;Homo&quot;
+## read2 &quot;Eukaryota&quot;  &quot;Chordata&quot; &quot;Mammalia&quot; NA         NA          NA    
+##       species
+## read1 NA     
+## read2 NA</code></pre>
 </div>
 <div id="finding-accessions-for-a-given-taxonomic-id" class="section level3">
 <h3>Finding accessions for a given taxonomic ID</h3>

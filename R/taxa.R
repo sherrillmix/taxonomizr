@@ -615,7 +615,7 @@ accessionToTaxa<-function(accessions,sqlFile,version=c('version','base')){
 #'
 #' @param taxaTable a matrix or data.frame with hits on the rows and various levels of taxonomy in the columns
 #' @param groupings a vector of groups e.g. read queries to condense taxa within
-#' @return a matrix an id column plus \code{ncol(taxaTable)} taxonomy columns with a row for each unique id in groupings with NAs where there is not complete agreement for an id
+#' @return a matrix with \code{ncol(taxaTable)} taxonomy columns with a row for each unique id (labelled on rownames) with NAs where there was not complete agreement for an id
 #' @export
 #' @examples
 #' taxas<-matrix(c(
@@ -655,7 +655,8 @@ condenseTaxa<-function(taxaTable,groupings=rep(1,nrow(taxaTable))){
   out[out=='__NAFILLER__']<-NA
   #remove extra spaces added by sqlite
   out[,'id']<-trimws(out[,'id'])
-  return(out)
+  rownames(out)<-out[,'id']
+  return(out[,colnames(out)!='id',drop=FALSE])
 }
 
 
