@@ -682,13 +682,15 @@ getNamesAndNodes<-function(outDir='.',url='ftp://ftp.ncbi.nih.gov/pub/taxonomy/t
     return(outFiles)
   }
   base<-basename(url)
-  tmp<-tempdir()
+  tmp<-tempfile()
+  dir.create(tmp)
   tarFile<-file.path(tmp,base)
-  utils::download.file(url,tarFile)
-  utils::untar(tarFile,fileNames,exdir=tmp)
+  utils::download.file(url,tarFile,mode='wb')
+  utils::untar(tarFile,fileNames,exdir=tmp,tar='internal',compressed='gzip')
   tmpFiles<-file.path(tmp,fileNames)
   if(!all(file.exists(tmpFiles)))stop("Problem finding files ",paste(tmpFiles[!file.exists(tmpFiles)],collapse=', '))
   mapply(file.copy,tmpFiles,outFiles)
+  if(!all(file.exists(outFiles)))stop("Problem copying files ",paste(outFiles[!file.exists(outFiles)],collapse=', '))
   file.remove(c(tarFile,tmpFiles))
   return(outFiles)
 }
@@ -832,11 +834,12 @@ getId<-function(taxa,sqlFile='nameNode.sqlite',onlyScientific=TRUE){
 #'     "This will download a lot data and take a while to process.
 #'      Make sure you have space and bandwidth. Type y to continue: "
 #'   )!='y')
-#'
 #'     stop('This is a stop to make sure no one downloads a bunch of data unintentionally')
+#'
 #'   prepareDatabase()
 #' }
 prepareDatabase<-function(sqlFile='nameNode.sqlite',tmpDir='.',vocal=TRUE,...){
+  if(!dir.exists(tmpDir))dir.create(tmpDir)
   if(file.exists(sqlFile)){
     message('SQLite database ',sqlFile,' already exists. Delete to regenerate')
     return(sqlFile)

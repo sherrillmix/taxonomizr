@@ -127,16 +127,17 @@ test_that("Test trimTaxa",{
   expect_equal(readLines(tmp2),c('2\t3','3\t4','4\t5'))
   writeLines(c(out,'1\t2\t3\t4\t5'),tmp)
   expect_error(taxonomizr:::trimTaxa(tmp,tmp2),"line")
-  file.remove(tmp2)
+  #apparently win-builder has some issue with file removal here so workaround
+  file.remove(tmp2);tmp2<-tempfile()
   gzHandle<-gzfile(tmp)
   writeLines(out,gzHandle)
   close(gzHandle)
   expect_error(taxonomizr:::trimTaxa(tmp,tmp2),NA)
   expect_equal(readLines(tmp2),c('2\t3','3\t4','4\t5'))
-  file.remove(tmp2)
+  file.remove(tmp2);tmp2<-tempfile()
   expect_error(taxonomizr:::trimTaxa(tmp,tmp2,2),NA)
   expect_equal(readLines(tmp2),c('2','3','4'))
-  file.remove(tmp2)
+  file.remove(tmp2);tmp2<-tempfile()
   expect_error(taxonomizr:::trimTaxa(tmp,tmp2,c(2,4)),NA)
   expect_equal(readLines(tmp2),c('2\t4','3\t5','4\t6'))
   expect_error(taxonomizr:::trimTaxa(tmp,tmp2,c(2,4)),NA)
@@ -514,11 +515,20 @@ test_that("Test condenseTaxa",{
 test_that("Test getNamesAndNodes",{
   tmp<-tempfile()
   dir.create(tmp)
-  expect_error(getNamesAndNodes(tmp,'file://fakeNamesNodes.tar.gz'),NA)
+  #windows download.file() of local file can't handle 1a bytes created by gzip
+  if(.Platform$OS.type == "windows"){
+    R.utils::gunzip('fakeNamesNodes.tar.gz',remove=FALSE)
+    fakeFile<-'file://fakeNamesNodes.tar'
+  }else{
+    fakeFile<-'file://fakeNamesNodes.tar.gz'
+  }
+  expect_error(getNamesAndNodes(tmp,fakeFile),NA)
   expect_equal(sort(list.files(tmp,'^(names|nodes).dmp$')),c('names.dmp','nodes.dmp'))
-  expect_message(getNamesAndNodes(tmp,'file://fakeNamesNodes.tar.gz'),'exist')
-  expect_equal(getNamesAndNodes(tmp,'file://fakeNamesNodes.tar.gz'),file.path(tmp,c('names.dmp','nodes.dmp')))
-  expect_error(getNamesAndNodes(tmp,'file://fakeNamesNodes.tar.gz','NOTREAL.FILE'),'finding')
+  expect_message(getNamesAndNodes(tmp,fakeFile),'exist')
+  expect_equal(getNamesAndNodes(tmp,fakeFile),file.path(tmp,c('names.dmp','nodes.dmp')))
+  #windows throws "incomplete block on file"
+  expect_error(getNamesAndNodes(tmp,fakeFile,'NOTREAL.FILE'),'finding|incomplete')
+  if(.Platform$OS.type == "windows")file.remove('fakeNamesNodes.tar')
 })
 
 test_that("Test getAccession2taxid",{
@@ -640,12 +650,24 @@ test_that("Test prepareDatabase",{
   ))
   targets<-sprintf('nucl_%s.accession2taxid.gz',types)
   mapply(function(xx,yy)writeLines(xx,file.path(tmpDir,yy)),taxa,targets)
-  expect_error(prepareDatabase(tmp,tmpDir,url='file://fakeNamesNodes.tar.gz',baseUrl=sprintf('file://%s',tmpDir),types=c('nucl_XxXx','nucl_XyXyX')),NA)
+  #windows download.file() of local file can't handle 1a bytes created by gzip
+  if(.Platform$OS.type == "windows"){
+    R.utils::gunzip('fakeNamesNodes.tar.gz',remove=FALSE)
+    fakeFile<-'file://fakeNamesNodes.tar'
+  }else{
+    fakeFile<-'file://fakeNamesNodes.tar.gz'
+  }
+  expect_error(prepareDatabase(tmp,tmpDir,url=fakeFile,baseUrl=sprintf('file://%s',tmpDir),types=c('nucl_XxXx','nucl_XyXyX')),NA)
   db<-RSQLite::dbConnect(RSQLite::SQLite(),tmp)
   expect_equal(sort(RSQLite::dbListTables(db)),c('accessionTaxa','names','nodes'))
   expect_equal(colnames(RSQLite::dbGetQuery(db,'SELECT * FROM names LIMIT 1')),c('id','name','scientific'))
   expect_equal(colnames(RSQLite::dbGetQuery(db,'SELECT * FROM nodes LIMIT 1')),c('id','rank','parent'))
   expect_equal(colnames(RSQLite::dbGetQuery(db,'SELECT * FROM accessionTaxa LIMIT 1')),c('base','accession','taxa'))
-  expect_message(prepareDatabase(tmp,tmpDir,url='file://fakeNamesNodes.tar.gz',baseUrl=sprintf('file://%s',tmpDir),types=c('nucl_XxXx','nucl_XyXyX')),'exists')
+  expect_message(prepareDatabase(tmp,tmpDir,url=fakeFile,baseUrl=sprintf('file://%s',tmpDir),types=c('nucl_XxXx','nucl_XyXyX')),'exists')
   expect_message(prepareDatabase(tmp,tmpDir,url='file://NOTAREALFILE',baseUrl='ALSONOTAREALFILE',types=c('NOTREAL','NOTREAL2')),'exists')
+  #test create new directory
+  tmpDir2<-tempfile()
+  expect_error(prepareDatabase(tmp,tmpDir2,url=fakeFile,baseUrl=sprintf('file://%s',tmpDir),types=c('nucl_XxXx','nucl_XyXyX')),NA)
+  RSQLite::dbDisconnect(db)
+  if(.Platform$OS.type == "windows")file.remove('fakeNamesNodes.tar')
 })
