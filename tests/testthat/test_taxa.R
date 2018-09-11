@@ -142,6 +142,7 @@ test_that("Test trimTaxa",{
   expect_equal(readLines(tmp2),c('2\t4','3\t5','4\t6'))
   expect_error(taxonomizr:::trimTaxa(tmp,tmp2,c(2,4)),NA)
   expect_equal(readLines(tmp2),rep(c('2\t4','3\t5','4\t6'),2))
+  with_mock(`R.utils::gunzip`=function(...){},expect_error(taxonomizr:::trimTaxa(tmp,tmp2),'unzip'))
 })
 
 test_that("Test read.accession2taxid",{
