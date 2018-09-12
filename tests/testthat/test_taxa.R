@@ -142,6 +142,7 @@ test_that("Test trimTaxa",{
   expect_equal(readLines(tmp2),c('2\t4','3\t5','4\t6'))
   expect_error(taxonomizr:::trimTaxa(tmp,tmp2,c(2,4)),NA)
   expect_equal(readLines(tmp2),rep(c('2\t4','3\t5','4\t6'),2))
+  with_mock(`R.utils::gunzip`=function(...){},expect_error(taxonomizr:::trimTaxa(tmp,tmp2),'unzip'))
 })
 
 test_that("Test read.accession2taxid",{
@@ -448,8 +449,10 @@ test_that("Test getParentNodes",{
   tmp<-tempfile()
   read.nodes.sql(textConnection(nodesText),tmp)
   read.names.sql(textConnection(namesText),tmp)
-  expect_equal(getParentNodes(c(9606,9605),tmp),data.frame('name'=c('Homo sapiens','Homo'),'parent'=c(9605,207598),'rank'=c('species','genus'),stringsAsFactors=FALSE))
-  expect_equal(getParentNodes(c(NA,9606,9999999,9606),tmp),data.frame('name'=c(NA,'Homo sapiens',NA,'Homo sapiens'),'parent'=c(NA,9605,NA,9605),'rank'=c(NA,'species',NA,'species'),stringsAsFactors=FALSE))
+  expect_equal(taxonomizr:::getParentNodes(c(9606,9605),tmp),data.frame('name'=c('Homo sapiens','Homo'),'parent'=c(9605,207598),'rank'=c('species','genus'),stringsAsFactors=FALSE))
+  expect_equal(taxonomizr:::getParentNodes(c(NA,9606,9999999,9606),tmp),data.frame('name'=c(NA,'Homo sapiens',NA,'Homo sapiens'),'parent'=c(NA,9605,NA,9605),'rank'=c(NA,'species',NA,'species'),stringsAsFactors=FALSE))
+  with_mock(`RSQLite::dbGetQuery`=function(...){data.frame('id'=c(9999))},expect_error(taxonomizr:::getParentNodes(c(9606,9605),tmp),'finding'))
+  with_mock(`RSQLite::dbGetQuery`=function(...){data.frame('id'=c(9605,9606))},expect_error(taxonomizr:::getParentNodes(c(9606,9605),tmp),'finding'))
 })
 
 
@@ -479,6 +482,9 @@ test_that("Test accessionToTaxa",{
   expect_equal(accessionToTaxa(c("Z17430.1","Z17429.1","X62402.1"),sqlFile,'base'),as.integer(c(NA,NA,NA)))
   expect_equal(accessionToTaxa(c("Z17430","NOTREAL","X62402","Z17429","X62402"),sqlFile,'base'),c(3702,NA,9606,3702,9606))
   expect_equal(accessionToTaxa(c("Z17430","NOTREAL","X62402","Z17429","X62402"),sqlFile,'version'),as.integer(c(NA,NA,NA,NA,NA)))
+  with_mock(`RSQLite::dbGetQuery`=function(...){data.frame('accession'=c(9605,9606))},expect_error(accessionToTaxa(c("Z17430.1","X62402.1"),sqlFile),'mismatch'))
+  with_mock(`RSQLite::dbGetQuery`=function(...){data.frame('accession'=c("X62402.1","Z17430.1"))},expect_error(accessionToTaxa(c("Z17430.1","X62402.1"),sqlFile),'mismatch'))
+  with_mock(`RSQLite::dbGetQuery`=function(...){data.frame('accession'=c("NOTREAL","NOTREAL2","NOTREAL3"))},expect_error(accessionToTaxa(c("Z17430.1","X62402.1"),sqlFile),'mismatch'))
 })
 
 test_that("Test condenseTaxa",{
@@ -527,6 +533,8 @@ test_that("Test getNamesAndNodes",{
   expect_equal(getNamesAndNodes(tmp,fakeFile),file.path(tmp,c('names.dmp','nodes.dmp')))
   #windows throws "incomplete block on file"
   expect_error(getNamesAndNodes(tmp,fakeFile,'NOTREAL.FILE'),'finding|incomplete')
+  tmp<-tempfile()
+  with_mock(`file.copy`=function(...)TRUE,expect_error(getNamesAndNodes(tmp,fakeFile),'copying'))
   if(.Platform$OS.type == "windows")file.remove('fakeNamesNodes.tar')
 })
 
