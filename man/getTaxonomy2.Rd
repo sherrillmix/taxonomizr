@@ -17,7 +17,7 @@ getTaxonomy2(ids, taxaNodes, taxaNames, desiredTaxa = c("superkingdom",
 
 \item{desiredTaxa}{a vector of strings giving the desired taxa levels}
 
-\item{mc.cores}{the number of cores to use when processing}
+\item{mc.cores}{DEPRECATED the number of cores to use when processing. Note this option is now deprecated and has no effect. Please switch to \code{\link{getTaxonomy}} (see \link{taxonomizrSwitch}) for much faster processing without requiring multiple cores.}
 
 \item{debug}{if TRUE output node and name vectors with dput for each id (probably useful only for development)}
 }

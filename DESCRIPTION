@@ -18,9 +18,8 @@ Suggests:
 Depends:
     R (>= 3.0.0)
 Imports:
-    parallel,
     RSQLite,
-    data.table,
-    R.utils
+    R.utils,
+    data.table
 RoxygenNote: 6.0.1
 VignetteBuilder: knitr

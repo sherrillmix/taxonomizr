@@ -333,7 +333,7 @@ read.accession2taxid<-function(taxaFiles,sqlFile,vocal=TRUE,extraSqlCommand='',i
 #' @param taxaNodes a nodes data.table from \code{\link{read.nodes}}
 #' @param taxaNames a names data.table from \code{\link{read.names}}
 #' @param desiredTaxa a vector of strings giving the desired taxa levels
-#' @param mc.cores the number of cores to use when processing
+#' @param mc.cores DEPRECATED the number of cores to use when processing. Note this option is now deprecated and has no effect. Please switch to \code{\link{getTaxonomy}} (see \link{taxonomizrSwitch}) for much faster processing without requiring multiple cores.
 #' @param debug if TRUE output node and name vectors with dput for each id (probably useful only for development)
 #' @return a matrix of taxonomic strings with a row for each id and a column for each desiredTaxa rank
 #' @import data.table
@@ -410,7 +410,7 @@ getTaxonomy2<-function(ids,taxaNodes ,taxaNames, desiredTaxa=c('superkingdom','p
   ids<-as.numeric(ids)
   if(length(ids)==0)return(NULL)
   uniqIds<-unique(ids)
-  taxa<-do.call(rbind,parallel::mclapply(uniqIds,function(id){
+  taxa<-do.call(rbind,lapply(uniqIds,function(id){
       out<-structure(rep(as.character(NA),length(desiredTaxa)),names=desiredTaxa)
       if(is.na(id))return(out)
       thisId<-id
@@ -433,7 +433,7 @@ getTaxonomy2<-function(ids,taxaNodes ,taxaNames, desiredTaxa=c('superkingdom','p
         dput(tmp2)
       }
       return(out)
-  },mc.cores=mc.cores))
+  }))
   rownames(taxa)<-format(uniqIds,scientific=FALSE)
   out<-taxa[format(ids,scientific=FALSE),,drop=FALSE]
   return(out)
