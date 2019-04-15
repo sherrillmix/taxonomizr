@@ -6,7 +6,7 @@
 \usage{
 getAccession2taxid(outDir = ".",
   baseUrl = "ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/",
-  types = c("nucl_gb", "nucl_est", "nucl_gss", "nucl_wgs"))
+  types = c("nucl_gb", "nucl_wgs"))
 }
 \arguments{
 \item{outDir}{the directory to put the accession2taxid.gz files in}
