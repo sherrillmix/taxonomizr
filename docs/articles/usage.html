@@ -143,7 +143,7 @@ ids&lt;-<span class="kw"><a href="../reference/accessionToTaxa.html">accessionTo
 <pre><code>read1   gi|326539903|gb|CP002582.1|     69.68   1745    448     69      3       1702    3517898 3519606 3e-169  608
 read2   gi|160426828|gb|CP000885.1|     68.46   1763    452     82      3       1711    1790367 1788655 4e-140  511
 ...</code></pre>
-<p>So to identify a taxon for a given sequence you would blast it against e.g. the NCBI nt database and load the results into R. For NCBI databases, the accession number is often the 4th item in the <code>|</code> (pipe) separated reference field (often the second column in a tab separated result). For example, the <code>gi|326539903|gb|**CP002582.1r**|</code> above.</p>
+<p>So to identify a taxon for a given sequence you would blast it against e.g. the NCBI nt database and load the results into R. For NCBI databases, the accession number is often the 4th item in the <code>|</code> (pipe) separated reference field (often the second column in a tab separated result). For example, the <code>CP002582.1</code> in the gi|326539903|gb|<strong>CP002582.1</strong>| above.</p>
 <p>So just as an example, reading in blast results might look something like:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">blastResults&lt;-<span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/read.table">read.table</a></span>(<span class="st">'XXXX.blast'</span>,<span class="dt">header=</span><span class="ot">FALSE</span>,<span class="dt">stringsAsFactors=</span><span class="ot">FALSE</span>)
 <span class="co">#grab the 4th |-separated field from the reference name in the second column</span>
