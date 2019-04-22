@@ -289,7 +289,7 @@ getAccessions(3702,'accessionTaxa.sql',limit=10)
 ### v0.5.0
   * Transitioned from data.table to SQLite
   * Addeded convenience `prepareDatabase()` function
-  * Squared Windows testing errors
+  * Squashed Windows testing errors
 
 ## Switch from data.table to SQLite
 Version 0.5.0 marked a change for name and node lookups from using data.table to using SQLite. This was necessary to increase performance (10-100x speedup for `getTaxonomy`) and create a simpler interface (a single SQLite database contains all necessary data). Unfortunately, this switch requires a couple breaking changes: 
