@@ -294,7 +294,7 @@ getAccessions(3702,'accessionTaxa.sql',limit=10)
 
 ## Changelog
 
-### v0.5.1
+### v0.5.2
   * Remove `nucl_est` and `nucl_gss` from defaults since NCBI folded them into `nucl_gb` and removed
 
 ### v0.5.0

@@ -764,7 +764,7 @@ getId2<-function(taxa,taxaNames){
   multiHits<-sapply(out,length)>1
   if(any(multiHits)){
     warning('Multiple taxa ids found for ',paste(taxa[multiHits],collapse=', '),'. Collapsing with commas')
-    out<-sapply(out,function(xx)ifelse(is.na(xx)||is.null(xx),NA,paste(xx,collapse=',')))
+    out<-sapply(out,function(xx)ifelse(all(is.na(xx))||is.null(xx),NA,paste(xx,collapse=',')))
   }
   out<-as.character(unlist(out))
   names(out)<-uniqTaxa
