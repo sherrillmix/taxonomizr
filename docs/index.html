@@ -239,13 +239,6 @@ ids&lt;-<span class="kw"><a href="reference/accessionToTaxa.html">accessionToTax
 </ul>
 </div>
 </div>
-<div id="switch-from-data-table-to-sqlite" class="section level2">
-<h2 class="hasAnchor">
-<a href="#switch-from-data-table-to-sqlite" class="anchor"></a>Switch from data.table to SQLite</h2>
-<p>Version 0.5.0 marked a change for name and node lookups from using data.table to using SQLite. This was necessary to increase performance (10-100x speedup for <code>getTaxonomy</code>) and create a simpler interface (a single SQLite database contains all necessary data). Unfortunately, this switch requires a couple breaking changes: * <code>getTaxonomy</code> changes from <code><a href="reference/getTaxonomy.html">getTaxonomy(ids,namesDT,nodesDT)</a></code> to <code><a href="reference/getTaxonomy.html">getTaxonomy(ids,sqlFile)</a></code> * <code>getId</code> changes from <code><a href="reference/getId.html">getId(taxa,namesDT)</a></code> to <code><a href="reference/getId.html">getId(taxa,sqlFile)</a></code> * <code>read.names</code> is deprecated, instead use <code>read.names.sql</code>. For example, instead of calling <code>names&lt;-read.names('names.dmp')</code> in every session, simply call <code><a href="reference/read.names.sql.html">read.names.sql('names.dmp','accessionTaxa.sql')</a></code> once (or use the convenient <code>prepareDatabase</code> as <a href="#preparation">above</a>)). * <code>read.nodes</code> is deprecated, instead use <code>read.names.sql</code>. For example. instead of calling <code>nodes&lt;-read.names('nodes.dmp')</code> in every session, simply call <code><a href="reference/read.nodes.sql.html">read.nodes.sql('nodes.dmp','accessionTaxa.sql')</a></code> once (or use the convenient <code>prepareDatabase</code> as <a href="#preparation">above</a>).</p>
-<p>I’ve tried to ease any problems with this by overloading <code>getTaxonomy</code> and <code>getId</code> to still function (with a warning) if passed a data.table names and nodes argument and providing a simpler <code>prepareDatabase</code> function for completing all setup steps (hopefully avoiding direct calls to <code>read.names</code> and <code>read.nodes</code> for most users).</p>
-<p>I plan to eventually remove data.table functionality to avoid a split codebase so please switch to the new SQLite format in all new code.</p>
-</div>
 <div id="manual-preparation-of-database-usually-not-necessary" class="section level2">
 <h2 class="hasAnchor">
 <a href="#manual-preparation-of-database-usually-not-necessary" class="anchor"></a>Manual preparation of database (usually not necessary)</h2>
@@ -288,6 +281,13 @@ ids&lt;-<span class="kw"><a href="reference/accessionToTaxa.html">accessionToTax
 <pre><code>## Adding index. This may also take a while.</code></pre>
 <p>Now everything should be ready for processing. All files are cached locally and so the preparation is only required once (or whenever you would like to update the data). It is not necessary to manually check for the presence of these files since the functions automatically check to see if their output is present and if so skip downloading/processing. Delete the local files if you would like to redownload or reprocess them.</p>
 </div>
+</div>
+<div id="switch-from-data-table-to-sqlite" class="section level2">
+<h2 class="hasAnchor">
+<a href="#switch-from-data-table-to-sqlite" class="anchor"></a>Switch from data.table to SQLite</h2>
+<p>Version 0.5.0 marked a change for name and node lookups from using data.table to using SQLite. This was necessary to increase performance (10-100x speedup for <code>getTaxonomy</code>) and create a simpler interface (a single SQLite database contains all necessary data). Unfortunately, this switch requires a couple breaking changes: * <code>getTaxonomy</code> changes from <code><a href="reference/getTaxonomy.html">getTaxonomy(ids,namesDT,nodesDT)</a></code> to <code><a href="reference/getTaxonomy.html">getTaxonomy(ids,sqlFile)</a></code> * <code>getId</code> changes from <code><a href="reference/getId.html">getId(taxa,namesDT)</a></code> to <code><a href="reference/getId.html">getId(taxa,sqlFile)</a></code> * <code>read.names</code> is deprecated, instead use <code>read.names.sql</code>. For example, instead of calling <code>names&lt;-read.names('names.dmp')</code> in every session, simply call <code><a href="reference/read.names.sql.html">read.names.sql('names.dmp','accessionTaxa.sql')</a></code> once (or use the convenient <code>prepareDatabase</code> as <a href="#preparation">above</a>)). * <code>read.nodes</code> is deprecated, instead use <code>read.names.sql</code>. For example. instead of calling <code>nodes&lt;-read.names('nodes.dmp')</code> in every session, simply call <code><a href="reference/read.nodes.sql.html">read.nodes.sql('nodes.dmp','accessionTaxa.sql')</a></code> once (or use the convenient <code>prepareDatabase</code> as <a href="#preparation">above</a>).</p>
+<p>I’ve tried to ease any problems with this by overloading <code>getTaxonomy</code> and <code>getId</code> to still function (with a warning) if passed a data.table names and nodes argument and providing a simpler <code>prepareDatabase</code> function for completing all setup steps (hopefully avoiding direct calls to <code>read.names</code> and <code>read.nodes</code> for most users).</p>
+<p>I plan to eventually remove data.table functionality to avoid a split codebase so please switch to the new SQLite format in all new code.</p>
 </div>
 </div>
   </div>
