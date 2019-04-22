@@ -306,9 +306,25 @@ getTaxonomy(ids,&#39;accessionTaxa.sql&#39;)
 
 <h2>Assigning taxonomy</h2>
 
-<h3>Finding taxonomy for NCBI accession numbers</h3>
+<h3>Producing accession numbers</h3>
 
-<p>NCBI accession numbers are often obtained when doing a BLAST search (usually the second column of output from blastn, blastx, blastp, &hellip;). So to identify a taxon for a given sequence you would blast it against e.g. the NCBI nt database and load the results into R.</p>
+<p>NCBI accession numbers are often obtained when doing a BLAST search (usually the second column of output from blastn, blastx, blastp, &hellip;). For example the output might look like:</p>
+
+<pre><code>read1   gi|326539903|gb|CP002582.1|     69.68   1745    448     69      3       1702    3517898 3519606 3e-169  608
+read2   gi|160426828|gb|CP000885.1|     68.46   1763    452     82      3       1711    1790367 1788655 4e-140  511
+...
+</code></pre>
+
+<p>So to identify a taxon for a given sequence you would blast it against e.g. the NCBI nt database and load the results into R. For NCBI databases, the accession number is often the 4th item in <code>|</code> separated reference field (often the second column in a tab separated result). For example gi|326539903|gb|<em>CP002582.1</em>|.</p>
+
+<p>So just as an example, reading in blast results might look something like:</p>
+
+<pre><code class="r">blastResults&lt;-read.table(&#39;XXXX.blast&#39;,header=FALSE,stringsAsFactors=FALSE)
+#grab the 4th |-separated field from the reference name in the second column
+accessions&lt;-sapply(strsplit(xx$V2,&#39;\\|&#39;),&#39;[&#39;,4)
+</code></pre>
+
+<h3>Finding taxonomy for NCBI accession numbers</h3>
 
 <p>Now we are ready to convert NCBI accession numbers to taxonomic IDs. For example, to find the taxonomic IDs associated with NCBI accession numbers &ldquo;LN847353.1&rdquo; and &ldquo;AL079352.3&rdquo;:</p>
 
@@ -442,7 +458,7 @@ condenseTaxa(taxa,groupings)
 
 <h2>Changelog</h2>
 
-<h3>v0.5.2</h3>
+<h3>v0.5.3</h3>
 
 <ul>
 <li>Remove <code>nucl_est</code> and <code>nucl_gss</code> from defaults since NCBI folded them into <code>nucl_gb</code> and removed</li>
