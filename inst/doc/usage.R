@@ -52,7 +52,7 @@ library(taxonomizr)
 #  condenseTaxa(taxa,groupings)
 
 ## ----eval=FALSE----------------------------------------------------------
-#  read.accession2taxid(list.files('.','accession2taxid.gz$'),'accessionTaxa.sql',indexTaxa=TRUE)
+#  read.accession2taxid(list.files('.','accession2taxid.gz$'),'accessionTaxa.sql',indexTaxa=TRUE,overwrite=TRUE)
 
 ## ----eval=FALSE----------------------------------------------------------
 #  getAccessions(3702,'accessionTaxa.sql',limit=10)

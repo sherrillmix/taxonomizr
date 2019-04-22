@@ -4,7 +4,8 @@
 \alias{read.names.sql}
 \title{Read NCBI names file}
 \usage{
-read.names.sql(nameFile, sqlFile = "nameNode.sqlite", overwrite = FALSE)
+read.names.sql(nameFile, sqlFile = "nameNode.sqlite",
+  overwrite = FALSE)
 }
 \arguments{
 \item{nameFile}{string giving the path to an NCBI name file to read from (both gzipped or uncompressed files are ok)}

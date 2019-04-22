@@ -4,7 +4,8 @@
 \alias{read.nodes.sql}
 \title{Read NCBI nodes file}
 \usage{
-read.nodes.sql(nodeFile, sqlFile = "nameNode.sqlite", overwrite = FALSE)
+read.nodes.sql(nodeFile, sqlFile = "nameNode.sqlite",
+  overwrite = FALSE)
 }
 \arguments{
 \item{nodeFile}{string giving the path to an NCBI node file to read from (both gzipped or uncompressed files are ok)}

@@ -4,8 +4,8 @@
 \alias{read.accession2taxid}
 \title{Read NCBI accession2taxid files}
 \usage{
-read.accession2taxid(taxaFiles, sqlFile, vocal = TRUE, extraSqlCommand = "",
-  indexTaxa = FALSE, overwrite = FALSE)
+read.accession2taxid(taxaFiles, sqlFile, vocal = TRUE,
+  extraSqlCommand = "", indexTaxa = FALSE, overwrite = FALSE)
 }
 \arguments{
 \item{taxaFiles}{a string or vector of strings giving the path(s) to files to be read in}

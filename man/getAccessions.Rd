@@ -4,7 +4,8 @@
 \alias{getAccessions}
 \title{Find all accessions for a taxa}
 \usage{
-getAccessions(taxaId, sqlFile, version = c("version", "base"), limit = NULL)
+getAccessions(taxaId, sqlFile, version = c("version", "base"),
+  limit = NULL)
 }
 \arguments{
 \item{taxaId}{a vector of taxonomic IDs}

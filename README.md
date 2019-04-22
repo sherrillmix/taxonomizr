@@ -87,14 +87,6 @@ prepareDatabase('accessionTaxa.sql')
 ```
 
 ```
-## Reading ./nucl_est.accession2taxid.gz.
-```
-
-```
-## Reading ./nucl_gss.accession2taxid.gz.
-```
-
-```
 ## Reading ./nucl_wgs.accession2taxid.gz.
 ```
 
@@ -109,6 +101,7 @@ prepareDatabase('accessionTaxa.sql')
 ```
 ## [1] "accessionTaxa.sql"
 ```
+
 
 If everything works then that should have prepared a SQLite database ready for use. You can skip the "Manual preparation" steps below.
 
@@ -129,11 +122,15 @@ prepareDatabase('accessionTaxa.sql')
 
 
 
+
 ## Assigning taxonomy
 
 ### Finding taxonomy for NCBI accession numbers
 
+NCBI accession numbers are often obtained when doing a BLAST search (usually the second column of output from blastn, blastx, blastp, ...). So to identify a taxon for a given sequence you would blast it against e.g. the NCBI nt database and load the results into R.
+
 Now we are ready to convert NCBI accession numbers to taxonomic IDs. For example, to find the taxonomic IDs associated with NCBI accession numbers "LN847353.1" and "AL079352.3":
+
 
 ```r
 taxaId<-accessionToTaxa(c("LN847353.1","AL079352.3"),"accessionTaxa.sql")
@@ -174,6 +171,7 @@ print(taxaId)
 ```
 
 
+
 ```r
 taxaId<-accessionToTaxa(c("LN847353","AL079352"),"accessionTaxa.sql",version='base')
 print(taxaId)
@@ -182,7 +180,6 @@ print(taxaId)
 ```
 ## [1] 1313 9606
 ```
-
 
 
 ### Finding taxonomy for taxonomic names
@@ -205,8 +202,8 @@ And again to get the taxonomy for those IDs use `getTaxonomy`:
 taxa<-getTaxonomy(taxaId,'accessionTaxa.sql')
 print(taxa)
 ```
-
 ```
+
 ##      superkingdom phylum     class      order      family      genus  
 ## 9606 "Eukaryota"  "Chordata" "Mammalia" "Primates" "Hominidae" "Homo" 
 ## 9913 "Eukaryota"  "Chordata" "Mammalia" NA         "Bovidae"   "Bos"  
@@ -255,7 +252,23 @@ To find all the accessions for a given taxonomic ID, you can use the `getAccessi
 
 
 ```r
-read.accession2taxid(list.files('.','accession2taxid.gz$'),'accessionTaxa.sql',indexTaxa=TRUE)
+read.accession2taxid(list.files('.','accession2taxid.gz$'),'accessionTaxa.sql',indexTaxa=TRUE,overwrite=TRUE)
+```
+
+```
+## Reading nucl_gb.accession2taxid.gz.
+```
+
+```
+## Reading nucl_wgs.accession2taxid.gz.
+```
+
+```
+## Reading in values. This may take a while.
+```
+
+```
+## Adding index. This may also take a while.
 ```
 
 Then you can get the accessions for taxa 3702 with a command like (note that the limit argument is used here in order to preserve space):
@@ -267,16 +280,16 @@ getAccessions(3702,'accessionTaxa.sql',limit=10)
 
 ```
 ##    taxa accession
-## 1  3702  Z17427.1
-## 2  3702  Z17428.1
-## 3  3702  Z17429.1
-## 4  3702  Z17430.1
-## 5  3702  Z17431.1
-## 6  3702  Z17432.1
-## 7  3702  Z17433.1
-## 8  3702  Z17434.1
-## 9  3702  Z17435.1
-## 10 3702  Z17436.1
+## 1  3702  X58148.1
+## 2  3702  X66414.1
+## 3  3702  X60045.1
+## 4  3702  X07376.1
+## 5  3702  X54927.1
+## 6  3702  X54926.1
+## 7  3702  X54928.1
+## 8  3702  X54930.1
+## 9  3702  X54929.1
+## 10 3702  X52320.1
 ```
 
 ## Switch from data.table to SQLite
@@ -319,15 +332,23 @@ getAccession2taxid()
 ```
 
 ```
-## [1] "./nucl_gb.accession2taxid.gz"  "./nucl_est.accession2taxid.gz"
-## [3] "./nucl_gss.accession2taxid.gz" "./nucl_wgs.accession2taxid.gz"
+## This can be a big (several gigabytes) download. Please be patient and use a fast connection.
 ```
+
+```
+## [1] "./nucl_gb.accession2taxid.gz"  "./nucl_wgs.accession2taxid.gz"
+```
+
 
 If you would also like to identify protein accession numbers, also download the prot file from NCBI (again this is a _big_ download):
 
 ```r
 #this is a big download
 getAccession2taxid(types='prot')
+```
+
+```
+## This can be a big (several gigabytes) download. Please be patient and use a fast connection.
 ```
 
 ```
@@ -351,19 +372,15 @@ read.accession2taxid(list.files('.','accession2taxid.gz$'),'accessionTaxa.sql')
 ```
 
 ```
-## Reading nucl_est.accession2taxid.gz.
-```
-
-```
 ## Reading nucl_gb.accession2taxid.gz.
 ```
 
 ```
-## Reading nucl_gss.accession2taxid.gz.
+## Reading nucl_wgs.accession2taxid.gz.
 ```
 
 ```
-## Reading nucl_wgs.accession2taxid.gz.
+## Reading prot.accession2taxid.gz.
 ```
 
 ```
@@ -373,6 +390,7 @@ read.accession2taxid(list.files('.','accession2taxid.gz$'),'accessionTaxa.sql')
 ```
 ## Adding index. This may also take a while.
 ```
+
 
 Now everything should be ready for processing. All files are cached locally and so the preparation is only required once (or whenever you would like to update the data). It is not necessary to manually check for the presence of these files since the functions automatically check to see if their output is present and if so skip downloading/processing. Delete the local files if you would like to redownload or reprocess them.
 
