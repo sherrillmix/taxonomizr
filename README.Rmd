@@ -280,6 +280,7 @@ getAccessions(3702,'accessionTaxa.sql',limit=10)
 
 ### v0.5.2
   * Remove `nucl_est` and `nucl_gss` from defaults since NCBI folded them into `nucl_gb` and removed
+  * Squash R:devel bug
 
 ### v0.5.0
   * Transitioned from data.table to SQLite
