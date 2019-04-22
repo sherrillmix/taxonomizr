@@ -24,7 +24,7 @@ library(taxonomizr)
 ## ----eval=FALSE----------------------------------------------------------
 #  blastResults<-read.table('XXXX.blast',header=FALSE,stringsAsFactors=FALSE)
 #  #grab the 4th |-separated field from the reference name in the second column
-#  accessions<-sapply(strsplit(xx$V2,'\\|'),'[',4)
+#  accessions<-sapply(strsplit(blastResults[,2],'\\|'),'[',4)
 
 ## ----eval=FALSE----------------------------------------------------------
 #  taxaId<-accessionToTaxa(c("LN847353.1","AL079352.3"),"accessionTaxa.sql")

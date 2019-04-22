@@ -135,7 +135,7 @@ read2   gi|160426828|gb|CP000885.1|     68.46   1763    452     82      3       
 ...
 ```
 
-So to identify a taxon for a given sequence you would blast it against e.g. the NCBI nt database and load the results into R. For NCBI databases, the accession number is often the 4th item in the `|` (pipe) separated reference field (often the second column in a tab separated result). For example, the `gi|326539903|gb|*CP002582.1r*|` above.
+So to identify a taxon for a given sequence you would blast it against e.g. the NCBI nt database and load the results into R. For NCBI databases, the accession number is often the 4th item in the `|` (pipe) separated reference field (often the second column in a tab separated result). For example, the `gi|326539903|gb|**CP002582.1r**|` above.
 
 So just as an example, reading in blast results might look something like:
 
@@ -143,7 +143,7 @@ So just as an example, reading in blast results might look something like:
 ```r
 blastResults<-read.table('XXXX.blast',header=FALSE,stringsAsFactors=FALSE)
 #grab the 4th |-separated field from the reference name in the second column
-accessions<-sapply(strsplit(xx$V2,'\\|'),'[',4)
+accessions<-sapply(strsplit(blastResults[,2],'\\|'),'[',4)
 ```
 
 
