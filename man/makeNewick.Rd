@@ -15,10 +15,7 @@ makeNewick(taxa, naSub = "_")
 Create a Newick formatted tree from a data.frame of taxonomic assignments
 }
 \examples{
-taxa<-matrix(
-  c('A','A','A','B','B','C','D','D','E','F','G','H'),nrow=3,
-  dimnames=list(c('species1','species2','species3'),c('order','family','genus','species'))
-)
+taxa<-matrix(c('A','A','A','B','B','C','D','D','E','F','G','H'),nrow=3)
 makeNewick(taxa)
 }
 \seealso{

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Find all accessions for a taxa — getAccessions • taxonomizr</title>
+<title>Create a Newick tree from taxonomy — makeNewick • taxonomizr</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Find all accessions for a taxa — getAccessions" />
-<meta property="og:description" content="Find accessions numbers for a given taxa ID the NCBI taxonomy. This will be pretty slow unless the database was built with indexTaxa=TRUE since the database would not have an index for taxaId." />
+<meta property="og:title" content="Create a Newick tree from taxonomy — makeNewick" />
+<meta property="og:description" content="Create a Newick formatted tree from a data.frame of taxonomic assignments" />
 
 
 
@@ -120,63 +120,38 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Find all accessions for a taxa</h1>
+    <h1>Create a Newick tree from taxonomy</h1>
     <small class="dont-index">Source: <a href='https://github.com/sherrillmix/taxonomizr/blob/master/R/taxa.R'><code>R/taxa.R</code></a></small>
-    <div class="hidden name"><code>getAccessions.Rd</code></div>
+    <div class="hidden name"><code>makeNewick.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Find accessions numbers for a given taxa ID the NCBI taxonomy. This will be pretty slow unless the database was built with indexTaxa=TRUE since the database would not have an index for taxaId.</p>
+    <p>Create a Newick formatted tree from a data.frame of taxonomic assignments</p>
     </div>
 
-    <pre class="usage"><span class='fu'>getAccessions</span><span class='op'>(</span><span class='va'>taxaId</span>, <span class='va'>sqlFile</span>, version <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"version"</span>, <span class='st'>"base"</span><span class='op'>)</span>, limit <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>makeNewick</span><span class='op'>(</span><span class='va'>taxa</span>, naSub <span class='op'>=</span> <span class='st'>"_"</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>taxaId</th>
-      <td><p>a vector of taxonomic IDs</p></td>
+      <th>taxa</th>
+      <td><p>a matrix with a row for each leaf of the tree and a column for each taxonomic classification e.g. the output from getTaxonomy</p></td>
     </tr>
     <tr>
-      <th>sqlFile</th>
-      <td><p>a string giving the path to a SQLite file created by <code><a href='read.accession2taxid.html'>read.accession2taxid</a></code></p></td>
-    </tr>
-    <tr>
-      <th>version</th>
-      <td><p>either 'version' indicating that taxaids are versioned e.g. Z17427.1 or 'base' indicating that taxaids do not have version numbers e.g. Z17427</p></td>
-    </tr>
-    <tr>
-      <th>limit</th>
-      <td><p>return only this number of accessions or NULL for no limits</p></td>
+      <th>naSub</th>
+      <td><p>a character string to substitute in place of NAs in the taxonomy</p></td>
     </tr>
     </table>
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>a vector of character strings giving taxa IDs (potentially comma concatenated for any taxa with ambiguous names)</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='read.accession2taxid.html'>read.accession2taxid</a></code></p></div>
+    <div class='dont-index'><p><code><a href='getTaxonomy.html'>getTaxonomy</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='va'>taxa</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span>
-  <span class='st'>"accession\taccession.version\ttaxid\tgi"</span>,
-  <span class='st'>"Z17427\tZ17427.1\t3702\t16569"</span>,
-  <span class='st'>"Z17428\tZ17428.1\t3702\t16570"</span>,
-  <span class='st'>"Z17429\tZ17429.1\t3702\t16571"</span>,
-  <span class='st'>"Z17430\tZ17430.1\t3702\t16572"</span>
-<span class='op'>)</span>
-<span class='va'>inFile</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/base/tempfile.html'>tempfile</a></span><span class='op'>(</span><span class='op'>)</span>
-<span class='va'>sqlFile</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/base/tempfile.html'>tempfile</a></span><span class='op'>(</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/base/writeLines.html'>writeLines</a></span><span class='op'>(</span><span class='va'>taxa</span>,<span class='va'>inFile</span><span class='op'>)</span>
-<span class='fu'><a href='read.accession2taxid.html'>read.accession2taxid</a></span><span class='op'>(</span><span class='va'>inFile</span>,<span class='va'>sqlFile</span>,vocal<span class='op'>=</span><span class='cn'>FALSE</span><span class='op'>)</span>
-<span class='fu'>getAccessions</span><span class='op'>(</span><span class='fl'>3702</span>,<span class='va'>sqlFile</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;   taxa accession
-#&gt; 1 3702  Z17427.1
-#&gt; 2 3702  Z17428.1
-#&gt; 3 3702  Z17429.1
-#&gt; 4 3702  Z17430.1</div></pre>
+    <pre class="examples"><div class='input'><span class='va'>taxa</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>'A'</span>,<span class='st'>'A'</span>,<span class='st'>'A'</span>,<span class='st'>'B'</span>,<span class='st'>'B'</span>,<span class='st'>'C'</span>,<span class='st'>'D'</span>,<span class='st'>'D'</span>,<span class='st'>'E'</span>,<span class='st'>'F'</span>,<span class='st'>'G'</span>,<span class='st'>'H'</span><span class='op'>)</span>,nrow<span class='op'>=</span><span class='fl'>3</span><span class='op'>)</span>
+<span class='fu'>makeNewick</span><span class='op'>(</span><span class='va'>taxa</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] "((((F,G)D)B,((H)E)C)A)"</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

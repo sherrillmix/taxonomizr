@@ -929,10 +929,7 @@ getAccessions<-function(taxaId,sqlFile,version=c('version','base'),limit=NULL){
 #' @seealso \code{\link{getTaxonomy}}
 #' @export
 #' @examples
-#' taxa<-matrix(
-#'   c('A','A','A','B','B','C','D','D','E','F','G','H'),nrow=3,
-#'   dimnames=list(c('species1','species2','species3'),c('order','family','genus','species'))
-#' )
+#' taxa<-matrix(c('A','A','A','B','B','C','D','D','E','F','G','H'),nrow=3)
 #' makeNewick(taxa)
 makeNewick<-function(taxa,naSub='_'){
   if(!is.null(naSub))taxa[is.na(taxa)]<-naSub
