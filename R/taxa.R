@@ -83,7 +83,8 @@ read.names<-function(nameFile,onlyScientific=TRUE){
 #' )
 #' tmpFile<-tempfile()
 #' writeLines(namesText,tmpFile)
-#' read.names.sql(tmpFile)
+#' sqlFile<-tempfile()
+#' read.names.sql(tmpFile,sqlFile)
 read.names.sql<-function(nameFile,sqlFile='nameNode.sqlite',overwrite=FALSE){
   if(file.exists(sqlFile)){
     dbTest <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
@@ -159,9 +160,9 @@ read.nodes<-function(nodeFile){
 #'  "9\t|\t32199\t|\tspecies\t|\tBA\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|"
 #' )
 #' tmpFile<-tempfile()
-#' outFile<-tempfile()
+#' sqlFile<-tempfile()
 #' writeLines(nodes,tmpFile)
-#' read.nodes.sql(tmpFile,outFile)
+#' read.nodes.sql(tmpFile,sqlFile)
 read.nodes.sql<-function(nodeFile,sqlFile='nameNode.sqlite',overwrite=FALSE){
   if(file.exists(sqlFile)){
     dbTest <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
@@ -288,10 +289,10 @@ trimTaxa<-function(inFile,outFile,desiredCols=c(2,3)){
 #'   "Z17430\tZ17430.1\t3702\t16572"
 #' )
 #' inFile<-tempfile()
-#' outFile<-tempfile()
+#' sqlFile<-tempfile()
 #' writeLines(taxa,inFile)
-#' read.accession2taxid(inFile,outFile,vocal=FALSE)
-#' db<-RSQLite::dbConnect(RSQLite::SQLite(),dbname=outFile)
+#' read.accession2taxid(inFile,sqlFile,vocal=FALSE)
+#' db<-RSQLite::dbConnect(RSQLite::SQLite(),dbname=sqlFile)
 #' RSQLite::dbGetQuery(db,'SELECT * FROM accessionTaxa')
 #' RSQLite::dbDisconnect(db)
 read.accession2taxid<-function(taxaFiles,sqlFile,vocal=TRUE,extraSqlCommand='',indexTaxa=FALSE,overwrite=FALSE){
@@ -668,6 +669,7 @@ condenseTaxa<-function(taxaTable,groupings=rep(1,nrow(taxaTable))){
 #' @param outDir the directory to put names.dmp and nodes.dmp in
 #' @param url the url where taxdump.tar.gz is located
 #' @param fileNames the filenames desired from the tar.gz file
+#' @param timeout time in seconds for the download to time out
 #' @return a vector of file path strings of the locations of the output files
 #' @seealso \code{\link{read.nodes.sql}}, \code{\link{read.names.sql}}
 #' @references \url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/}, \url{https://www.ncbi.nlm.nih.gov/Taxonomy/taxonomyhome.html/}
@@ -676,7 +678,10 @@ condenseTaxa<-function(taxaTable,groupings=rep(1,nrow(taxaTable))){
 #' \dontrun{
 #'   getNamesAndNodes()
 #' }
-getNamesAndNodes<-function(outDir='.',url='ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz',fileNames=c('names.dmp','nodes.dmp')){
+getNamesAndNodes<-function(outDir='.',url='ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz',fileNames=c('names.dmp','nodes.dmp'),timeout=36000){
+  oldTimeout<-getOption('timeout')
+  on.exit(options('timeout'=oldTimeout))
+  options('timeout'=timeout)
   outFiles<-file.path(outDir,fileNames)
   if(all(file.exists(outFiles))){
     message(paste(outFiles,collapse=', '),' already exist. Delete to redownload')
@@ -687,7 +692,7 @@ getNamesAndNodes<-function(outDir='.',url='ftp://ftp.ncbi.nih.gov/pub/taxonomy/t
   dir.create(tmp)
   tarFile<-file.path(tmp,base)
   utils::download.file(url,tarFile,mode='wb')
-  utils::untar(tarFile,fileNames,exdir=tmp,tar='internal',compressed='gzip')
+  utils::untar(tarFile,fileNames,exdir=tmp,tar='internal')
   tmpFiles<-file.path(tmp,fileNames)
   if(!all(file.exists(tmpFiles)))stop("Problem finding files ",paste(tmpFiles[!file.exists(tmpFiles)],collapse=', '))
   mapply(file.copy,tmpFiles,outFiles)
@@ -703,6 +708,7 @@ getNamesAndNodes<-function(outDir='.',url='ftp://ftp.ncbi.nih.gov/pub/taxonomy/t
 #' @param outDir the directory to put the accession2taxid.gz files in
 #' @param baseUrl the url of the directory where accession2taxid.gz files are located
 #' @param types the types if accession2taxid.gz files desired where type is the prefix of xxx.accession2taxid.gz. The default is to download all nucl_ accessions. For protein accessions, try \code{types=c('prot')}.
+#' @param timeout time in seconds for the download to time out
 #' @return a vector of file path strings of the locations of the output files
 #' @seealso \code{\link{read.accession2taxid}}
 #' @references \url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/}, \url{https://www.ncbi.nlm.nih.gov/Sequin/acc.html}
@@ -717,7 +723,10 @@ getNamesAndNodes<-function(outDir='.',url='ftp://ftp.ncbi.nih.gov/pub/taxonomy/t
 #'
 #'   getAccession2taxid()
 #' }
-getAccession2taxid<-function(outDir='.',baseUrl='ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/',types=c('nucl_gb','nucl_wgs')){
+getAccession2taxid<-function(outDir='.',baseUrl='ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/',types=c('nucl_gb','nucl_wgs'),timeout=36000){
+  oldTimeout<-getOption('timeout')
+  on.exit(options('timeout'=oldTimeout))
+  options('timeout'=timeout)
   message('This can be a big (several gigabytes) download. Please be patient and use a fast connection.')
   fileNames<-sprintf('%s.accession2taxid.gz',types)
   outFiles<-file.path(outDir,fileNames)
@@ -793,10 +802,11 @@ getId2<-function(taxa,taxaNames){
 #' )
 #' tmpFile<-tempfile()
 #' writeLines(namesText,tmpFile)
-#' names<-read.names.sql(tmpFile)
-#' getId('Bacteria',names)
-#' getId('Not a real name',names)
-#' getId('Multi',names)
+#' sqlFile<-tempfile()
+#' read.names.sql(tmpFile,sqlFile)
+#' getId('Bacteria',sqlFile)
+#' getId('Not a real name',sqlFile)
+#' getId('Multi',sqlFile)
 getId<-function(taxa,sqlFile='nameNode.sqlite',onlyScientific=TRUE){
   if('data.table' %in% class(sqlFile))return(getId2(taxa,sqlFile))
   tmp<-tempfile()
@@ -883,10 +893,10 @@ prepareDatabase<-function(sqlFile='nameNode.sqlite',tmpDir='.',vocal=TRUE,...){
 #'   "Z17430\tZ17430.1\t3702\t16572"
 #' )
 #' inFile<-tempfile()
-#' outFile<-tempfile()
+#' sqlFile<-tempfile()
 #' writeLines(taxa,inFile)
-#' read.accession2taxid(inFile,outFile)
-#' getAccessions(3702,outFile)
+#' read.accession2taxid(inFile,sqlFile)
+#' getAccessions(3702,sqlFile)
 getAccessions<-function(taxaId,sqlFile,version=c('version','base'),limit=NULL){
   version<-match.arg(version)
   if(version=='version')version<-'accession'

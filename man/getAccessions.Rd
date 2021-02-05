@@ -4,8 +4,7 @@
 \alias{getAccessions}
 \title{Find all accessions for a taxa}
 \usage{
-getAccessions(taxaId, sqlFile, version = c("version", "base"),
-  limit = NULL)
+getAccessions(taxaId, sqlFile, version = c("version", "base"), limit = NULL)
 }
 \arguments{
 \item{taxaId}{a vector of taxonomic IDs}
@@ -24,17 +23,17 @@ Find accessions numbers for a given taxa ID the NCBI taxonomy. This will be pret
 }
 \examples{
 taxa<-c(
-  "accession\\taccession.version\\ttaxid\\tgi",
-  "Z17427\\tZ17427.1\\t3702\\t16569",
-  "Z17428\\tZ17428.1\\t3702\\t16570",
-  "Z17429\\tZ17429.1\\t3702\\t16571",
-  "Z17430\\tZ17430.1\\t3702\\t16572"
+  "accession\taccession.version\ttaxid\tgi",
+  "Z17427\tZ17427.1\t3702\t16569",
+  "Z17428\tZ17428.1\t3702\t16570",
+  "Z17429\tZ17429.1\t3702\t16571",
+  "Z17430\tZ17430.1\t3702\t16572"
 )
 inFile<-tempfile()
-outFile<-tempfile()
+sqlFile<-tempfile()
 writeLines(taxa,inFile)
-read.accession2taxid(inFile,outFile)
-getAccessions(3702,outFile)
+read.accession2taxid(inFile,sqlFile)
+getAccessions(3702,sqlFile)
 }
 \seealso{
 \code{\link{read.accession2taxid}}

@@ -4,8 +4,7 @@
 \alias{read.nodes.sql}
 \title{Read NCBI nodes file}
 \usage{
-read.nodes.sql(nodeFile, sqlFile = "nameNode.sqlite",
-  overwrite = FALSE)
+read.nodes.sql(nodeFile, sqlFile = "nameNode.sqlite", overwrite = FALSE)
 }
 \arguments{
 \item{nodeFile}{string giving the path to an NCBI node file to read from (both gzipped or uncompressed files are ok)}
@@ -22,16 +21,16 @@ Take an NCBI nodes file and convert it to a data.table
 }
 \examples{
 nodes<-c(
- "1\\t|\\t1\\t|\\tno rank\\t|\\t\\t|\\t8\\t|\\t0\\t|\\t1\\t|\\t0\\t|\\t0\\t|\\t0\\t|\\t0\\t|\\t0\\t|\\t\\t|",
- "2\\t|\\t131567\\t|\\tsuperkingdom\\t|\\t\\t|\\t0\\t|\\t0\\t|\\t11\\t|\\t0\\t|\\t0\\t|\\t0\\t|\\t0\\t|\\t0\\t|\\t\\t|",
- "6\\t|\\t335928\\t|\\tgenus\\t|\\t\\t|\\t0\\t|\\t1\\t|\\t11\\t|\\t1\\t|\\t0\\t|\\t1\\t|\\t0\\t|\\t0\\t|\\t\\t|",
- "7\\t|\\t6\\t|\\tspecies\\t|\\tAC\\t|\\t0\\t|\\t1\\t|\\t11\\t|\\t1\\t|\\t0\\t|\\t1\\t|\\t1\\t|\\t0\\t|\\t\\t|",
- "9\\t|\\t32199\\t|\\tspecies\\t|\\tBA\\t|\\t0\\t|\\t1\\t|\\t11\\t|\\t1\\t|\\t0\\t|\\t1\\t|\\t1\\t|\\t0\\t|\\t\\t|"
+ "1\t|\t1\t|\tno rank\t|\t\t|\t8\t|\t0\t|\t1\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
+ "2\t|\t131567\t|\tsuperkingdom\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
+ "6\t|\t335928\t|\tgenus\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\t\t|",
+ "7\t|\t6\t|\tspecies\t|\tAC\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|",
+ "9\t|\t32199\t|\tspecies\t|\tBA\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|"
 )
 tmpFile<-tempfile()
-outFile<-tempfile()
+sqlFile<-tempfile()
 writeLines(nodes,tmpFile)
-read.nodes.sql(tmpFile,outFile)
+read.nodes.sql(tmpFile,sqlFile)
 }
 \references{
 \url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/}

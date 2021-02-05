@@ -24,14 +24,14 @@ vignettes/usage.Rmd: usage.template README.Rmd
 	cp usage.template vignettes/usage.Rmd
 	sed -n '/\#\# Introduction/,$$p' README.Rmd >> vignettes/usage.Rmd
 
-inst/doc: vignettes/usage.Rmd
+doc: vignettes/usage.Rmd
 	R -e 'devtools::build_vignettes()'
-	touch inst/doc
+	touch doc
 
 README.md: README.Rmd R/*.R
 	make localInstall
 	R -e 'knitr::opts_chunk$$set(fig.path="README_files/");knitr::knit("README.Rmd")'
 	
-$(PACKAGEFILE): man R/*.R DESCRIPTION src/*.c tests/testthat/*.R inst/doc
+$(PACKAGEFILE): man R/*.R DESCRIPTION src/*.c tests/testthat/*.R doc
 	sed -i "s/^Date:.*$$/Date: `date +%Y-%m-%d`/" DESCRIPTION
 	R -e 'devtools::check();devtools::build()'

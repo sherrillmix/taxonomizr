@@ -7,3 +7,5 @@
 ^usage.template$
 ^inst/extdata/*
 ^accessionTaxa.sql$
+^doc$
+^Meta$

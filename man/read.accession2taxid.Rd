@@ -4,8 +4,14 @@
 \alias{read.accession2taxid}
 \title{Read NCBI accession2taxid files}
 \usage{
-read.accession2taxid(taxaFiles, sqlFile, vocal = TRUE,
-  extraSqlCommand = "", indexTaxa = FALSE, overwrite = FALSE)
+read.accession2taxid(
+  taxaFiles,
+  sqlFile,
+  vocal = TRUE,
+  extraSqlCommand = "",
+  indexTaxa = FALSE,
+  overwrite = FALSE
+)
 }
 \arguments{
 \item{taxaFiles}{a string or vector of strings giving the path(s) to files to be read in}
@@ -28,17 +34,17 @@ Take NCBI accession2taxid files, keep only accession and taxa and save it as a S
 }
 \examples{
 taxa<-c(
-  "accession\\taccession.version\\ttaxid\\tgi",
-  "Z17427\\tZ17427.1\\t3702\\t16569",
-  "Z17428\\tZ17428.1\\t3702\\t16570",
-  "Z17429\\tZ17429.1\\t3702\\t16571",
-  "Z17430\\tZ17430.1\\t3702\\t16572"
+  "accession\taccession.version\ttaxid\tgi",
+  "Z17427\tZ17427.1\t3702\t16569",
+  "Z17428\tZ17428.1\t3702\t16570",
+  "Z17429\tZ17429.1\t3702\t16571",
+  "Z17430\tZ17430.1\t3702\t16572"
 )
 inFile<-tempfile()
-outFile<-tempfile()
+sqlFile<-tempfile()
 writeLines(taxa,inFile)
-read.accession2taxid(inFile,outFile,vocal=FALSE)
-db<-RSQLite::dbConnect(RSQLite::SQLite(),dbname=outFile)
+read.accession2taxid(inFile,sqlFile,vocal=FALSE)
+db<-RSQLite::dbConnect(RSQLite::SQLite(),dbname=sqlFile)
 RSQLite::dbGetQuery(db,'SELECT * FROM accessionTaxa')
 RSQLite::dbDisconnect(db)
 }

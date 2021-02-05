@@ -9,10 +9,10 @@ test_that("Test read.names",{
   )
   out<-data.table::data.table('id'=1:2,'name'=c('root','Bacteria'),key='id')
   data.table::setindex(out,'name')
-  expect_equal(read.names(textConnection(names)),out)
+  expect_warning(expect_equal(read.names(textConnection(names)),out))
   out<-data.table::data.table('id'=rep(1:2,2:3),'name'=c('all','root','Bacteria','Monera','Procaryotae'),key='id')
   data.table::setindex(out,'name')
-  expect_equal(read.names(textConnection(names),FALSE),out)
+  expect_warning(expect_equal(read.names(textConnection(names),FALSE),out))
   expect_warning(read.names(textConnection(names)),'SQLite')
 })
 
@@ -25,7 +25,7 @@ test_that("Test read.nodes",{
     "9\t|\t32199\t|\tspecies\t|\tBA\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|"
   )
   out<-data.table::data.table('id'=c(1:2,6:7,9),'rank'=c('no rank','superkingdom','genus','species','species'),'parent'=c(1,131567,335928,6,32199),key='id')
-  expect_equal(read.nodes(textConnection(nodes)),out)
+  expect_warning(expect_equal(read.nodes(textConnection(nodes)),out))
   expect_warning(read.nodes(textConnection(nodes)),'SQLite')
 })
 
@@ -283,7 +283,7 @@ test_that("Test getTaxonomy with deprecated data.tables",{
     "33208\t|\tMetazoa\t|\t\t|\tscientific name", "33154\t|\tOpisthokonta\t|\t\t|\tscientific name",
     "2759\t|\tEukaryota\t|\t\t|\tscientific name", "131567\t|\tcellular organisms\t|\t\t|\tscientific name"
   )
-  taxaNames<-read.names(textConnection(namesText))
+  taxaNames<-expect_warning(read.names(textConnection(namesText)))
   nodesText<-c(
    "1\t|\t1\t|\tno rank\t|\t\t|\t8\t|\t0\t|\t1\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
     "2\t|\t131567\t|\tsuperkingdom\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
@@ -305,27 +305,27 @@ test_that("Test getTaxonomy with deprecated data.tables",{
     "33154\t|\t2759\t|\tno rank", "2759\t|\t131567\t|\tsuperkingdom",
     "131567\t|\t1\t|\tno rank"
   )
-  taxaNodes<-read.nodes(textConnection(nodesText))
+  taxaNodes<-expect_warning(read.nodes(textConnection(nodesText)))
   desiredTaxa<-c('superkingdom','phylum','class','order','family','genus','species')
   out<-matrix(c(
     "Eukaryota","Chordata","Mammalia","Primates","Hominidae","Homo","Homo sapiens",
     "Eukaryota","Chordata","Mammalia","Primates","Hominidae","Homo",NA
   ),byrow=TRUE,dimnames=list(c('9606','9605'),desiredTaxa),nrow=2)
-  expect_equal(getTaxonomy(c(9606,9605),taxaNodes,taxaNames,mc.cores=1,desiredTaxa=desiredTaxa),out)
-  expect_equal(getTaxonomy(c(9605,9606,9605),taxaNodes,taxaNames,mc.cores=1,desiredTaxa=desiredTaxa),out[c(2,1,2),])
-  expect_equal(getTaxonomy(c(9605,9606,9605),taxaNodes,taxaNames,mc.cores=1,desiredTaxa=desiredTaxa[3:1]),out[c(2,1,2),3:1])
-  expect_output(getTaxonomy(9606,taxaNodes,taxaNames,mc.cores=1,debug=TRUE),'\\\\t')
-  expect_equal(getTaxonomy(9606,taxaNodes,taxaNames,mc.cores=1,desiredTaxa='NOTREAL'),matrix(as.character(NA),dimnames=list(9606,'NOTREAL')))
-  expect_equal(getTaxonomy(9999999,taxaNodes,taxaNames,mc.cores=1,desiredTaxa='class'),matrix(as.character(NA),dimnames=list(9999999,'class')))
+  expect_warning(expect_equal(getTaxonomy(c(9606,9605),taxaNodes,taxaNames,mc.cores=1,desiredTaxa=desiredTaxa),out))
+  expect_warning(expect_equal(getTaxonomy(c(9605,9606,9605),taxaNodes,taxaNames,mc.cores=1,desiredTaxa=desiredTaxa),out[c(2,1,2),]))
+  expect_warning(expect_equal(getTaxonomy(c(9605,9606,9605),taxaNodes,taxaNames,mc.cores=1,desiredTaxa=desiredTaxa[3:1]),out[c(2,1,2),3:1]))
+  expect_warning(expect_output(getTaxonomy(9606,taxaNodes,taxaNames,mc.cores=1,debug=TRUE),'\\\\t'))
+  expect_warning(expect_equal(getTaxonomy(9606,taxaNodes,taxaNames,mc.cores=1,desiredTaxa='NOTREAL'),matrix(as.character(NA),dimnames=list(9606,'NOTREAL'))))
+  expect_warning(expect_equal(getTaxonomy(9999999,taxaNodes,taxaNames,mc.cores=1,desiredTaxa='class'),matrix(as.character(NA),dimnames=list(9999999,'class'))))
   #causes error on Windows
-  if(.Platform$OS.type == "unix")expect_equal(getTaxonomy(c(9605,9606,9605),taxaNodes,taxaNames,mc.cores=2,desiredTaxa=desiredTaxa),out[c(2,1,2),])
-  expect_equal(getTaxonomy(c(),taxaNodes,taxaNames,mc.cores=1,desiredTaxa=desiredTaxa),NULL)
+  if(.Platform$OS.type == "unix")expect_warning(expect_equal(getTaxonomy(c(9605,9606,9605),taxaNodes,taxaNames,mc.cores=2,desiredTaxa=desiredTaxa),out[c(2,1,2),]))
+  expect_warning(expect_equal(getTaxonomy(c(),taxaNodes,taxaNames,mc.cores=1,desiredTaxa=desiredTaxa),NULL))
   naDf<-out
   naDf[,]<-NA
   rownames(naDf)<-c('NA','NA')
-  expect_equal(getTaxonomy(c(NA,NA),taxaNodes,taxaNames),naDf)
-  suppressWarnings(expect_equal(getTaxonomy(c(NA,9605,NA,'9604,9605'),taxaNodes,taxaNames),rbind('  NA'=naDf[1,],'9605'=out[2,],'  NA'=naDf[1,],'  NA'=naDf[1,])))
-  expect_equal(getTaxonomy('9605',taxaNodes,taxaNames),getTaxonomy(9605,taxaNodes,taxaNames))
+  expect_warning(expect_equal(getTaxonomy(c(NA,NA),taxaNodes,taxaNames),naDf))
+  expect_warning(expect_equal(getTaxonomy(c(NA,9605,NA,'9604,9605'),taxaNodes,taxaNames),rbind('  NA'=naDf[1,],'9605'=out[2,],'  NA'=naDf[1,],'  NA'=naDf[1,])))
+  expect_warning(expect_equal(getTaxonomy('9605',taxaNodes,taxaNames),getTaxonomy(9605,taxaNodes,taxaNames)))
   expect_warning(getTaxonomy('9605,123',taxaNodes,taxaNames),'coercion')
   expect_warning(getTaxonomy(9999999,taxaNodes,taxaNames),'SQLite')
 })
@@ -354,7 +354,7 @@ test_that("Test getTaxonomy2",{
     "33208\t|\tMetazoa\t|\t\t|\tscientific name", "33154\t|\tOpisthokonta\t|\t\t|\tscientific name",
     "2759\t|\tEukaryota\t|\t\t|\tscientific name", "131567\t|\tcellular organisms\t|\t\t|\tscientific name"
   )
-  taxaNames<-read.names(textConnection(namesText))
+  taxaNames<-expect_warning(read.names(textConnection(namesText)))
   nodesText<-c(
    "1\t|\t1\t|\tno rank\t|\t\t|\t8\t|\t0\t|\t1\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
     "2\t|\t131567\t|\tsuperkingdom\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
@@ -376,27 +376,27 @@ test_that("Test getTaxonomy2",{
     "33154\t|\t2759\t|\tno rank", "2759\t|\t131567\t|\tsuperkingdom",
     "131567\t|\t1\t|\tno rank"
   )
-  taxaNodes<-read.nodes(textConnection(nodesText))
+  taxaNodes<-expect_warning(read.nodes(textConnection(nodesText)))
   desiredTaxa<-c('superkingdom','phylum','class','order','family','genus','species')
   out<-matrix(c(
     "Eukaryota","Chordata","Mammalia","Primates","Hominidae","Homo","Homo sapiens",
     "Eukaryota","Chordata","Mammalia","Primates","Hominidae","Homo",NA
   ),byrow=TRUE,dimnames=list(c('9606','9605'),desiredTaxa),nrow=2)
-  expect_equal(getTaxonomy2(c(9606,9605),taxaNodes,taxaNames,mc.cores=1,desiredTaxa=desiredTaxa),out)
-  expect_equal(getTaxonomy2(c(9605,9606,9605),taxaNodes,taxaNames,mc.cores=1,desiredTaxa=desiredTaxa),out[c(2,1,2),])
-  expect_equal(getTaxonomy2(c(9605,9606,9605),taxaNodes,taxaNames,mc.cores=1,desiredTaxa=desiredTaxa[3:1]),out[c(2,1,2),3:1])
-  expect_output(getTaxonomy2(9606,taxaNodes,taxaNames,mc.cores=1,debug=TRUE),'\\\\t')
-  expect_equal(getTaxonomy2(9606,taxaNodes,taxaNames,mc.cores=1,desiredTaxa='NOTREAL'),matrix(as.character(NA),dimnames=list(9606,'NOTREAL')))
-  expect_equal(getTaxonomy2(9999999,taxaNodes,taxaNames,mc.cores=1,desiredTaxa='class'),matrix(as.character(NA),dimnames=list(9999999,'class')))
+  expect_warning(expect_equal(getTaxonomy2(c(9606,9605),taxaNodes,taxaNames,mc.cores=1,desiredTaxa=desiredTaxa),out))
+  expect_warning(expect_equal(getTaxonomy2(c(9605,9606,9605),taxaNodes,taxaNames,mc.cores=1,desiredTaxa=desiredTaxa),out[c(2,1,2),]))
+  expect_warning(expect_equal(getTaxonomy2(c(9605,9606,9605),taxaNodes,taxaNames,mc.cores=1,desiredTaxa=desiredTaxa[3:1]),out[c(2,1,2),3:1]))
+  expect_warning(expect_output(getTaxonomy2(9606,taxaNodes,taxaNames,mc.cores=1,debug=TRUE),'\\\\t'))
+  expect_warning(expect_equal(getTaxonomy2(9606,taxaNodes,taxaNames,mc.cores=1,desiredTaxa='NOTREAL'),matrix(as.character(NA),dimnames=list(9606,'NOTREAL'))))
+  expect_warning(expect_equal(getTaxonomy2(9999999,taxaNodes,taxaNames,mc.cores=1,desiredTaxa='class'),matrix(as.character(NA),dimnames=list(9999999,'class'))))
   #causes error on Windows
-  if(.Platform$OS.type == "unix")expect_equal(getTaxonomy2(c(9605,9606,9605),taxaNodes,taxaNames,mc.cores=2,desiredTaxa=desiredTaxa),out[c(2,1,2),])
-  expect_equal(getTaxonomy2(c(),taxaNodes,taxaNames,mc.cores=1,desiredTaxa=desiredTaxa),NULL)
+  if(.Platform$OS.type == "unix")expect_warning(expect_equal(getTaxonomy2(c(9605,9606,9605),taxaNodes,taxaNames,mc.cores=2,desiredTaxa=desiredTaxa),out[c(2,1,2),]))
+  expect_warning(expect_equal(getTaxonomy2(c(),taxaNodes,taxaNames,mc.cores=1,desiredTaxa=desiredTaxa),NULL))
   naDf<-out
   naDf[,]<-NA
   rownames(naDf)<-c('NA','NA')
-  expect_equal(getTaxonomy2(c(NA,NA),taxaNodes,taxaNames),naDf)
-  suppressWarnings(expect_equal(getTaxonomy2(c(NA,9605,NA,'9604,9605'),taxaNodes,taxaNames),rbind('  NA'=naDf[1,],'9605'=out[2,],'  NA'=naDf[1,],'  NA'=naDf[1,])))
-  expect_equal(getTaxonomy2('9605',taxaNodes,taxaNames),getTaxonomy2(9605,taxaNodes,taxaNames))
+  expect_warning(expect_equal(getTaxonomy2(c(NA,NA),taxaNodes,taxaNames),naDf))
+  expect_warning(expect_equal(getTaxonomy2(c(NA,9605,NA,'9604,9605'),taxaNodes,taxaNames),rbind('  NA'=naDf[1,],'9605'=out[2,],'  NA'=naDf[1,],'  NA'=naDf[1,])))
+  expect_warning(expect_equal(getTaxonomy2('9605',taxaNodes,taxaNames),getTaxonomy2(9605,taxaNodes,taxaNames)))
   expect_warning(getTaxonomy2('9605,123',taxaNodes,taxaNames),'coercion')
 })
 
@@ -536,6 +536,9 @@ test_that("Test getNamesAndNodes",{
   tmp<-tempfile()
   with_mock(`file.copy`=function(...)TRUE,expect_error(getNamesAndNodes(tmp,fakeFile),'copying'))
   if(.Platform$OS.type == "windows")file.remove('fakeNamesNodes.tar')
+  options(timeout=46)
+  expect_error(getNamesAndNodes(tmp,fakeFile,'NOTREAL.FILE',timeout=2000))
+  expect_equal(getOption('timeout'),46)
 })
 
 test_that("Test getAccession2taxid",{
@@ -549,6 +552,10 @@ test_that("Test getAccession2taxid",{
   expect_error(getAccession2taxid(tmp2,baseUrl=sprintf('file://%s',tmp),types=c('nucl_XxXx','nucl_XyXyX')),NA)
   expect_equal(sort(list.files(tmp2,'accession2taxid.gz$')),sort(targets))
   expect_message(getAccession2taxid(tmp2,baseUrl=sprintf('file://%s',tmp),types=c('nucl_XxXx','nucl_XyXyX')),'exist')
+  options(timeout=59)
+  expect_message(getAccession2taxid(tmp2,baseUrl=sprintf('file://%s',tmp),types=c('nucl_XxXx','nucl_XyXyX'),timeout=1000),'exist')
+  expect_error(getAccession2taxid(tmp2,baseUrl=sprintf('file://%s',tmp),types=c('nucl_XxXx','nucl_XyXyX')),NA)
+  expect_equal(getOption('timeout'),59)
 })
 
 test_that("Test getId with deprecated data.table",{
@@ -558,11 +565,11 @@ test_that("Test getId with deprecated data.table",{
    "3\t|\tMulti\t|\tBacteria <prokaryotes>\t|\tscientific name\t|",
    "2\t|\tBacteria\t|\tBacteria <prokaryotes>\t|\tscientific name\t|"
  )
- names<-read.names(textConnection(namesText))
- expect_equal(getId('Bacteria',names),'2')
- expect_equal(getId(c('Bacteria','root','Bacteria','NOTREAL'),names),c('2','1','2',NA))
- expect_equal(getId('Not a real name',names),as.character(NA))
- suppressWarnings(expect_equal(getId('Multi',names),'3,4'))
+ expect_warning(names<-read.names(textConnection(namesText)))
+ expect_warning(expect_equal(getId('Bacteria',names),'2'))
+ expect_warning(expect_equal(getId(c('Bacteria','root','Bacteria','NOTREAL'),names),c('2','1','2',NA)))
+ expect_warning(expect_equal(getId('Not a real name',names),as.character(NA)))
+ expect_warning(expect_equal(getId('Multi',names),'3,4'))
  expect_warning(getId('Multi',names),'Multiple')
  expect_warning(getId('Bacteria',names),'SQLite')
 })
@@ -576,11 +583,11 @@ test_that("Test getId2",{
    "5\t|\tMulti2\t|\tBacteria <prokaryotes>\t|\tscientific name\t|",
    "6\t|\tMulti2\t|\tBacteria <prokaryotes>\t|\tscientific name\t|"
  )
- names<-read.names(textConnection(namesText))
- expect_equal(getId2('Bacteria',names),'2')
- expect_equal(getId2(c('Bacteria','root','Bacteria','NOTREAL'),names),c('2','1','2',NA))
- expect_equal(getId2('Not a real name',names),as.character(NA))
- suppressWarnings(expect_equal(getId2(c('Bacteria','Multi1','NOTREAL'),names),c('2','3,4',NA)))
+ expect_warning(names<-read.names(textConnection(namesText)))
+ expect_warning(expect_equal(getId2('Bacteria',names),'2'))
+ expect_warning(expect_equal(getId2(c('Bacteria','root','Bacteria','NOTREAL'),names),c('2','1','2',NA)))
+ expect_warning(expect_equal(getId2('Not a real name',names),as.character(NA)))
+ expect_warning(expect_equal(getId2(c('Bacteria','Multi1','NOTREAL'),names),c('2','3,4',NA)))
  expect_warning(getId2(c('Multi1','Bacteria','Multi2'),names),'Multiple.*Multi1, Multi2')
  expect_warning(getId2('Bacteria',names),'SQLite')
 })

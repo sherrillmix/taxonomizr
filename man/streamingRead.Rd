@@ -4,8 +4,13 @@
 \alias{streamingRead}
 \title{Process a large file piecewise}
 \usage{
-streamingRead(bigFile, n = 1e+06, FUN = function(xx) sub(",.*", "",
-  xx), ..., vocal = FALSE)
+streamingRead(
+  bigFile,
+  n = 1e+06,
+  FUN = function(xx) sub(",.*", "", xx),
+  ...,
+  vocal = FALSE
+)
 }
 \arguments{
 \item{bigFile}{a string giving the path to a file to be read in or a connection opened with "r" mode}

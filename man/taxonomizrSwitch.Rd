@@ -15,7 +15,7 @@ Version 0.5.0 marked a change for name and node lookups from using data.table to
  \item \code{\link{read.nodes}} is deprecated, instead use \code{\link{read.names.sql}}. For example. instead of calling \code{nodes<-read.names('nodes.dmp')} in every session, simply call \code{read.nodes.sql('nodes.dmp','accessionTaxa.sql')} once (or use the convenient \code{\link{prepareDatabase}}).
 }
 
-I've tried to ease any problems with this by overloading \code{\link{getTaxonomy}} and \code{\link{getId}} to still function (with a warning) if passed a data.table names and nodes argument and providing a simpler \code{\link{prepareDatabase}} function for completing all setup steps (hopefully avoiding direct calls to \code{\link{read.names}} and \code{\link{read.nodes}} for most users).
+I've tried to ease any problems with this by overloading \code{\link{getTaxonomy}} and \code{\link{getId}} to still function (with a warning) if passed a data.table names and nodes argument and providing a simpler \code{\link{prepareDatabase}} function for completing all setup steps (hopefully avoiding direct calls to \code{\link{read.names}} and \code{\link{read.nodes}} for most users). 
 
 I plan to eventually remove data.table functionality to avoid a split codebase so please switch to the new SQLite format in all new code.
 }

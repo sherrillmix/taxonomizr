@@ -4,8 +4,7 @@
 \alias{read.names.sql}
 \title{Read NCBI names file}
 \usage{
-read.names.sql(nameFile, sqlFile = "nameNode.sqlite",
-  overwrite = FALSE)
+read.names.sql(nameFile, sqlFile = "nameNode.sqlite", overwrite = FALSE)
 }
 \arguments{
 \item{nameFile}{string giving the path to an NCBI name file to read from (both gzipped or uncompressed files are ok)}
@@ -22,15 +21,16 @@ Take an NCBI names file, keep only scientific names and convert it to a SQLite t
 }
 \examples{
 namesText<-c(
-  "1\\t|\\tall\\t|\\t\\t|\\tsynonym\\t|",
-  "1\\t|\\troot\\t|\\t\\t|\\tscientific name\\t|",
-  "2\\t|\\tBacteria\\t|\\tBacteria <prokaryotes>\\t|\\tscientific name\\t|",
-  "2\\t|\\tMonera\\t|\\tMonera <Bacteria>\\t|\\tin-part\\t|",
-  "2\\t|\\tProcaryotae\\t|\\tProcaryotae <Bacteria>\\t|\\tin-part\\t|"
+  "1\t|\tall\t|\t\t|\tsynonym\t|",
+  "1\t|\troot\t|\t\t|\tscientific name\t|",
+  "2\t|\tBacteria\t|\tBacteria <prokaryotes>\t|\tscientific name\t|",
+  "2\t|\tMonera\t|\tMonera <Bacteria>\t|\tin-part\t|",
+  "2\t|\tProcaryotae\t|\tProcaryotae <Bacteria>\t|\tin-part\t|"
 )
 tmpFile<-tempfile()
 writeLines(namesText,tmpFile)
-read.names.sql(tmpFile)
+sqlFile<-tempfile()
+read.names.sql(tmpFile,sqlFile)
 }
 \references{
 \url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/}
