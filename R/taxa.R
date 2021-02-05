@@ -315,7 +315,7 @@ read.accession2taxid<-function(taxaFiles,sqlFile,vocal=TRUE,extraSqlCommand='',i
     trimTaxa(ii,tmp,1:3)
   }
   db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
-  on.exit(RSQLite::dbDisconnect(db))
+  on.exit(RSQLite::dbDisconnect(db),add=TRUE)
   if(extraSqlCommand!='')RSQLite::dbExecute(db,extraSqlCommand)
   if(vocal)message('Reading in values. This may take a while.')
   RSQLite::dbWriteTable(conn = db, name = "accessionTaxa", value =tmp, row.names = FALSE, header = TRUE,sep='\t')
@@ -906,16 +906,16 @@ getAccessions<-function(taxaId,sqlFile,version=c('version','base'),limit=NULL){
   #set up a new table of accessions in a temp db (avoiding concurrency issues)
   #some trouble with dbWriteTable writing to "tmp.xxx" in the main database if we do this inside the attach
   tmpDb <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=tmp)
+  on.exit(RSQLite::dbDisconnect(tmpDb))
   RSQLite::dbWriteTable(tmpDb,'query',data.frame('taxa'=taxaId,stringsAsFactors=FALSE),overwrite=TRUE)
-  RSQLite::dbDisconnect(tmpDb)
   #load the big sql
   db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
+  on.exit(RSQLite::dbDisconnect(db),add=TRUE)
   #attach the temp table
   RSQLite::dbExecute(db, sprintf("ATTACH '%s' AS tmp",tmp))
   taxaDf<-RSQLite::dbGetQuery(db,sprintf('SELECT tmp.query.taxa, %s FROM tmp.query LEFT OUTER JOIN accessionTaxa ON tmp.query.taxa=accessionTaxa.taxa%s',version,ifelse(!is.null(limit),sprintf(' LIMIT %s',limit),'')))
   RSQLite::dbExecute(db,'DROP TABLE tmp.query')
   RSQLite::dbExecute(db,'DETACH tmp')
-  RSQLite::dbDisconnect(db)
   file.remove(tmp)
   colnames(taxaDf)<-c('taxa','accession')
   return(taxaDf)
