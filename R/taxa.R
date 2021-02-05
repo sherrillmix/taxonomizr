@@ -895,7 +895,7 @@ prepareDatabase<-function(sqlFile='nameNode.sqlite',tmpDir='.',vocal=TRUE,...){
 #' inFile<-tempfile()
 #' sqlFile<-tempfile()
 #' writeLines(taxa,inFile)
-#' read.accession2taxid(inFile,sqlFile)
+#' read.accession2taxid(inFile,sqlFile,vocal=FALSE)
 #' getAccessions(3702,sqlFile)
 getAccessions<-function(taxaId,sqlFile,version=c('version','base'),limit=NULL){
   version<-match.arg(version)

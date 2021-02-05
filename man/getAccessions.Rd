@@ -32,7 +32,7 @@ taxa<-c(
 inFile<-tempfile()
 sqlFile<-tempfile()
 writeLines(taxa,inFile)
-read.accession2taxid(inFile,sqlFile)
+read.accession2taxid(inFile,sqlFile,vocal=FALSE)
 getAccessions(3702,sqlFile)
 }
 \seealso{
