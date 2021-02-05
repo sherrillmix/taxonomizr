@@ -475,6 +475,7 @@ test_that("Test accessionToTaxa",{
   writeLines(taxa,inFile)
   read.accession2taxid(inFile,sqlFile)
   expect_equal(accessionToTaxa(c("Z17430.1","Z17429.1","X62402.1"),sqlFile),c(3702,3702,9606))
+  expect_equal(accessionToTaxa(c('A'="Z17430.1",'B'="Z17429.1",'C'="X62402.1"),sqlFile),c(3702,3702,9606))
   expect_equal(accessionToTaxa(c(),sqlFile),c())
   expect_equal(accessionToTaxa(c("Z17430.1","NOTREAL","X62402.1","Z17429.1","X62402.1"),sqlFile),c(3702,NA,9606,3702,9606))
   expect_error(accessionToTaxa("Z17430.1","NOTREAL"),"exist")
