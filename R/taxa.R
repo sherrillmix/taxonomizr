@@ -921,6 +921,28 @@ getAccessions<-function(taxaId,sqlFile,version=c('version','base'),limit=NULL){
   return(taxaDf)
 }
 
+#' Create a Newick tree from taxonomy
+#'
+#' Create a Newick formatted tree from a data.frame of taxonomic assignments
+#' @param taxa a matrix with a row for each leaf of the tree and a column for each taxonomic classification e.g. the output from getTaxonomy
+#' @param naSub a character string to substitute in place of NAs in the taxonomy
+#' @seealso \code{\link{getTaxonomy}}
+#' @export
+#' @examples
+#' taxa<-matrix(
+#'   c('A','A','A','B','B','C','D','D','E','F','G','H'),nrow=3,
+#'   dimnames=list(c('species1','species2','species3'),c('order','family','genus','species'))
+#' )
+#' makeNewick(taxa)
+makeNewick<-function(taxa,naSub='_'){
+  if(!is.null(naSub))taxa[is.na(taxa)]<-naSub
+  if(ncol(taxa)==0)return('')
+  bases<-unique(taxa[,1])
+  innerTree<-sapply(bases,function(ii)makeNewick(taxa[taxa[,1]==ii,-1,drop=FALSE]))
+  out<-sprintf('(%s)',paste(sprintf('%s%s',innerTree,bases),collapse=','))
+  return(out)
+}
+
 #' Switch from data.table to SQLite
 #'
 #' In version 0.5.0, taxonomizr switched from data.table to SQLite name and node lookups. See below for more details.
