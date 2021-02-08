@@ -16,6 +16,7 @@ The major functions are:
 More specialized functions are:
  * `getId`: convert a biological name to taxonomic ID
  * `getAccessions`: find accessions for a given taxonomic ID
+ * `makeNewick`: generate a Newick formatted tree from taxonomic output
 
 And a simple use case might look like (see below for more details):
 
@@ -312,7 +313,39 @@ getAccessions(3702,'accessionTaxa.sql',limit=10)
 ## 10 3702  X52320.1
 ```
 
+### Convert taxonomy to Newick tree
+
+This is probably only useful in a few specific cases but a convenience function `makeNewick` to convert taxonomy into a Newick tree is included. The function takes a matrix giving with columns corresponding to taxonomic categories and rows different taxonomic assignments, e.g. the output from `condenseTaxa` or `getTaxonomy` and reduces it to a Newick formatted tree. For example:
+
+
+
+
+```r
+taxa
+```
+
+```
+##      [,1]        [,2]       [,3]       [,4]       [,5]        [,6]   
+## [1,] "Eukaryota" "Chordata" "Mammalia" "Primates" "Hominidae" "Homo" 
+## [2,] "Eukaryota" "Chordata" "Mammalia" "Primates" "Hominidae" "Pan"  
+## [3,] "Eukaryota" "Chordata" "Mammalia" NA         "Cervidae"  "Alces"
+```
+
+```r
+makeNewick(taxa)
+```
+
+```
+## [1] "((((((Homo,Pan)Hominidae)Primates,((Alces)Cervidae)_)Mammalia)Chordata)Eukaryota)"
+```
+
+
 ## Changelog
+
+### v0.5.3
+  * Fix named vector bug in `accessionToTaxa`
+  * Add `makeNewick` function
+  * Deal with default 60 second timeout for downloads in R
 
 ### v0.5.3
   * Remove `nucl_est` and `nucl_gss` from defaults since NCBI folded them into `nucl_gb` and removed

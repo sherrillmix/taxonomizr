@@ -101,6 +101,8 @@
 <code>getId</code>: convert a biological name to taxonomic ID</li>
 <li>
 <code>getAccessions</code>: find accessions for a given taxonomic ID</li>
+<li>
+<code>makeNewick</code>: generate a Newick formatted tree from taxonomic output</li>
 </ul>
 <p>And a simple use case might look like (see below for more details):</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
@@ -266,6 +268,20 @@ read2   gi|160426828|gb|CP000885.1|     68.46   1763    452     82      3       
 ## 9  3702  X54929.1
 ## 10 3702  X52320.1</code></pre>
 </div>
+<div id="convert-taxonomy-to-newick-tree" class="section level3">
+<h3 class="hasAnchor">
+<a href="#convert-taxonomy-to-newick-tree" class="anchor"></a>Convert taxonomy to Newick tree</h3>
+<p>This is probably only useful in a few specific cases but a convenience function <code>makeNewick</code> to convert taxonomy into a Newick tree is included. The function takes a matrix giving with columns corresponding to taxonomic categories and rows different taxonomic assignments, e.g. the output from <code>condenseTaxa</code> or <code>getTaxonomy</code> and reduces it to a Newick formatted tree. For example:</p>
+<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">taxa</span></code></pre></div>
+<pre><code>##      [,1]        [,2]       [,3]       [,4]       [,5]        [,6]   
+## [1,] "Eukaryota" "Chordata" "Mammalia" "Primates" "Hominidae" "Homo" 
+## [2,] "Eukaryota" "Chordata" "Mammalia" "Primates" "Hominidae" "Pan"  
+## [3,] "Eukaryota" "Chordata" "Mammalia" NA         "Cervidae"  "Alces"</code></pre>
+<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="reference/makeNewick.html">makeNewick</a></span><span class="op">(</span><span class="va">taxa</span><span class="op">)</span></code></pre></div>
+<pre><code>## [1] "((((((Homo,Pan)Hominidae)Primates,((Alces)Cervidae)_)Mammalia)Chordata)Eukaryota)"</code></pre>
+</div>
 </div>
 <div id="changelog" class="section level2">
 <h2 class="hasAnchor">
@@ -273,6 +289,16 @@ read2   gi|160426828|gb|CP000885.1|     68.46   1763    452     82      3       
 <div id="v053" class="section level3">
 <h3 class="hasAnchor">
 <a href="#v053" class="anchor"></a>v0.5.3</h3>
+<ul>
+<li>Fix named vector bug in <code>accessionToTaxa</code>
+</li>
+<li>Add <code>makeNewick</code> function</li>
+<li>Deal with default 60 second timeout for downloads in R</li>
+</ul>
+</div>
+<div id="v053-1" class="section level3">
+<h3 class="hasAnchor">
+<a href="#v053-1" class="anchor"></a>v0.5.3</h3>
 <ul>
 <li>Remove <code>nucl_est</code> and <code>nucl_gss</code> from defaults since NCBI folded them into <code>nucl_gb</code> and removed</li>
 <li>Squash R:devel bug</li>
@@ -298,7 +324,7 @@ read2   gi|160426828|gb|CP000885.1|     68.46   1763    452     82      3       
 <h3 class="hasAnchor">
 <a href="#download-names-and-nodes" class="anchor"></a>Download names and nodes</h3>
 <p>First, download the necessary names and nodes files from <a href="ftp://ftp.ncbi.nih.gov/pub/taxonomy/">NCBI</a>:</p>
-<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/getNamesAndNodes.html">getNamesAndNodes</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <pre><code>## [1] "./names.dmp" "./nodes.dmp"</code></pre>
 </div>
@@ -306,13 +332,13 @@ read2   gi|160426828|gb|CP000885.1|     68.46   1763    452     82      3       
 <h3 class="hasAnchor">
 <a href="#download-accession-to-taxa-files" class="anchor"></a>Download accession to taxa files</h3>
 <p>Then download accession to taxa id conversion files from <a href="ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/">NCBI</a>. <strong>Note:</strong> this is a pretty <em>big</em> download (several gigabytes):</p>
-<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#this is a big download</span>
 <span class="fu"><a href="reference/getAccession2taxid.html">getAccession2taxid</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <pre><code>## This can be a big (several gigabytes) download. Please be patient and use a fast connection.</code></pre>
 <pre><code>## [1] "./nucl_gb.accession2taxid.gz"  "./nucl_wgs.accession2taxid.gz"</code></pre>
 <p>If you would also like to identify protein accession numbers, also download the prot file from NCBI (again this is a <em>big</em> download):</p>
-<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#this is a big download</span>
 <span class="fu"><a href="reference/getAccession2taxid.html">getAccession2taxid</a></span><span class="op">(</span>types<span class="op">=</span><span class="st">'prot'</span><span class="op">)</span></code></pre></div>
 <pre><code>## This can be a big (several gigabytes) download. Please be patient and use a fast connection.</code></pre>
@@ -322,11 +348,11 @@ read2   gi|160426828|gb|CP000885.1|     68.46   1763    452     82      3       
 <h3 class="hasAnchor">
 <a href="#convert-names-nodes-and-accessions-to-database" class="anchor"></a>Convert names, nodes and accessions to database</h3>
 <p>Then process the downloaded names and nodes files into a more easily accessed form:</p>
-<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/read.names.sql.html">read.names.sql</a></span><span class="op">(</span><span class="st">'names.dmp'</span>,<span class="st">'accessionTaxa.sql'</span><span class="op">)</span>
 <span class="fu"><a href="reference/read.nodes.sql.html">read.nodes.sql</a></span><span class="op">(</span><span class="st">'nodes.dmp'</span>,<span class="st">'accessionTaxa.sql'</span><span class="op">)</span></code></pre></div>
 <p>Next process the downloaded accession files into the same database (this one could take a while):</p>
-<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/read.accession2taxid.html">read.accession2taxid</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span><span class="op">(</span><span class="st">'.'</span>,<span class="st">'accession2taxid.gz$'</span><span class="op">)</span>,<span class="st">'accessionTaxa.sql'</span><span class="op">)</span></code></pre></div>
 <pre><code>## Reading nucl_gb.accession2taxid.gz.</code></pre>
 <pre><code>## Reading nucl_wgs.accession2taxid.gz.</code></pre>
