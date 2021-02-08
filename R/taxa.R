@@ -453,7 +453,7 @@ getParentNodes<-function(ids,sqlFile='nameNode.sqlite'){
   on.exit(RSQLite::dbDisconnect(db),add=TRUE)
   RSQLite::dbExecute(db, sprintf("ATTACH '%s' AS tmp",tmp))
   taxaDf<-RSQLite::dbGetQuery(db,'SELECT tmp.query.id, name,parent, rank FROM tmp.query LEFT OUTER JOIN nodes ON tmp.query.id=nodes.id LEFT OUTER JOIN names ON tmp.query.id=names.id WHERE names.scientific=1 OR names.scientific IS NULL')
-  if(!identical(taxaDf$id,ids))stop(simpleError('Problem finding ids'))
+  if(!identical(taxaDf$id,unname(ids)))stop(simpleError('Problem finding ids')) #don't actually need the unname here since as.numeric strips names but good to be safe
   return(taxaDf[,c('name','parent','rank')])
 }
 

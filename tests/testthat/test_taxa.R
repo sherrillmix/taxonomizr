@@ -450,6 +450,7 @@ test_that("Test getParentNodes",{
   read.nodes.sql(textConnection(nodesText),tmp)
   read.names.sql(textConnection(namesText),tmp)
   expect_equal(taxonomizr:::getParentNodes(c(9606,9605),tmp),data.frame('name'=c('Homo sapiens','Homo'),'parent'=c(9605,207598),'rank'=c('species','genus'),stringsAsFactors=FALSE))
+  expect_equal(taxonomizr:::getParentNodes(c('a'=9606,'b'=9605),tmp),data.frame('name'=c('Homo sapiens','Homo'),'parent'=c(9605,207598),'rank'=c('species','genus'),stringsAsFactors=FALSE))
   expect_equal(taxonomizr:::getParentNodes(c(NA,9606,9999999,9606),tmp),data.frame('name'=c(NA,'Homo sapiens',NA,'Homo sapiens'),'parent'=c(NA,9605,NA,9605),'rank'=c(NA,'species',NA,'species'),stringsAsFactors=FALSE))
   with_mock(`RSQLite::dbGetQuery`=function(...){data.frame('id'=c(9999))},expect_error(taxonomizr:::getParentNodes(c(9606,9605),tmp),'finding'))
   with_mock(`RSQLite::dbGetQuery`=function(...){data.frame('id'=c(9605,9606))},expect_error(taxonomizr:::getParentNodes(c(9606,9605),tmp),'finding'))
