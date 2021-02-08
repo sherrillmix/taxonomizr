@@ -38,7 +38,7 @@ The package is on CRAN, so it should install with a simple:
 ```r
 install.packages("taxonomizr")
 ```
-If you want the development version directly from github, use the [<code>devtools</code>](https://github.com/hadley/devtools) library and run:
+If you want the development version directly from github, use the [<code>devtools</code>](https://github.com/r-lib/devtools) library and run:
 
 ```r
 devtools::install_github("sherrillmix/taxonomizr")
