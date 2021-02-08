@@ -9,3 +9,4 @@
 ^accessionTaxa.sql$
 ^doc$
 ^Meta$
+^tests/testthat/testthat-problems.rds$
