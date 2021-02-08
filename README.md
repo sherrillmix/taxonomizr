@@ -315,7 +315,7 @@ getAccessions(3702,'accessionTaxa.sql',limit=10)
 
 ### Convert taxonomy to Newick tree
 
-This is probably only useful in a few specific cases but a convenience function `makeNewick` to convert taxonomy into a Newick tree is included. The function takes a matrix giving with columns corresponding to taxonomic categories and rows different taxonomic assignments, e.g. the output from `condenseTaxa` or `getTaxonomy` and reduces it to a Newick formatted tree. For example:
+This is probably only useful in a few specific cases but a convenience function `makeNewick` to convert taxonomy into a Newick tree is included. The function takes a matrix giving with columns corresponding to taxonomic categories and rows different to taxonomic assignments, e.g. the output from `condenseTaxa` or `getTaxonomy` and reduces it to a Newick formatted tree. For example:
 
 
 
