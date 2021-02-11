@@ -20,7 +20,7 @@ read.accession2taxid(
 
 \item{vocal}{if TRUE output status messages}
 
-\item{extraSqlCommand}{for advanced use. A string giving a command to be called on the SQLite databse before loading data e.g. "pragma temp_store = 2;" to keep all temp files in memory (don't do this unless you have a lot (>100 Gb) of RAM)}
+\item{extraSqlCommand}{for advanced use. A string giving a command to be called on the SQLite database before loading data e.g. "pragma temp_store = 2;" to keep all temp files in memory (don't do this unless you have a lot (>100 Gb) of RAM)}
 
 \item{indexTaxa}{if TRUE add an index for taxa ID. This would only be necessary if you want to look up accessions by taxa ID e.g. \code{\link{getAccessions}}}
 
