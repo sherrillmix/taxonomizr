@@ -15,6 +15,7 @@ The major functions are:
 
 More specialized functions are:
  * `getId`: convert a biological name to taxonomic ID
+ * `getRawTaxonomy`: find all taxonomic ranks for a taxonomic ID
  * `getAccessions`: find accessions for a given taxonomic ID
  * `makeNewick`: generate a Newick formatted tree from taxonomic output
 
@@ -266,6 +267,65 @@ condenseTaxa(taxa,groupings)
 ## read1 NA     
 ## read2 NA
 ```
+
+### Find all taxonomic assignments for a given taxa
+To get all taxonomic assignments for a given taxa regardless of their particular rank, you can use the `getRawTaxonomy` function. Note that there are often many intermediate ranks outside the more common taxonomic ranks. The function returns a list since different IDs can have differing numbers of ranks. It is used similarly to `getTaxonomy`:
+
+
+```r
+getRawTaxonomy(c(9606,9913),'accessionTaxa.sql')
+```
+
+```
+## $`9606`
+##                species                  genus              subfamily 
+##         "Homo sapiens"                 "Homo"            "Homininae" 
+##                 family            superfamily              parvorder 
+##            "Hominidae"           "Hominoidea"           "Catarrhini" 
+##             infraorder               suborder                  order 
+##          "Simiiformes"          "Haplorrhini"             "Primates" 
+##             superorder                  clade                clade.1 
+##     "Euarchontoglires"        "Boreoeutheria"             "Eutheria" 
+##                clade.2                  class                clade.3 
+##               "Theria"             "Mammalia"              "Amniota" 
+##                clade.4                class.1             superclass 
+##            "Tetrapoda" "Dipnotetrapodomorpha"        "Sarcopterygii" 
+##                clade.5                clade.6                clade.7 
+##         "Euteleostomi"           "Teleostomi"        "Gnathostomata" 
+##                clade.8              subphylum                 phylum 
+##           "Vertebrata"             "Craniata"             "Chordata" 
+##                clade.9               clade.10               clade.11 
+##        "Deuterostomia"            "Bilateria"            "Eumetazoa" 
+##                kingdom               clade.12           superkingdom 
+##              "Metazoa"         "Opisthokonta"            "Eukaryota" 
+##                no rank 
+##   "cellular organisms" 
+## 
+## $`9913`
+##                species                  genus              subfamily 
+##           "Bos taurus"                  "Bos"              "Bovinae" 
+##                 family             infraorder               suborder 
+##              "Bovidae"               "Pecora"           "Ruminantia" 
+##                  order             superorder                  clade 
+##         "Artiodactyla"       "Laurasiatheria"        "Boreoeutheria" 
+##                clade.1                clade.2                  class 
+##             "Eutheria"               "Theria"             "Mammalia" 
+##                clade.3                clade.4                class.1 
+##              "Amniota"            "Tetrapoda" "Dipnotetrapodomorpha" 
+##             superclass                clade.5                clade.6 
+##        "Sarcopterygii"         "Euteleostomi"           "Teleostomi" 
+##                clade.7                clade.8              subphylum 
+##        "Gnathostomata"           "Vertebrata"             "Craniata" 
+##                 phylum                clade.9               clade.10 
+##             "Chordata"        "Deuterostomia"            "Bilateria" 
+##               clade.11                kingdom               clade.12 
+##            "Eumetazoa"              "Metazoa"         "Opisthokonta" 
+##           superkingdom                no rank 
+##            "Eukaryota"   "cellular organisms"
+```
+
+
+
 
 ### Finding accessions for a given taxonomic ID
 

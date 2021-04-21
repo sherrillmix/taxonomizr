@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Get taxonomic ranks for a taxa — getTaxonomy • taxonomizr</title>
+<title>Get all taxonomy for a taxa — getRawTaxonomy • taxonomizr</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Get taxonomic ranks for a taxa — getTaxonomy" />
-<meta property="og:description" content="Take NCBI taxa IDs and get the corresponding taxa ranks from name and node SQLite database" />
+<meta property="og:title" content="Get all taxonomy for a taxa — getRawTaxonomy" />
+<meta property="og:description" content="Take NCBI taxa IDs and get all taxonomic ranks from name and node SQLite database. Ranks that occur more than once are made unique with a postfix through link{make.unique}" />
 
 
 
@@ -120,22 +120,16 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Get taxonomic ranks for a taxa</h1>
+    <h1>Get all taxonomy for a taxa</h1>
     <small class="dont-index">Source: <a href='https://github.com/sherrillmix/taxonomizr/blob/master/R/taxa.R'><code>R/taxa.R</code></a></small>
-    <div class="hidden name"><code>getTaxonomy.Rd</code></div>
+    <div class="hidden name"><code>getRawTaxonomy.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Take NCBI taxa IDs and get the corresponding taxa ranks from name and node SQLite database</p>
+    <p>Take NCBI taxa IDs and get all taxonomic ranks from name and node SQLite database. Ranks that occur more than once are made unique with a postfix through <code>link{make.unique}</code></p>
     </div>
 
-    <pre class="usage"><span class='fu'>getTaxonomy</span><span class='op'>(</span>
-  <span class='va'>ids</span>,
-  sqlFile <span class='op'>=</span> <span class='st'>"nameNode.sqlite"</span>,
-  <span class='va'>...</span>,
-  desiredTaxa <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"superkingdom"</span>, <span class='st'>"phylum"</span>, <span class='st'>"class"</span>, <span class='st'>"order"</span>, <span class='st'>"family"</span>, <span class='st'>"genus"</span>,
-    <span class='st'>"species"</span><span class='op'>)</span>
-<span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>getRawTaxonomy</span><span class='op'>(</span><span class='va'>ids</span>, sqlFile <span class='op'>=</span> <span class='st'>"nameNode.sqlite"</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -148,19 +142,11 @@
       <th>sqlFile</th>
       <td><p>a string giving the path to a SQLite file containing names and nodes tables</p></td>
     </tr>
-    <tr>
-      <th>...</th>
-      <td><p>legacy additional arguments to original data.table based getTaxonomy function. Used only for support for deprecated function, do not use in new code.</p></td>
-    </tr>
-    <tr>
-      <th>desiredTaxa</th>
-      <td><p>a vector of strings giving the desired taxa levels</p></td>
-    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a matrix of taxonomic strings with a row for each id and a column for each desiredTaxa rank</p>
+    <p>a list of vectors with each element containing a vector of taxonomic strings with names corresponding to the taxonomic rank</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='read.nodes.sql.html'>read.nodes.sql</a></code>, <code><a href='read.names.sql.html'>read.names.sql</a></code></p></div>
@@ -231,13 +217,53 @@
 <span class='op'>)</span>
 <span class='fu'><a href='https://rdrr.io/r/base/writeLines.html'>writeLines</a></span><span class='op'>(</span><span class='va'>nodesText</span>,<span class='va'>tmpFile</span><span class='op'>)</span>
 <span class='va'>taxaNodes</span><span class='op'>&lt;-</span><span class='fu'><a href='read.nodes.sql.html'>read.nodes.sql</a></span><span class='op'>(</span><span class='va'>tmpFile</span>,<span class='va'>sqlFile</span><span class='op'>)</span>
-<span class='fu'>getTaxonomy</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>9606</span>,<span class='fl'>9605</span><span class='op'>)</span>,<span class='va'>sqlFile</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;      superkingdom phylum     class      order      family      genus 
-#&gt; 9606 "Eukaryota"  "Chordata" "Mammalia" "Primates" "Hominidae" "Homo"
-#&gt; 9605 "Eukaryota"  "Chordata" "Mammalia" "Primates" "Hominidae" "Homo"
-#&gt;      species       
-#&gt; 9606 "Homo sapiens"
-#&gt; 9605 NA            </div></pre>
+<span class='fu'>getRawTaxonomy</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>9606</span>,<span class='fl'>9605</span><span class='op'>)</span>,<span class='va'>sqlFile</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; $`9606`
+#&gt;                species                  genus              subfamily 
+#&gt;         "Homo sapiens"                 "Homo"            "Homininae" 
+#&gt;                 family            superfamily              parvorder 
+#&gt;            "Hominidae"           "Hominoidea"           "Catarrhini" 
+#&gt;             infraorder               suborder                  order 
+#&gt;          "Simiiformes"          "Haplorrhini"             "Primates" 
+#&gt;             superorder                no rank              no rank.1 
+#&gt;     "Euarchontoglires"        "Boreoeutheria"             "Eutheria" 
+#&gt;              no rank.2                  class              no rank.3 
+#&gt;               "Theria"             "Mammalia"              "Amniota" 
+#&gt;              no rank.4              no rank.5              no rank.6 
+#&gt;            "Tetrapoda" "Dipnotetrapodomorpha"        "Sarcopterygii" 
+#&gt;              no rank.7              no rank.8              no rank.9 
+#&gt;         "Euteleostomi"           "Teleostomi"        "Gnathostomata" 
+#&gt;             no rank.10              subphylum                 phylum 
+#&gt;           "Vertebrata"             "Craniata"             "Chordata" 
+#&gt;             no rank.11             no rank.12             no rank.13 
+#&gt;        "Deuterostomia"            "Bilateria"            "Eumetazoa" 
+#&gt;                kingdom             no rank.14           superkingdom 
+#&gt;              "Metazoa"         "Opisthokonta"            "Eukaryota" 
+#&gt;             no rank.15 
+#&gt;   "cellular organisms" 
+#&gt; 
+#&gt; $`9605`
+#&gt;                  genus              subfamily                 family 
+#&gt;                 "Homo"            "Homininae"            "Hominidae" 
+#&gt;            superfamily              parvorder             infraorder 
+#&gt;           "Hominoidea"           "Catarrhini"          "Simiiformes" 
+#&gt;               suborder                  order             superorder 
+#&gt;          "Haplorrhini"             "Primates"     "Euarchontoglires" 
+#&gt;                no rank              no rank.1              no rank.2 
+#&gt;        "Boreoeutheria"             "Eutheria"               "Theria" 
+#&gt;                  class              no rank.3              no rank.4 
+#&gt;             "Mammalia"              "Amniota"            "Tetrapoda" 
+#&gt;              no rank.5              no rank.6              no rank.7 
+#&gt; "Dipnotetrapodomorpha"        "Sarcopterygii"         "Euteleostomi" 
+#&gt;              no rank.8              no rank.9             no rank.10 
+#&gt;           "Teleostomi"        "Gnathostomata"           "Vertebrata" 
+#&gt;              subphylum                 phylum             no rank.11 
+#&gt;             "Craniata"             "Chordata"        "Deuterostomia" 
+#&gt;             no rank.12             no rank.13                kingdom 
+#&gt;            "Bilateria"            "Eumetazoa"              "Metazoa" 
+#&gt;             no rank.14           superkingdom             no rank.15 
+#&gt;         "Opisthokonta"            "Eukaryota"   "cellular organisms" 
+#&gt; </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

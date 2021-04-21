@@ -4,12 +4,20 @@
 \alias{prepareDatabase}
 \title{Download data from NCBI and set up SQLite database}
 \usage{
-prepareDatabase(sqlFile = "nameNode.sqlite", tmpDir = ".", vocal = TRUE, ...)
+prepareDatabase(
+  sqlFile = "nameNode.sqlite",
+  tmpDir = ".",
+  getAccessions = TRUE,
+  vocal = TRUE,
+  ...
+)
 }
 \arguments{
 \item{sqlFile}{character string giving the file location to store the SQLite database}
 
 \item{tmpDir}{location for storing the downloaded files from NCBI. (Note that it may be useful to store these somewhere convenient to avoid redownloading)}
+
+\item{getAccessions}{if TRUE download the very large accesssion2taxid files necessary to convert accessions to taxonomic IDs}
 
 \item{vocal}{if TRUE output messages describing progress}
 

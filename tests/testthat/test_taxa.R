@@ -182,7 +182,7 @@ test_that("Test read.accession2taxid",{
   }
 })
 
-test_that("Test getTaxonomy",{
+test_that("Test getTaxonomy and getRawTaxonomy",{
   namesText<-c(
     "1\t|\tall\t|\t\t|\tsynonym\t|",
     "1\t|\troot\t|\t\t|\tscientific name\t|",
@@ -230,6 +230,7 @@ test_that("Test getTaxonomy",{
   tmp<-tempfile()
   read.names.sql(textConnection(namesText),tmp)
   read.nodes.sql(textConnection(nodesText),tmp)
+
   desiredTaxa<-c('superkingdom','phylum','class','order','family','genus','species')
   out<-matrix(c(
     "Eukaryota","Chordata","Mammalia","Primates","Hominidae","Homo","Homo sapiens",
@@ -242,6 +243,15 @@ test_that("Test getTaxonomy",{
   expect_equal(getTaxonomy(9999999,tmp,desiredTaxa='class'),matrix(as.character(NA),dimnames=list(9999999,'class')))
   expect_equal(getTaxonomy(c(9999999,9606),tmp,desiredTaxa='class'),matrix(c(NA,'Mammalia'),dimnames=list(c('9999999','   9606'),'class'),nrow=2))
   expect_equal(getTaxonomy(c(),tmp,desiredTaxa=desiredTaxa),NULL)
+  desiredRaw<-list(`9606` = c(species = "Homo sapiens", genus = "Homo", subfamily = "Homininae", family = "Hominidae", superfamily = "Hominoidea", parvorder = "Catarrhini", infraorder = "Simiiformes", suborder = "Haplorrhini", order = "Primates", superorder = "Euarchontoglires", `no rank` = "Boreoeutheria", `no rank.1` = "Eutheria", `no rank.2` = "Theria", class = "Mammalia", `no rank.3` = "Amniota", `no rank.4` = "Tetrapoda", `no rank.5` = "Dipnotetrapodomorpha", `no rank.6` = "Sarcopterygii", `no rank.7` = "Euteleostomi", `no rank.8` = "Teleostomi", `no rank.9` = "Gnathostomata", `no rank.10` = "Vertebrata", subphylum = "Craniata", phylum = "Chordata", `no rank.11` = "Deuterostomia", `no rank.12` = "Bilateria", `no rank.13` = "Eumetazoa", kingdom = "Metazoa", `no rank.14` = "Opisthokonta", superkingdom = "Eukaryota", `no rank.15` = "cellular organisms"), `9605` = c(genus = "Homo", subfamily = "Homininae", family = "Hominidae", superfamily = "Hominoidea", parvorder = "Catarrhini", infraorder = "Simiiformes", suborder = "Haplorrhini", order = "Primates", superorder = "Euarchontoglires", `no rank` = "Boreoeutheria", `no rank.1` = "Eutheria", `no rank.2` = "Theria", class = "Mammalia", `no rank.3` = "Amniota", `no rank.4` = "Tetrapoda", `no rank.5` = "Dipnotetrapodomorpha", `no rank.6` = "Sarcopterygii", `no rank.7` = "Euteleostomi", `no rank.8` = "Teleostomi", `no rank.9` = "Gnathostomata", `no rank.10` = "Vertebrata", subphylum = "Craniata", phylum = "Chordata", `no rank.11` = "Deuterostomia", `no rank.12` = "Bilateria", `no rank.13` = "Eumetazoa", kingdom = "Metazoa", `no rank.14` = "Opisthokonta", superkingdom = "Eukaryota", `no rank.15` = "cellular organisms"))
+  expect_equal(getRawTaxonomy(c(9606,9605),tmp),desiredRaw)
+  expect_equal(getRawTaxonomy(c(9606,9605,9605,9606),tmp),desiredRaw[c(1:2,2:1)])
+  expect_equal(getRawTaxonomy(c(),tmp),NULL)
+  expect_equal(getRawTaxonomy(c(1),tmp),list('1'=NULL))
+  expect_equal(getRawTaxonomy(c(1,0),tmp),list('1'=NULL,'0'=structure(as.character(NA),.Names=NA)))
+  expect_equal(getRawTaxonomy(c(NA),tmp),list('NA'=NULL))
+  expect_equal(getRawTaxonomy(c(NA,NA),tmp),list('NA'=NULL,'NA'=NULL))
+  expect_equal(getRawTaxonomy(c(NA,9606),tmp),c(list('  NA'=NULL),desiredRaw[1]))
   naDf<-out
   naDf[,]<-NA
   rownames(naDf)<-c('NA','NA')
@@ -249,6 +259,7 @@ test_that("Test getTaxonomy",{
   suppressWarnings(expect_equal(getTaxonomy(c(NA,9605,NA,'9604,9605'),tmp),rbind('  NA'=naDf[1,],'9605'=out[2,],'  NA'=naDf[1,],'  NA'=naDf[1,])))
   expect_equal(getTaxonomy('9605',tmp),getTaxonomy(9605,tmp))
   expect_warning(getTaxonomy('9605,123',tmp),'coercion')
+  expect_warning(getRawTaxonomy('9605,123',tmp),'coercion')
   cycle<-c(
    "9606\t|\t9605\t|\tno rank\t|\t\t|\t8\t|\t0\t|\t1\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
    "9605\t|\t9606\t|\tsuperkingdom\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|"
@@ -257,6 +268,42 @@ test_that("Test getTaxonomy",{
   read.names.sql(textConnection(namesText),tmp2)
   read.nodes.sql(textConnection(cycle),tmp2)
   expect_error(getTaxonomy(9606,tmp2),'cycle')
+  expect_error(getRawTaxonomy(9606,tmp2),'cycle')
+})
+
+test_that("Test getTaxonomy and getRawTaxonomy with duplicated taxa ranks",{
+  namesText<-c(
+    "1\t|\tall\t|\t\t|\tsynonym\t|",
+    "1\t|\troot\t|\t\t|\tscientific name\t|",
+    "2\t|\tBacteria\t|\tBacteria <prokaryotes>\t|\tscientific name\t|",
+    "2\t|\tMonera\t|\tMonera <Bacteria>\t|\tin-part\t|",
+    "2\t|\tProcaryotae\t|\tProcaryotae <Bacteria>\t|\tin-part\t|",
+    "3\t|\tClade A\t|\t\t|\tscientific name\t|",
+    "4\t|\tClade B\t|\t\t|\tscientific name\t|",
+    "5\t|\tClade C\t|\t\t|\tscientific name\t|",
+    "6\t|\tClade D\t|\t\t|\tscientific name\t|",
+    "7\t|\tClade E\t|\t\t|\tscientific name\t|"
+  )
+  nodesText<-c(
+   "1\t|\t1\t|\tno rank\t|\t\t|\t8\t|\t0\t|\t1\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
+    "2\t|\t1\t|\tsuperkingdom\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
+    "3\t|\t2\t|\tclade",
+    "4\t|\t3\t|\tclade",
+    "5\t|\t4\t|\tclade",
+    "6\t|\t5\t|\tclade",
+    "7\t|\t6\t|\tclade"
+  )
+  tmp<-tempfile()
+  read.names.sql(textConnection(namesText),tmp)
+  read.nodes.sql(textConnection(nodesText),tmp)
+  desiredTaxa<-c('superkingdom','clade')
+  out<-matrix(c(
+    "Bacteria","Clade A",
+    "Bacteria","Clade A"
+  ),byrow=TRUE,dimnames=list(c('7','6'),desiredTaxa),nrow=2)
+  expect_equal(getTaxonomy(c(7,6),tmp,desiredTaxa=desiredTaxa),out)
+  expect_equal(getRawTaxonomy(c(7,6,3),tmp),list('7'=c('clade'='Clade E','clade.1'='Clade D','clade.2'='Clade C','clade.3'='Clade B','clade.4'='Clade A','superkingdom'='Bacteria'),'6'=c('clade'='Clade D','clade.1'='Clade C','clade.2'='Clade B','clade.3'='Clade A','superkingdom'='Bacteria'),'3'=c('clade'='Clade A','superkingdom'='Bacteria')))
+  expect_equal(getRawTaxonomy(c(7),tmp),list('7'=c('clade'='Clade E','clade.1'='Clade D','clade.2'='Clade C','clade.3'='Clade B','clade.4'='Clade A','superkingdom'='Bacteria')))
 })
 
 test_that("Test getTaxonomy with deprecated data.tables",{
