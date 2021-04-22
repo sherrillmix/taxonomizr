@@ -622,7 +622,7 @@ test_that("Test getAccession2taxid",{
   dir.create(tmp)
   types<-c('XxXx','XyXyX')
   targets<-sprintf('nucl_%s.accession2taxid.gz',types)
-  sapply(targets,function(xx)writeLines('TEST',file.path(tmp,xx)))
+  sapply(targets,function(xx)writeLines('TEST',file.path(tmp,xx),sep='')) #avoiding newlines to avoid silly windows issues
   tmp2<-tempfile()
   dir.create(tmp2)
   expect_error(getAccession2taxid(tmp2,baseUrl=sprintf('file://%s',tmp),types=c('nucl_XxXx','nucl_XyXyX')),NA)

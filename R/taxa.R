@@ -848,7 +848,8 @@ getAccession2taxid<-function(outDir='.',baseUrl='ftp://ftp.ncbi.nih.gov/pub/taxo
     message(paste(outFiles,collapse=', '),' already exist. Delete to redownload')
     return(outFiles)
   }
-  urls<-paste(baseUrl,fileNames,sep='/')
+  if(!substring(baseUrl,nchar(baseUrl)) %in% c('/','\\'))baseUrl<-sprintf('%s/',baseUrl)
+  urls<-paste(baseUrl,fileNames,sep='')
   mapply(function(xx,yy){
     utils::download.file(xx,yy,mode='wb')
     if(!checkDownloadMd5(xx,yy))stop('Downloaded file does not match ',xx,' File corrupted or download ended early?')
