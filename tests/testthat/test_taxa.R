@@ -585,13 +585,13 @@ test_that("Test condenseTaxa",{
 test_that("Test getNamesAndNodes",{
   tmp<-tempfile()
   dir.create(tmp)
+  testFile<-system.file('testdata/fakeNamesNodes.tar.gz',package='taxonomizr')
   #windows download.file() of local file can't handle 1a bytes created by gzip
   if(.Platform$OS.type == "windows"){
-    R.utils::gunzip('fakeNamesNodes.tar.gz',remove=FALSE)
-    fakeFile<-'file://fakeNamesNodes.tar'
-  }else{
-    fakeFile<-'file://fakeNamesNodes.tar.gz'
+    R.utils::gunzip(testFile,remove=FALSE,skip=TRUE)
+    testFile<-system.file('testdata/fakeNamesNodes.tar',package='taxonomizr')
   }
+  fakeFile<-sprintf('file://%s',testFile)
   expect_error(getNamesAndNodes(tmp,fakeFile),NA)
   expect_equal(sort(list.files(tmp,'^(names|nodes).dmp$')),c('names.dmp','nodes.dmp'))
   expect_message(getNamesAndNodes(tmp,fakeFile),'exist')
@@ -607,7 +607,7 @@ test_that("Test getNamesAndNodes",{
   tmp<-tempfile()
   dir.create(tmp)
   newFake<-file.path(tmp,'fake')
-  download.file(fakeFile,newFake)
+  download.file(fakeFile,newFake,mode='wb')
   fakeMd5<-tools::md5sum(newFake)
   writeLines(sprintf('%s EXTRATEXT',fakeMd5),sprintf('%s.md5',newFake))
   expect_error(getNamesAndNodes(tmp,sprintf('file://%s',newFake)),NA)
@@ -754,13 +754,13 @@ test_that("Test prepareDatabase",{
   ))
   targets<-sprintf('nucl_%s.accession2taxid.gz',types)
   mapply(function(xx,yy)writeLines(xx,file.path(tmpDir,yy)),taxa,targets)
+  testFile<-system.file('testdata/fakeNamesNodes.tar.gz',package='taxonomizr')
   #windows download.file() of local file can't handle 1a bytes created by gzip
   if(.Platform$OS.type == "windows"){
-    R.utils::gunzip('fakeNamesNodes.tar.gz',remove=FALSE)
-    fakeFile<-'file://fakeNamesNodes.tar'
-  }else{
-    fakeFile<-'file://fakeNamesNodes.tar.gz'
+    R.utils::gunzip(testFile,remove=FALSE,skip=TRUE)
+    testFile<-system.file('testdata/fakeNamesNodes.tar',package='taxonomizr')
   }
+  fakeFile<-sprintf('file://%s',testFile)
   expect_error(prepareDatabase(tmp,tmpDir,url=fakeFile,baseUrl=sprintf('file://%s',tmpDir),types=c('nucl_XxXx','nucl_XyXyX')),NA)
   db<-RSQLite::dbConnect(RSQLite::SQLite(),tmp)
   expect_equal(sort(RSQLite::dbListTables(db)),c('accessionTaxa','names','nodes'))

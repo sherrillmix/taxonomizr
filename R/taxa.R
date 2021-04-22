@@ -460,7 +460,7 @@ getParentNodes<-function(ids,sqlFile='nameNode.sqlite'){
 checkDownloadMd5<-function(url,file,errorIfNoMd5=FALSE){
   md5<-sprintf('%s.md5',url)
   tmp<-tempfile()
-  check<-tryCatch(utils::download.file(md5,tmp),warning=function(xx)1,error=function(xx)1)
+  check<-tryCatch(utils::download.file(md5,tmp,mode='wb'),warning=function(xx)1,error=function(xx)1)
   if(check!=0){
     if(errorIfNoMd5)stop("Problem downloading md5 ",md5)
     else return(TRUE)
@@ -850,7 +850,7 @@ getAccession2taxid<-function(outDir='.',baseUrl='ftp://ftp.ncbi.nih.gov/pub/taxo
   }
   urls<-paste(baseUrl,fileNames,sep='/')
   mapply(function(xx,yy){
-    utils::download.file(xx,yy)
+    utils::download.file(xx,yy,mode='wb')
     if(!checkDownloadMd5(xx,yy))stop('Downloaded file does not match ',xx,' File corrupted or download ended early?')
   },urls,outFiles)
   return(outFiles)
