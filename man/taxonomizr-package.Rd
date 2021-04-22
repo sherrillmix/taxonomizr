@@ -30,7 +30,7 @@ More specialized functions are:
     stop('This is a stop to make sure no one downloads a bunch of data unintentionally')
 
   prepareDatabase('accessionTaxa.sql')
-  blastAccessions<-c("Z17430.1","Z17429.1","X62402.1") 
+  blastAccessions<-c("Z17430.1","Z17429.1","X62402.1")
   ids<-accessionToTaxa(blastAccessions,'accessionTaxa.sql')
   getTaxonomy(ids,'accessionTaxa.sql')
 }

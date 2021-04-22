@@ -20,7 +20,7 @@
 #'     stop('This is a stop to make sure no one downloads a bunch of data unintentionally')
 #'
 #'   prepareDatabase('accessionTaxa.sql')
-#'   blastAccessions<-c("Z17430.1","Z17429.1","X62402.1") 
+#'   blastAccessions<-c("Z17430.1","Z17429.1","X62402.1")
 #'   ids<-accessionToTaxa(blastAccessions,'accessionTaxa.sql')
 #'   getTaxonomy(ids,'accessionTaxa.sql')
 #' }
@@ -457,6 +457,18 @@ getParentNodes<-function(ids,sqlFile='nameNode.sqlite'){
   return(taxaDf[,c('name','parent','rank')])
 }
 
+checkDownloadMd5<-function(url,file,errorIfNoMd5=FALSE){
+  md5<-sprintf('%s.md5',url)
+  tmp<-tempfile()
+  check<-tryCatch(utils::download.file(md5,tmp),warning=function(xx)1,error=function(xx)1)
+  if(check!=0){
+    if(errorIfNoMd5)stop("Problem downloading md5 ",md5)
+    else return(TRUE)
+  }
+  hash<-strsplit(readLines(tmp),' ')[[1]][1]
+  return(hash==tools::md5sum(file))
+}
+
 
 #' Get taxonomic ranks for a taxa
 #'
@@ -552,7 +564,7 @@ getTaxonomy<-function (ids,sqlFile='nameNode.sqlite',..., desiredTaxa=c('superki
       selector<-parents[,'rank']==ii&!is.na(parents[,'rank'])
       taxa[which(stillWorking)[selector],ii]<-parents[selector,'name']
     }
-    rep<-rep+1 
+    rep<-rep+1
     currentIds[stillWorking]<-parents$parent
     if(rep>200)stop('Found cycle in taxonomy')
   }
@@ -652,7 +664,7 @@ getRawTaxonomy<-function (ids,sqlFile='nameNode.sqlite'){
       xx[rank]<-name
       return(xx)
     },taxa[stillWorking],parents[,'rank'],parents[,'name'],SIMPLIFY=FALSE)
-    rep<-rep+1 
+    rep<-rep+1
     currentIds[stillWorking]<-parents$parent
     if(rep>200)stop('Found cycle in taxonomy')
   }
@@ -793,6 +805,7 @@ getNamesAndNodes<-function(outDir='.',url='ftp://ftp.ncbi.nih.gov/pub/taxonomy/t
   dir.create(tmp)
   tarFile<-file.path(tmp,base)
   utils::download.file(url,tarFile,mode='wb')
+  if(!checkDownloadMd5(url,tarFile))stop('Downloaded file does not match ',url,' File corrupted or download ended early?')
   utils::untar(tarFile,fileNames,exdir=tmp,tar='internal')
   tmpFiles<-file.path(tmp,fileNames)
   if(!all(file.exists(tmpFiles)))stop("Problem finding files ",paste(tmpFiles[!file.exists(tmpFiles)],collapse=', '))
@@ -836,7 +849,10 @@ getAccession2taxid<-function(outDir='.',baseUrl='ftp://ftp.ncbi.nih.gov/pub/taxo
     return(outFiles)
   }
   urls<-paste(baseUrl,fileNames,sep='/')
-  mapply(utils::download.file,urls,outFiles)
+  mapply(function(xx,yy){
+    utils::download.file(xx,yy)
+    if(!checkDownloadMd5(xx,yy))stop('Downloaded file does not match ',xx,' File corrupted or download ended early?')
+  },urls,outFiles)
   return(outFiles)
 }
 
@@ -1048,16 +1064,16 @@ makeNewick<-function(taxa,naSub='_'){
 #'
 #' In version 0.5.0, taxonomizr switched from data.table to SQLite name and node lookups. See below for more details.
 #'
-#' Version 0.5.0 marked a change for name and node lookups from using data.table to using SQLite. This was necessary to increase performance (10-100x speedup for \code{\link{getTaxonomy}}) and create a simpler interface (a single SQLite database contains all necessary data). Unfortunately, this switch requires a couple breaking changes: 
+#' Version 0.5.0 marked a change for name and node lookups from using data.table to using SQLite. This was necessary to increase performance (10-100x speedup for \code{\link{getTaxonomy}}) and create a simpler interface (a single SQLite database contains all necessary data). Unfortunately, this switch requires a couple breaking changes:
 #' \itemize{
 #'  \item \code{\link{getTaxonomy}} changes from \code{getTaxonomy(ids,namesDT,nodesDT)} to \code{getTaxonomy(ids,sqlFile)}
 #'  \item  \code{\link{getId}} changes from  \code{getId(taxa,namesDT)} to \code{getId(taxa,sqlFile)}
 #'  \item \code{\link{read.names}} is deprecated, instead use \code{\link{read.names.sql}}. For example, instead of calling \code{names<-read.names('names.dmp')} in every session, simply call \code{read.names.sql('names.dmp','accessionTaxa.sql')} once (or use the convenient \code{\link{prepareDatabase}})).
 #'  \item \code{\link{read.nodes}} is deprecated, instead use \code{\link{read.names.sql}}. For example. instead of calling \code{nodes<-read.names('nodes.dmp')} in every session, simply call \code{read.nodes.sql('nodes.dmp','accessionTaxa.sql')} once (or use the convenient \code{\link{prepareDatabase}}).
 #' }
-#' 
-#' I've tried to ease any problems with this by overloading \code{\link{getTaxonomy}} and \code{\link{getId}} to still function (with a warning) if passed a data.table names and nodes argument and providing a simpler \code{\link{prepareDatabase}} function for completing all setup steps (hopefully avoiding direct calls to \code{\link{read.names}} and \code{\link{read.nodes}} for most users). 
-#' 
+#'
+#' I've tried to ease any problems with this by overloading \code{\link{getTaxonomy}} and \code{\link{getId}} to still function (with a warning) if passed a data.table names and nodes argument and providing a simpler \code{\link{prepareDatabase}} function for completing all setup steps (hopefully avoiding direct calls to \code{\link{read.names}} and \code{\link{read.nodes}} for most users).
+#'
 #' I plan to eventually remove data.table functionality to avoid a split codebase so please switch to the new SQLite format in all new code.
 #'
 #' @seealso \code{\link{getTaxonomy}}, \code{\link{read.names.sql}}, \code{\link{read.nodes.sql}}, \code{\link{prepareDatabase}}, \code{\link{getId}}

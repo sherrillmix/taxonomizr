@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">taxonomizr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.1</span>
       </span>
     </div>
 
@@ -158,7 +158,7 @@
     <span class='kw'><a href='https://rdrr.io/r/base/stop.html'>stop</a></span><span class='op'>(</span><span class='st'>'This is a stop to make sure no one downloads a bunch of data unintentionally'</span><span class='op'>)</span>
 
   <span class='fu'><a href='prepareDatabase.html'>prepareDatabase</a></span><span class='op'>(</span><span class='st'>'accessionTaxa.sql'</span><span class='op'>)</span>
-  <span class='va'>blastAccessions</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Z17430.1"</span>,<span class='st'>"Z17429.1"</span>,<span class='st'>"X62402.1"</span><span class='op'>)</span> 
+  <span class='va'>blastAccessions</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Z17430.1"</span>,<span class='st'>"Z17429.1"</span>,<span class='st'>"X62402.1"</span><span class='op'>)</span>
   <span class='va'>ids</span><span class='op'>&lt;-</span><span class='fu'><a href='accessionToTaxa.html'>accessionToTaxa</a></span><span class='op'>(</span><span class='va'>blastAccessions</span>,<span class='st'>'accessionTaxa.sql'</span><span class='op'>)</span>
   <span class='fu'><a href='getTaxonomy.html'>getTaxonomy</a></span><span class='op'>(</span><span class='va'>ids</span>,<span class='st'>'accessionTaxa.sql'</span><span class='op'>)</span>
 <span class='op'>}</span>

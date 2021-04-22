@@ -157,7 +157,7 @@ test_that("Test read.accession2taxid",{
   outFile2<-tempfile()
   inFile<-tempfile()
   writeLines(taxa,inFile)
-  file.create(outFile) 
+  file.create(outFile)
   expect_error(read.accession2taxid(inFile,outFile),NA)
   file.remove(outFile)
   expect_error(read.accession2taxid(inFile,outFile),NA)
@@ -230,7 +230,6 @@ test_that("Test getTaxonomy and getRawTaxonomy",{
   tmp<-tempfile()
   read.names.sql(textConnection(namesText),tmp)
   read.nodes.sql(textConnection(nodesText),tmp)
-
   desiredTaxa<-c('superkingdom','phylum','class','order','family','genus','species')
   out<-matrix(c(
     "Eukaryota","Chordata","Mammalia","Primates","Hominidae","Homo","Homo sapiens",
@@ -503,6 +502,23 @@ test_that("Test getParentNodes",{
   with_mock(`RSQLite::dbGetQuery`=function(...){data.frame('id'=c(9605,9606))},expect_error(taxonomizr:::getParentNodes(c(9606,9605),tmp),'finding'))
 })
 
+test_that("Test checkDownloadMd5",{
+  tmp<-tempfile()
+  tmp2<-tempfile()
+  writeLines('THISISSOMEDATA',tmp)
+  writeLines('THISISSOMEOTHERDATA',tmp2)
+  md5<-tools::md5sum(tmp)
+  expect_true(checkDownloadMd5(sprintf('file://%s',tmp),tmp2)) #no md5 so can't check and doesn't error
+  expect_error(checkDownloadMd5(sprintf('file://%s',tmp),tmp2,TRUE),'md5') #no md5 so can't check and error flag set
+  writeLines(sprintf('%s EXTRASTUFF',md5),sprintf('%s.md5',tmp))
+  expect_false(checkDownloadMd5(sprintf('file://%s',tmp),tmp2))
+  file.copy(tmp,tmp2,TRUE)
+  expect_true(checkDownloadMd5(sprintf('file://%s',tmp),tmp2))
+  writeLines(sprintf('SOMEOTHERMD5 EXTRASTUFF',md5),sprintf('%s.md5',tmp))
+  expect_false(checkDownloadMd5(sprintf('file://%s',tmp),tmp2))
+})
+
+
 
 test_that("Test accessionToTaxa",{
   taxa<-c(
@@ -588,6 +604,17 @@ test_that("Test getNamesAndNodes",{
   options(timeout=46)
   expect_error(getNamesAndNodes(tmp,fakeFile,'NOTREAL.FILE',timeout=2000))
   expect_equal(getOption('timeout'),46)
+  tmp<-tempfile()
+  dir.create(tmp)
+  newFake<-file.path(tmp,'fake')
+  download.file(fakeFile,newFake)
+  fakeMd5<-tools::md5sum(newFake)
+  writeLines(sprintf('%s EXTRATEXT',fakeMd5),sprintf('%s.md5',newFake))
+  expect_error(getNamesAndNodes(tmp,sprintf('file://%s',newFake)),NA)
+  tmp<-tempfile()
+  dir.create(tmp)
+  writeLines('NOTREALHASH EXTRATEXT',sprintf('%s.md5',newFake))
+  expect_error(getNamesAndNodes(tmp,sprintf('file://%s',newFake)),'match')
 })
 
 test_that("Test getAccession2taxid",{
@@ -605,6 +632,20 @@ test_that("Test getAccession2taxid",{
   expect_message(getAccession2taxid(tmp2,baseUrl=sprintf('file://%s',tmp),types=c('nucl_XxXx','nucl_XyXyX'),timeout=1000),'exist')
   expect_error(getAccession2taxid(tmp2,baseUrl=sprintf('file://%s',tmp),types=c('nucl_XxXx','nucl_XyXyX')),NA)
   expect_equal(getOption('timeout'),59)
+  file.remove(list.files(tmp2,'^nucl_.*.gz$',full.names=TRUE))
+  writeLines('NOTREALHASH EXTRATEXT',sprintf('%s.md5',file.path(tmp,targets[1])))
+  expect_error(getAccession2taxid(tmp2,baseUrl=sprintf('file://%s',tmp),types=c('nucl_XxXx','nucl_XyXyX')),'match')
+  fakeMd5<-tools::md5sum(file.path(tmp,targets[1]))
+  file.remove(list.files(tmp2,'^nucl_.*.gz$',full.names=TRUE))
+  writeLines(sprintf('%s EXTRATEXT',fakeMd5),sprintf('%s.md5',file.path(tmp,targets[1])))
+  expect_error(getAccession2taxid(tmp2,baseUrl=sprintf('file://%s',tmp),types=c('nucl_XxXx','nucl_XyXyX')),NA)
+  fakeMd5<-tools::md5sum(file.path(tmp,targets[2]))
+  file.remove(list.files(tmp2,'^nucl_.*.gz$',full.names=TRUE))
+  writeLines('NOTREALHASH EXTRATEXT',sprintf('%s.md5',file.path(tmp,targets[2])))
+  expect_error(getAccession2taxid(tmp2,baseUrl=sprintf('file://%s',tmp),types=c('nucl_XxXx','nucl_XyXyX')),'match')
+  file.remove(list.files(tmp2,'^nucl_.*.gz$',full.names=TRUE))
+  writeLines(sprintf('%s EXTRATEXT',fakeMd5),sprintf('%s.md5',file.path(tmp,targets[2])))
+  expect_error(getAccession2taxid(tmp2,baseUrl=sprintf('file://%s',tmp),types=c('nucl_XxXx','nucl_XyXyX')),NA)
 })
 
 test_that("Test getId with deprecated data.table",{
