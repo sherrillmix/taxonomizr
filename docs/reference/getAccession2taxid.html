@@ -132,8 +132,7 @@
     <pre class="usage"><span class='fu'>getAccession2taxid</span><span class='op'>(</span>
   outDir <span class='op'>=</span> <span class='st'>"."</span>,
   baseUrl <span class='op'>=</span> <span class='st'>"ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/"</span>,
-  types <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"nucl_gb"</span>, <span class='st'>"nucl_wgs"</span><span class='op'>)</span>,
-  timeout <span class='op'>=</span> <span class='fl'>36000</span>
+  types <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"nucl_gb"</span>, <span class='st'>"nucl_wgs"</span><span class='op'>)</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -150,10 +149,6 @@
     <tr>
       <th>types</th>
       <td><p>the types if accession2taxid.gz files desired where type is the prefix of xxx.accession2taxid.gz. The default is to download all nucl_ accessions. For protein accessions, try <code>types=c('prot')</code>.</p></td>
-    </tr>
-    <tr>
-      <th>timeout</th>
-      <td><p>time in seconds for the download to time out</p></td>
     </tr>
     </table>
 

@@ -7,8 +7,7 @@
 getAccession2taxid(
   outDir = ".",
   baseUrl = "ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/",
-  types = c("nucl_gb", "nucl_wgs"),
-  timeout = 36000
+  types = c("nucl_gb", "nucl_wgs")
 )
 }
 \arguments{
@@ -17,8 +16,6 @@ getAccession2taxid(
 \item{baseUrl}{the url of the directory where accession2taxid.gz files are located}
 
 \item{types}{the types if accession2taxid.gz files desired where type is the prefix of xxx.accession2taxid.gz. The default is to download all nucl_ accessions. For protein accessions, try \code{types=c('prot')}.}
-
-\item{timeout}{time in seconds for the download to time out}
 }
 \value{
 a vector of file path strings of the locations of the output files

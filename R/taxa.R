@@ -460,8 +460,8 @@ getParentNodes<-function(ids,sqlFile='nameNode.sqlite'){
 checkDownloadMd5<-function(url,file,errorIfNoMd5=FALSE){
   md5<-sprintf('%s.md5',url)
   tmp<-tempfile()
-  check<-tryCatch(utils::download.file(md5,tmp,mode='wb'),warning=function(xx)1,error=function(xx)1)
-  if(check!=0){
+  check<-tryCatch(curl::curl_download(md5,tmp,mode='wb',quiet=FALSE),warning=function(xx)FALSE,error=function(xx)FALSE)
+  if(check==FALSE){
     if(errorIfNoMd5)stop("Problem downloading md5 ",md5)
     else return(TRUE)
   }
@@ -782,7 +782,6 @@ condenseTaxa<-function(taxaTable,groupings=rep(1,nrow(taxaTable))){
 #' @param outDir the directory to put names.dmp and nodes.dmp in
 #' @param url the url where taxdump.tar.gz is located
 #' @param fileNames the filenames desired from the tar.gz file
-#' @param timeout time in seconds for the download to time out
 #' @return a vector of file path strings of the locations of the output files
 #' @seealso \code{\link{read.nodes.sql}}, \code{\link{read.names.sql}}
 #' @references \url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/}, \url{https://www.ncbi.nlm.nih.gov/Taxonomy/taxonomyhome.html/}
@@ -791,10 +790,7 @@ condenseTaxa<-function(taxaTable,groupings=rep(1,nrow(taxaTable))){
 #' \dontrun{
 #'   getNamesAndNodes()
 #' }
-getNamesAndNodes<-function(outDir='.',url='ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz',fileNames=c('names.dmp','nodes.dmp'),timeout=36000){
-  oldTimeout<-getOption('timeout')
-  on.exit(options('timeout'=oldTimeout))
-  options('timeout'=timeout)
+getNamesAndNodes<-function(outDir='.',url='ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz',fileNames=c('names.dmp','nodes.dmp')){
   outFiles<-file.path(outDir,fileNames)
   if(all(file.exists(outFiles))){
     message(paste(outFiles,collapse=', '),' already exist. Delete to redownload')
@@ -804,7 +800,7 @@ getNamesAndNodes<-function(outDir='.',url='ftp://ftp.ncbi.nih.gov/pub/taxonomy/t
   tmp<-tempfile()
   dir.create(tmp)
   tarFile<-file.path(tmp,base)
-  utils::download.file(url,tarFile,mode='wb')
+  curl::curl_download(url,tarFile,mode='wb',quiet=FALSE)
   if(!checkDownloadMd5(url,tarFile))stop('Downloaded file does not match ',url,' File corrupted or download ended early?')
   utils::untar(tarFile,fileNames,exdir=tmp,tar='internal')
   tmpFiles<-file.path(tmp,fileNames)
@@ -822,7 +818,6 @@ getNamesAndNodes<-function(outDir='.',url='ftp://ftp.ncbi.nih.gov/pub/taxonomy/t
 #' @param outDir the directory to put the accession2taxid.gz files in
 #' @param baseUrl the url of the directory where accession2taxid.gz files are located
 #' @param types the types if accession2taxid.gz files desired where type is the prefix of xxx.accession2taxid.gz. The default is to download all nucl_ accessions. For protein accessions, try \code{types=c('prot')}.
-#' @param timeout time in seconds for the download to time out
 #' @return a vector of file path strings of the locations of the output files
 #' @seealso \code{\link{read.accession2taxid}}
 #' @references \url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/}, \url{https://www.ncbi.nlm.nih.gov/Sequin/acc.html}
@@ -837,10 +832,7 @@ getNamesAndNodes<-function(outDir='.',url='ftp://ftp.ncbi.nih.gov/pub/taxonomy/t
 #'
 #'   getAccession2taxid()
 #' }
-getAccession2taxid<-function(outDir='.',baseUrl='ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/',types=c('nucl_gb','nucl_wgs'),timeout=36000){
-  oldTimeout<-getOption('timeout')
-  on.exit(options('timeout'=oldTimeout))
-  options('timeout'=timeout)
+getAccession2taxid<-function(outDir='.',baseUrl='ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/',types=c('nucl_gb','nucl_wgs')){
   message('This can be a big (several gigabytes) download. Please be patient and use a fast connection.')
   fileNames<-sprintf('%s.accession2taxid.gz',types)
   outFiles<-file.path(outDir,fileNames)
@@ -851,7 +843,7 @@ getAccession2taxid<-function(outDir='.',baseUrl='ftp://ftp.ncbi.nih.gov/pub/taxo
   if(!substring(baseUrl,nchar(baseUrl)) %in% c('/','\\'))baseUrl<-sprintf('%s/',baseUrl)
   urls<-paste(baseUrl,fileNames,sep='')
   mapply(function(xx,yy){
-    utils::download.file(xx,yy,mode='wb')
+    curl::curl_download(xx,yy,mode='wb',quiet=FALSE)
     if(!checkDownloadMd5(xx,yy))stop('Downloaded file does not match ',xx,' File corrupted or download ended early?')
   },urls,outFiles)
   return(outFiles)

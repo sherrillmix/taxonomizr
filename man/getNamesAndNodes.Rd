@@ -7,8 +7,7 @@
 getNamesAndNodes(
   outDir = ".",
   url = "ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz",
-  fileNames = c("names.dmp", "nodes.dmp"),
-  timeout = 36000
+  fileNames = c("names.dmp", "nodes.dmp")
 )
 }
 \arguments{
@@ -17,8 +16,6 @@ getNamesAndNodes(
 \item{url}{the url where taxdump.tar.gz is located}
 
 \item{fileNames}{the filenames desired from the tar.gz file}
-
-\item{timeout}{time in seconds for the download to time out}
 }
 \value{
 a vector of file path strings of the locations of the output files
