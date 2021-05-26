@@ -37,7 +37,7 @@
 #' @param onlyScientific If TRUE, only store scientific names. If FALSE, synonyms and other types are included (increasing the potential for ambiguous taxonomic assignments).
 #' @return a data.table with columns id and name with a key on id
 #' @export
-#' @references \url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/}
+#' @references \url{https://ftp.ncbi.nih.gov/pub/taxonomy/}
 #' @seealso \code{\link{read.nodes}}, \code{\link{read.names.sql}}
 #' @examples
 #' namesText<-c(
@@ -71,7 +71,7 @@ read.names<-function(nameFile,onlyScientific=TRUE){
 #' @param overwrite If TRUE, delete names table in database if present and regenerate
 #' @return invisibly returns a string with path to sqlfile
 #' @export
-#' @references \url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/}
+#' @references \url{https://ftp.ncbi.nih.gov/pub/taxonomy/}
 #' @seealso \code{\link{read.nodes}}
 #' @examples
 #' namesText<-c(
@@ -117,7 +117,7 @@ read.names.sql<-function(nameFile,sqlFile='nameNode.sqlite',overwrite=FALSE){
 #'
 #' @param nodeFile string giving the path to an NCBI node file to read from (both gzipped or uncompressed files are ok)
 #' @return a data.table with columns id, parent and rank with a key on id
-#' @references \url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/}
+#' @references \url{https://ftp.ncbi.nih.gov/pub/taxonomy/}
 #' @seealso \code{\link{read.names}}, \code{\link{read.nodes.sql}}
 #' @export
 #' @examples
@@ -148,7 +148,7 @@ read.nodes<-function(nodeFile){
 #' @param sqlFile a string giving the path where the output SQLite file should be saved
 #' @param overwrite If TRUE, delete nodes table in database if present and regenerate
 #' @return a data.table with columns id, parent and rank with a key on id
-#' @references \url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/}
+#' @references \url{https://ftp.ncbi.nih.gov/pub/taxonomy/}
 #' @seealso \code{\link{read.names.sql}}
 #' @export
 #' @examples
@@ -278,7 +278,7 @@ trimTaxa<-function(inFile,outFile,desiredCols=c(2,3)){
 #' @param overwrite If TRUE, delete accessionTaxa table in database if present and regenerate
 #' @return TRUE if sucessful
 #' @export
-#' @references \url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid}
+#' @references \url{https://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid}
 #' @seealso \code{\link{read.nodes.sql}}, \code{\link{read.names.sql}}
 #' @examples
 #' taxa<-c(
@@ -682,7 +682,7 @@ getRawTaxonomy<-function (ids,sqlFile='nameNode.sqlite'){
 #' @param version either 'version' indicating that taxaids are versioned e.g. Z17427.1 or 'base' indicating that taxaids do not have version numbers e.g. Z17427
 #' @return a vector of NCBI taxa ids
 #' @export
-#' @references \url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid}
+#' @references \url{https://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid}
 #' @seealso \code{\link{getTaxonomy}}, \code{\link{read.accession2taxid}}
 #' @examples
 #' taxa<-c(
@@ -784,13 +784,13 @@ condenseTaxa<-function(taxaTable,groupings=rep(1,nrow(taxaTable))){
 #' @param fileNames the filenames desired from the tar.gz file
 #' @return a vector of file path strings of the locations of the output files
 #' @seealso \code{\link{read.nodes.sql}}, \code{\link{read.names.sql}}
-#' @references \url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/}, \url{https://www.ncbi.nlm.nih.gov/Taxonomy/taxonomyhome.html/}
+#' @references \url{https://ftp.ncbi.nih.gov/pub/taxonomy/}, \url{https://www.ncbi.nlm.nih.gov/Taxonomy/taxonomyhome.html/}
 #' @export
 #' @examples
 #' \dontrun{
 #'   getNamesAndNodes()
 #' }
-getNamesAndNodes<-function(outDir='.',url='ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz',fileNames=c('names.dmp','nodes.dmp')){
+getNamesAndNodes<-function(outDir='.',url='https://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz',fileNames=c('names.dmp','nodes.dmp')){
   outFiles<-file.path(outDir,fileNames)
   if(all(file.exists(outFiles))){
     message(paste(outFiles,collapse=', '),' already exist. Delete to redownload')
@@ -820,7 +820,7 @@ getNamesAndNodes<-function(outDir='.',url='ftp://ftp.ncbi.nih.gov/pub/taxonomy/t
 #' @param types the types if accession2taxid.gz files desired where type is the prefix of xxx.accession2taxid.gz. The default is to download all nucl_ accessions. For protein accessions, try \code{types=c('prot')}.
 #' @return a vector of file path strings of the locations of the output files
 #' @seealso \code{\link{read.accession2taxid}}
-#' @references \url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/}, \url{https://www.ncbi.nlm.nih.gov/Sequin/acc.html}
+#' @references \url{https://ftp.ncbi.nih.gov/pub/taxonomy/}, \url{https://www.ncbi.nlm.nih.gov/Sequin/acc.html}
 #' @export
 #' @examples
 #' \dontrun{
@@ -832,7 +832,7 @@ getNamesAndNodes<-function(outDir='.',url='ftp://ftp.ncbi.nih.gov/pub/taxonomy/t
 #'
 #'   getAccession2taxid()
 #' }
-getAccession2taxid<-function(outDir='.',baseUrl='ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/',types=c('nucl_gb','nucl_wgs')){
+getAccession2taxid<-function(outDir='.',baseUrl='https://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/',types=c('nucl_gb','nucl_wgs')){
   message('This can be a big (several gigabytes) download. Please be patient and use a fast connection.')
   fileNames<-sprintf('%s.accession2taxid.gz',types)
   outFiles<-file.path(outDir,fileNames)
