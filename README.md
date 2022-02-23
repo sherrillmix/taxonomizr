@@ -324,8 +324,38 @@ getRawTaxonomy(c(9606,9913),'accessionTaxa.sql')
 ##            "Eukaryota"   "cellular organisms"
 ```
 
+These raw taxonomy with varying numbers of levels can be normalized so that all taxa share the same number of levels (aligning by taxonomic levels that are not the unspecific "clade") using the `normalizeTaxa` function:
 
 
+
+```r
+raw<-getRawTaxonomy(c(9606,9913),'accessionTaxa.sql')
+normalizeTaxa(raw)
+```
+
+```
+##      no rank              superkingdom superkingdom.1 kingdom   kingdom.1  
+## 9606 "cellular organisms" "Eukaryota"  "Opisthokonta" "Metazoa" "Eumetazoa"
+## 9913 "cellular organisms" "Eukaryota"  "Opisthokonta" "Metazoa" "Eumetazoa"
+##      kingdom.2   kingdom.3       phylum     subphylum  subphylum.1 
+## 9606 "Bilateria" "Deuterostomia" "Chordata" "Craniata" "Vertebrata"
+## 9913 "Bilateria" "Deuterostomia" "Chordata" "Craniata" "Vertebrata"
+##      subphylum.2     subphylum.3  subphylum.4    superclass     
+## 9606 "Gnathostomata" "Teleostomi" "Euteleostomi" "Sarcopterygii"
+## 9913 "Gnathostomata" "Teleostomi" "Euteleostomi" "Sarcopterygii"
+##      superclass.1           superclass.2 superclass.3 class      class.1 
+## 9606 "Dipnotetrapodomorpha" "Tetrapoda"  "Amniota"    "Mammalia" "Theria"
+## 9913 "Dipnotetrapodomorpha" "Tetrapoda"  "Amniota"    "Mammalia" "Theria"
+##      class.2    class.3         superorder         order          suborder     
+## 9606 "Eutheria" "Boreoeutheria" "Euarchontoglires" "Primates"     "Haplorrhini"
+## 9913 "Eutheria" "Boreoeutheria" "Laurasiatheria"   "Artiodactyla" "Ruminantia" 
+##      infraorder    parvorder    superfamily  family      subfamily   genus 
+## 9606 "Simiiformes" "Catarrhini" "Hominoidea" "Hominidae" "Homininae" "Homo"
+## 9913 "Pecora"      NA           NA           "Bovidae"   "Bovinae"   "Bos" 
+##      species       
+## 9606 "Homo sapiens"
+## 9913 "Bos taurus"
+```
 
 ### Finding accessions for a given taxonomic ID
 
@@ -375,7 +405,7 @@ getAccessions(3702,'accessionTaxa.sql',limit=10)
 
 ### Convert taxonomy to Newick tree
 
-This is probably only useful in a few specific cases but a convenience function `makeNewick` to convert taxonomy into a Newick tree is included. The function takes a matrix giving with columns corresponding to taxonomic categories and rows different to taxonomic assignments, e.g. the output from `condenseTaxa` or `getTaxonomy` and reduces it to a Newick formatted tree. For example:
+This is probably only useful in a few specific cases but a convenience function `makeNewick` to convert taxonomy into a Newick tree is included. The function takes a matrix giving with columns corresponding to taxonomic categories and rows different to taxonomic assignments, e.g. the output from `condenseTaxa` or `getTaxonomy` or `normalizeTaxa` and reduces it to a Newick formatted tree. For example:
 
 
 
@@ -402,7 +432,20 @@ makeNewick(taxa)
 
 ## Changelog
 
-### v0.5.3
+### v0.8.1
+  * Add normalizeTaxa function
+
+### v0.8.0
+  * Switch to curl::curl_download to avoid Windows issues
+
+### v0.7.1
+  * Add md5 check for downloads
+
+### v0.7.0
+  * Add getRawTaxonomy function
+  * Add option to not download accessions
+
+### v0.6.0
   * Fix named vector bug in `accessionToTaxa`
   * Add `makeNewick` function
   * Deal with default 60 second timeout for downloads in R
