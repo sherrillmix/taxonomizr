@@ -574,13 +574,13 @@ getTaxonomy<-function (ids,sqlFile='nameNode.sqlite',..., desiredTaxa=c('superki
 
 #' Get all taxonomy for a taxa
 #'
-#' Take NCBI taxa IDs and get all taxonomic ranks from name and node SQLite database. Ranks that occur more than once are made unique with a postfix through \code{link{make.unique}}
+#' Take NCBI taxa IDs and get all taxonomic ranks from name and node SQLite database. Ranks that occur more than once are made unique with a postfix through \code{\link{make.unique}}
 #'
 #' @param ids a vector of ids to find taxonomy for
 #' @param sqlFile a string giving the path to a SQLite file containing names and nodes tables
 #' @return a list of vectors with each element containing a vector of taxonomic strings with names corresponding to the taxonomic rank
 #' @export
-#' @seealso \code{\link{read.nodes.sql}}, \code{\link{read.names.sql}}
+#' @seealso \code{\link{read.nodes.sql}}, \code{\link{read.names.sql}}, \code{\link{normalizeTaxa}}
 #' @examples
 #' sqlFile<-tempfile()
 #' namesText<-c(
@@ -1039,6 +1039,7 @@ getAccessions<-function(taxaId,sqlFile,version=c('version','base'),limit=NULL){
 #' Create a Newick formatted tree from a data.frame of taxonomic assignments
 #' @param taxa a matrix with a row for each leaf of the tree and a column for each taxonomic classification e.g. the output from getTaxonomy
 #' @param naSub a character string to substitute in place of NAs in the taxonomy
+#' @return a string giving a Newick formatted tree
 #' @seealso \code{\link{getTaxonomy}}
 #' @export
 #' @examples
@@ -1051,6 +1052,126 @@ makeNewick<-function(taxa,naSub='_'){
   innerTree<-sapply(bases,function(ii)makeNewick(taxa[taxa[,1]==ii,-1,drop=FALSE]))
   out<-sprintf('(%s)',paste(sprintf('%s%s',innerTree,bases),collapse=','))
   return(out)
+}
+
+
+#' Bring multiple raw taxonomies into alignment
+#'
+#' Combine the raw taxonomy of several taxa into a single matrix where each row corresponds to a taxa and each column a taxonomic level. Named taxonomic levels are aligned between taxa then any unspecified clades are combined between the named levels. Taxonomic levels between named levels are arbitrarily combined from most generic to most specific. Working from the data provided in the NCBI taxonomy results in ambiguities so results should be used with care.
+#' @param rawTaxa A list of vectors with each vector containing a named character vector with entries specifying taxonomy for a clade and names giving the corresponding taxonomic levels e.g. the output from \code{\link{getRawTaxonomy}}
+#' @param cladeRegex A regex to identify ambiguous taxonomic levels. In the case of NCBI taxonomy, these unidentified levels are all labelled "clade" and \code{\link{getRawTaxonomy}} may attach a unique digit attach to the end for uniqueness.
+#' @param rootFill If a clade is upstream of the highest taxonomic level then it will be labeled with this prefix
+#' @param lineageOrder A vector giving an ordering for lineages from most specific to most generic. This should be unnecessary unless the taxonomy contains ambiguities e.g. one taxa goes from species to kingdom while another goes from genus to kingdom leaving it ambiguous whether genus or species is more specific
+#' @return a matrix with a row for each taxa and a column for each taxonomic level
+#' @seealso \code{\link{getRawTaxonomy}}
+#' @export
+#' @examples
+#' rawTaxa<-list(
+#'    '81907' = c(species = "Alectura lathami", genus = "Alectura",
+#'      family = "Megapodiidae", order = "Galliformes", superorder = "Galloanserae",
+#'      infraclass = "Neognathae", class = "Aves", clade = "Coelurosauria",
+#'      clade.1 = "Theropoda", clade.2 = "Saurischia", clade.3 = "Dinosauria",
+#'      clade.4 = "Archosauria", clade.5 = "Archelosauria", clade.6 = "Sauria",
+#'      clade.7 = "Sauropsida", clade.8 = "Amniota", clade.9 = "Tetrapoda",
+#'      clade.10 = "Dipnotetrapodomorpha", superclass = "Sarcopterygii",
+#'      clade.11 = "Euteleostomi", clade.12 = "Teleostomi", clade.13 = "Gnathostomata",
+#'      clade.14 = "Vertebrata", subphylum = "Craniata", phylum = "Chordata",
+#'      clade.15 = "Deuterostomia", clade.16 = "Bilateria", clade.17 = "Eumetazoa",
+#'      kingdom = "Metazoa", clade.18 = "Opisthokonta", superkingdom = "Eukaryota",
+#'      'no rank' = "cellular organisms"),
+#'    '8496' = c(species = "Alligator mississippiensis",
+#'      genus = "Alligator", subfamily = "Alligatorinae", family = "Alligatoridae",
+#'      order = "Crocodylia", clade = "Archosauria", clade.1 = "Archelosauria",
+#'      clade.2 = "Sauria", clade.3 = "Sauropsida", clade.4 = "Amniota",
+#'      clade.5 = "Tetrapoda", clade.6 = "Dipnotetrapodomorpha", superclass = "Sarcopterygii",
+#'      clade.7 = "Euteleostomi", clade.8 = "Teleostomi", clade.9 = "Gnathostomata",
+#'      clade.10 = "Vertebrata", subphylum = "Craniata", phylum = "Chordata",
+#'      clade.11 = "Deuterostomia", clade.12 = "Bilateria", clade.13 = "Eumetazoa",
+#'      kingdom = "Metazoa", clade.14 = "Opisthokonta", superkingdom = "Eukaryota",
+#'      'no rank' = "cellular organisms"),
+#'    '38654' = c(species = "Alligator sinensis",
+#'      genus = "Alligator", subfamily = "Alligatorinae", family = "Alligatoridae",
+#'      order = "Crocodylia", clade = "Archosauria", clade.1 = "Archelosauria",
+#'      clade.2 = "Sauria", clade.3 = "Sauropsida", clade.4 = "Amniota",
+#'      clade.5 = "Tetrapoda", clade.6 = "Dipnotetrapodomorpha", superclass = "Sarcopterygii",
+#'      clade.7 = "Euteleostomi", clade.8 = "Teleostomi", clade.9 = "Gnathostomata",
+#'      clade.10 = "Vertebrata", subphylum = "Craniata", phylum = "Chordata",
+#'      clade.11 = "Deuterostomia", clade.12 = "Bilateria", clade.13 = "Eumetazoa",
+#'      kingdom = "Metazoa", clade.14 = "Opisthokonta", superkingdom = "Eukaryota",
+#'      'no rank' = "cellular organisms")
+#' )
+#' normalizeTaxa(rawTaxa)
+normalizeTaxa<-function(rawTaxa,cladeRegex='^clade$|^clade\\.[0-9]+$|^$',rootFill='_ROOT_',lineageOrder=c()){
+  if(!is.list(rawTaxa))rawTaxa<-list(rawTaxa)
+  levels<-lapply(rawTaxa,names)
+  nonClade<-lapply(levels,function(xx)xx[!grepl(cladeRegex,xx)])
+  sortLevels<-topoSort(c(nonClade,list(lineageOrder)),errorIfAmbiguous=TRUE)
+  if(length(sortLevels)==0)stop('No unambiguous clades found')
+  if(any(sapply(nonClade,length)==0))stop('Taxa with no unambiguous clades found')
+  upDowns<-do.call(rbind,lapply(1:length(rawTaxa),function(ii){
+    xx<-rawTaxa[[ii]]
+    cladeIds<-grep(cladeRegex,names(xx))
+    goodIds<-which(names(xx) %in% sortLevels)
+    if(length(cladeIds)==0)return(NULL)
+    data.frame('id'=ii,'clade'=names(xx)[cladeIds],'taxa'=xx[cladeIds],'up'=sapply(cladeIds,function(ii)names(xx)[min(c(goodIds[goodIds>ii],Inf))]),'down'=sapply(cladeIds,function(ii)names(xx)[max(c(goodIds[goodIds<ii],-Inf))]),stringsAsFactors=FALSE)
+  }))
+  if(any(is.na(upDowns$up))){
+    upDowns[is.na(upDowns$up),'up']<-rootFill
+    sortLevels<-c(sortLevels,rootFill)
+  }
+  if(is.null(upDowns))inserts<-structure(rep(0,length(sortLevels)),.Names=sortLevels)
+  else inserts<-tapply(upDowns$id,upDowns$up,function(xx)max(table(xx)))[sortLevels]
+  inserts[is.na(inserts)]<-0
+  names(inserts)<-sortLevels
+  outLevels<-rev(make.unique(rev(rep(names(inserts),inserts+1))))
+  out<-do.call(rbind,lapply(rawTaxa,function(xx){
+    xx<-c(xx,structure(NA,.Names=rootFill))
+    names(xx)<-rev(make.unique(rev(names(xx))[cummax(ifelse(names(rev(xx)) %in% sortLevels,1:length(xx),0))]))
+    xx[outLevels]
+  }))
+  colnames(out)<-outLevels
+  out<-out[,colnames(out)!=rootFill]
+  return(out)
+}
+
+
+#' Combine multiple sorted vectors into a single sorted vector 
+#'
+#' Combine multiple sorted vectors into a single vector assuming there are no cycles or weird topologies. Where a global position is ambiguous, the result is placed arbitrarily.
+#' @param vectors A list of vectors each vector containing sorted elements to be merged into a global sorted vector
+#' @param maxIter An integer specifying the maximum number of iterations before bailing out. This should be unnecessary and is just a safety feature in case of some unexpected input or bug.
+#' @param errorIfAmbiguous If TRUE then error if any ambiguities arise
+#' @return a vector with all unique elements sorted by the combined ordering provided by the input vectors
+#' @seealso \code{\link{normalizeTaxa}}
+#' @export
+#' @examples
+#' topoSort(list(c('a','b','f','g'),c('b','e','g','y','z'),c('b','d','e','f','y')))
+topoSort<-function(vectors,maxIter=1000,errorIfAmbiguous=FALSE){
+  out<-c()
+  pointers<-rep(1,length(vectors))
+  ns<-sapply(vectors,length)
+  iters<-1
+  while(any(active<-pointers<=ns)){
+    currents<-mapply('[',vectors[active],pointers[active])
+    if(all(currents==currents[1])){
+      out<-c(out,currents[1])
+      pointers[active]<-pointers[active]+1
+    }else{
+      upstream<-sapply(currents,function(taxa){
+        any(mapply(function(vec,point,n){
+          if((point+1)>n)FALSE else taxa %in% vec[(point+1):n]
+        },vectors[active],pointers[active],ns[active]))
+      })
+      if(all(upstream))stop('Found cycle in topological sort')
+      if(errorIfAmbiguous && length(unique(currents[!upstream]))>1)stop('Ambiguous ordering found in topoSort (',paste(unique(currents[!upstream]),collapse=' vs '),')')
+      select<-currents[min(which(!upstream))]
+      out<-c(out,select)
+      pointers[active][currents==select]<-pointers[active][currents==select]+1
+    }
+    if(iters>maxIter)stop('Maximum iterations exceeded in topological sort. A bug or pathological topology?')
+    iters<-iters+1
+  }
+  return(unname(out))
 }
 
 #' Switch from data.table to SQLite
@@ -1073,4 +1194,5 @@ makeNewick<-function(taxa,naSub='_'){
 #' @keywords interal
 #' @name taxonomizrSwitch
 NULL
+
 

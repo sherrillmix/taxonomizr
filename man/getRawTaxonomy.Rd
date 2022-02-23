@@ -15,7 +15,7 @@ getRawTaxonomy(ids, sqlFile = "nameNode.sqlite")
 a list of vectors with each element containing a vector of taxonomic strings with names corresponding to the taxonomic rank
 }
 \description{
-Take NCBI taxa IDs and get all taxonomic ranks from name and node SQLite database. Ranks that occur more than once are made unique with a postfix through \code{link{make.unique}}
+Take NCBI taxa IDs and get all taxonomic ranks from name and node SQLite database. Ranks that occur more than once are made unique with a postfix through \code{\link{make.unique}}
 }
 \examples{
 sqlFile<-tempfile()
@@ -86,5 +86,5 @@ taxaNodes<-read.nodes.sql(tmpFile,sqlFile)
 getRawTaxonomy(c(9606,9605),sqlFile)
 }
 \seealso{
-\code{\link{read.nodes.sql}}, \code{\link{read.names.sql}}
+\code{\link{read.nodes.sql}}, \code{\link{read.names.sql}}, \code{\link{normalizeTaxa}}
 }

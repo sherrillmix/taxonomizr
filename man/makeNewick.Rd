@@ -11,6 +11,9 @@ makeNewick(taxa, naSub = "_")
 
 \item{naSub}{a character string to substitute in place of NAs in the taxonomy}
 }
+\value{
+a string giving a Newick formatted tree
+}
 \description{
 Create a Newick formatted tree from a data.frame of taxonomic assignments
 }
