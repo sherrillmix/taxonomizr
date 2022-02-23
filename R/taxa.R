@@ -1163,7 +1163,7 @@ topoSort<-function(vectors,maxIter=1000,errorIfAmbiguous=FALSE){
           if((point+1)>n)FALSE else taxa %in% vec[(point+1):n]
         },vectors[active],pointers[active],ns[active]))
       })
-      if(all(upstream))stop('Found cycle in topological sort')
+      if(all(upstream))stop('Found cycle in topological sort (all of ',paste(unique(currents),collapse=', '),' appear higher in a taxonomy)')
       if(errorIfAmbiguous && length(unique(currents[!upstream]))>1)stop('Ambiguous ordering found in topoSort (',paste(unique(currents[!upstream]),collapse=' vs '),')')
       select<-currents[min(which(!upstream))]
       out<-c(out,select)
