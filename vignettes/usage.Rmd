@@ -406,16 +406,16 @@ makeNewick(taxa)
 ## Changelog
 
 ### v0.8.1
-  * Add normalizeTaxa function
+  * Add `normalizeTaxa` function
 
 ### v0.8.0
-  * Switch to curl::curl_download to avoid Windows issues
+  * Switch to `curl::curl_download` to avoid Windows issues
 
 ### v0.7.1
   * Add md5 check for downloads
 
 ### v0.7.0
-  * Add getRawTaxonomy function
+  * Add `getRawTaxonomy` function
   * Add option to not download accessions
 
 ### v0.6.0
