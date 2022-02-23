@@ -1131,6 +1131,7 @@ normalizeTaxa<-function(rawTaxa,cladeRegex='^clade$|^clade\\.[0-9]+$|^$',rootFil
   }))
   colnames(out)<-outLevels
   out<-out[,colnames(out)!=rootFill]
+  out<-out[,ncol(out):1]
   return(out)
 }
 
