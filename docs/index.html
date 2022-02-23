@@ -12,13 +12,15 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
 <script src="pkgdown.js"></script><meta property="og:title" content="Functions to Work with NCBI Accessions and Taxonomy">
-<meta property="og:description" content="Functions for assigning taxonomy to NCBI accession numbers and taxon IDs based on NCBI's accession2taxid and taxdump files. This package allows the user to downloads NCBI data dumps and create a local database for fast and local taxonomic assignment.">
+<meta property="og:description" content="Functions for assigning taxonomy to NCBI accession numbers and taxon IDs based on NCBI's accession2taxid and taxdump files. This package allows the user to download NCBI data dumps and create a local database for fast and local taxonomic assignment.">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-home">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,18 +33,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">taxonomizr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.8.2</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="reference/index.html">Reference</a>
 </li>
@@ -61,7 +57,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/sherrillmix/taxonomizr/">
+  <a href="https://github.com/sherrillmix/taxonomizr/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -78,271 +74,252 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-<div id="convert-accession-numbers-to-taxonomy" class="section level1">
-<div class="page-header"><h1 class="hasAnchor">
-<a href="#convert-accession-numbers-to-taxonomy" class="anchor"></a>Convert accession numbers to taxonomy</h1></div>
+<div class="section level1">
+<div class="page-header"><h1 id="convert-accession-numbers-to-taxonomy">Convert accession numbers to taxonomy<a class="anchor" aria-label="anchor" href="#convert-accession-numbers-to-taxonomy"></a>
+</h1></div>
 
-<div id="introduction" class="section level2">
-<h2 class="hasAnchor">
-<a href="#introduction" class="anchor"></a>Introduction</h2>
-<p><code>taxonomizr</code> provides some simple functions to parse NCBI taxonomy files and accession dumps and efficiently use them to assign <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/taxonomyhome.html/">taxonomy</a> to accession numbers or taxonomic IDs. This is useful for example to assign taxonomy to BLAST results. This is all done locally after downloading the appropriate files from NCBI using included functions (see <a href="#preparation">below</a>).</p>
-<p>The major functions are:</p>
-<ul>
-<li>
-<code>prepareDatabase</code>: download data from NCBI and prepare SQLite database</li>
-<li>
-<code>accessionToTaxa</code>: convert accession numbers to taxonomic IDs</li>
-<li>
-<code>getTaxonomy</code>: convert taxonomic IDs to taxonomy</li>
-</ul>
-<p>More specialized functions are:</p>
-<ul>
-<li>
-<code>getId</code>: convert a biological name to taxonomic ID</li>
-<li>
-<code>getRawTaxonomy</code>: find all taxonomic ranks for a taxonomic ID</li>
-<li>
-<code>getAccessions</code>: find accessions for a given taxonomic ID</li>
-<li>
-<code>makeNewick</code>: generate a Newick formatted tree from taxonomic output</li>
-</ul>
+<div class="section level2">
+<h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
+</h2>
+<p><code>taxonomizr</code> provides some simple functions to parse NCBI taxonomy files and accession dumps and efficiently use them to assign <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/taxonomyhome.html/" class="external-link">taxonomy</a> to accession numbers or taxonomic IDs. This is useful for example to assign taxonomy to BLAST results. This is all done locally after downloading the appropriate files from NCBI using included functions (see <a href="#preparation">below</a>).</p>
+<p>The major functions are: * <code>prepareDatabase</code>: download data from NCBI and prepare SQLite database * <code>accessionToTaxa</code>: convert accession numbers to taxonomic IDs * <code>getTaxonomy</code>: convert taxonomic IDs to taxonomy</p>
+<p>More specialized functions are: * <code>getId</code>: convert a biological name to taxonomic ID * <code>getRawTaxonomy</code>: find all taxonomic ranks for a taxonomic ID * <code>getAccessions</code>: find accessions for a given taxonomic ID * <code>makeNewick</code>: generate a Newick formatted tree from taxonomic output</p>
 <p>And a simple use case might look like (see below for more details):</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">taxonomizr</span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">taxonomizr</span><span class="op">)</span>
 <span class="co">#note this will require a lot of hard drive space, bandwidth and time to process all the data from NCBI</span>
 <span class="fu"><a href="reference/prepareDatabase.html">prepareDatabase</a></span><span class="op">(</span><span class="st">'accessionTaxa.sql'</span><span class="op">)</span>
-<span class="va">blastAccessions</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Z17430.1"</span>,<span class="st">"Z17429.1"</span>,<span class="st">"X62402.1"</span><span class="op">)</span> 
+<span class="va">blastAccessions</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Z17430.1"</span>,<span class="st">"Z17429.1"</span>,<span class="st">"X62402.1"</span><span class="op">)</span> 
 <span class="va">ids</span><span class="op">&lt;-</span><span class="fu"><a href="reference/accessionToTaxa.html">accessionToTaxa</a></span><span class="op">(</span><span class="va">blastAccessions</span>,<span class="st">'accessionTaxa.sql'</span><span class="op">)</span>
 <span class="fu"><a href="reference/getTaxonomy.html">getTaxonomy</a></span><span class="op">(</span><span class="va">ids</span>,<span class="st">'accessionTaxa.sql'</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="requirements" class="section level2">
-<h2 class="hasAnchor">
-<a href="#requirements" class="anchor"></a>Requirements</h2>
+<div class="section level2">
+<h2 id="requirements">Requirements<a class="anchor" aria-label="anchor" href="#requirements"></a>
+</h2>
 <p>This package downloads a few databases from NCBI and stores them in an easily accessible form on the hard drive. This ends up taking a decent amount of space so you’ll probably want around 75 Gb of free hard drive space.</p>
 </div>
-<div id="installation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#installation" class="anchor"></a>Installation</h2>
+<div class="section level2">
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h2>
 <p>The package is on CRAN, so it should install with a simple:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"taxonomizr"</span><span class="op">)</span></code></pre></div>
-<p>If you want the development version directly from github, use the <a href="https://github.com/r-lib/devtools"><code>devtools</code></a> library and run:</p>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"taxonomizr"</span><span class="op">)</span></code></pre></div>
+<p>If you want the development version directly from github, use the <a href="https://github.com/r-lib/devtools" class="external-link"><code>devtools</code></a> library and run:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">"sherrillmix/taxonomizr"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/remote-reexports.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"sherrillmix/taxonomizr"</span><span class="op">)</span></code></pre></div>
 <p>To use the library, load it in R:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">taxonomizr</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">taxonomizr</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="preparation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#preparation" class="anchor"></a>Preparation<a name="preparation"></a>
+<div class="section level2">
+<h2 id="preparation">Preparation<a name="preparation"></a>
+<a class="anchor" aria-label="anchor" href="#preparation"></a>
 </h2>
 <p>Since version 0.5.0, there is a simple function to run all preparations. Note that you’ll need a bit of time, download bandwidth and hard drive space before running this command (we’re downloading taxonomic assignments for every record in NCBI). To create a SQLite database called <code>accessionTaxa.sql</code> in the current working directory (you may want to store this somewhere more centrally located so it does not need to be duplicated with every project), we can run:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/prepareDatabase.html">prepareDatabase</a></span><span class="op">(</span><span class="st">'accessionTaxa.sql'</span><span class="op">)</span></code></pre></div>
-<pre><code>## Downloading names and nodes with getNamesAndNodes()</code></pre>
-<pre><code>## Downloading accession2taxid with getAccession2taxid()</code></pre>
-<pre><code>## This can be a big (several gigabytes) download. Please be patient and use a fast connection.</code></pre>
-<pre><code>## Preprocessing names with read.names.sql()</code></pre>
-<pre><code>## Preprocessing nodes with read.nodes.sql()</code></pre>
-<pre><code>## Preprocessing accession2taxid with read.accession2taxid()</code></pre>
-<pre><code>## Reading ./nucl_gb.accession2taxid.gz.</code></pre>
-<pre><code>## Reading ./nucl_wgs.accession2taxid.gz.</code></pre>
-<pre><code>## Reading in values. This may take a while.</code></pre>
-<pre><code>## Adding index. This may also take a while.</code></pre>
-<pre><code>## [1] "accessionTaxa.sql"</code></pre>
+<pre><code><span class="co">## Downloading names and nodes with getNamesAndNodes()</span></code></pre>
+<pre><code><span class="co">## Downloading accession2taxid with getAccession2taxid()</span></code></pre>
+<pre><code><span class="co">## This can be a big (several gigabytes) download. Please be patient and use a fast connection.</span></code></pre>
+<pre><code><span class="co">## Preprocessing names with read.names.sql()</span></code></pre>
+<pre><code><span class="co">## Preprocessing nodes with read.nodes.sql()</span></code></pre>
+<pre><code><span class="co">## Preprocessing accession2taxid with read.accession2taxid()</span></code></pre>
+<pre><code><span class="co">## Reading ./nucl_gb.accession2taxid.gz.</span></code></pre>
+<pre><code><span class="co">## Reading ./nucl_wgs.accession2taxid.gz.</span></code></pre>
+<pre><code><span class="co">## Reading in values. This may take a while.</span></code></pre>
+<pre><code><span class="co">## Adding index. This may also take a while.</span></code></pre>
+<pre><code><span class="co">## [1] "accessionTaxa.sql"</span></code></pre>
 <p>If everything works then that should have prepared a SQLite database ready for use. You can skip the “Manual preparation” steps below.</p>
 <p>All files are cached locally and so the preparation is only required once (delete/rename the SQLite database and recall the function to regenerate the database). It is not necessary to manually check for the presence of the database since the function checks to see if SQLite database is present and if so skips downloading/processing. For example, running the command again produces:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/prepareDatabase.html">prepareDatabase</a></span><span class="op">(</span><span class="st">'accessionTaxa.sql'</span><span class="op">)</span></code></pre></div>
-<pre><code>## SQLite database accessionTaxa.sql already exists. Delete to regenerate</code></pre>
-<pre><code>## [1] "accessionTaxa.sql"</code></pre>
+<pre><code><span class="co">## SQLite database accessionTaxa.sql already exists. Delete to regenerate</span></code></pre>
+<pre><code><span class="co">## [1] "accessionTaxa.sql"</span></code></pre>
 </div>
-<div id="assigning-taxonomy" class="section level2">
-<h2 class="hasAnchor">
-<a href="#assigning-taxonomy" class="anchor"></a>Assigning taxonomy</h2>
-<div id="producing-accession-numbers" class="section level3">
-<h3 class="hasAnchor">
-<a href="#producing-accession-numbers" class="anchor"></a>Producing accession numbers</h3>
+<div class="section level2">
+<h2 id="assigning-taxonomy">Assigning taxonomy<a class="anchor" aria-label="anchor" href="#assigning-taxonomy"></a>
+</h2>
+<div class="section level3">
+<h3 id="producing-accession-numbers">Producing accession numbers<a class="anchor" aria-label="anchor" href="#producing-accession-numbers"></a>
+</h3>
 <p>NCBI accession numbers are often obtained when doing a BLAST search (usually the second column of output from blastn, blastx, blastp, …). For example the output might look like:</p>
 <pre><code>read1   gi|326539903|gb|CP002582.1|     69.68   1745    448     69      3       1702    3517898 3519606 3e-169  608
 read2   gi|160426828|gb|CP000885.1|     68.46   1763    452     82      3       1711    1790367 1788655 4e-140  511
 ...</code></pre>
-<p>So to identify a taxon for a given sequence you would blast it against e.g. the NCBI nt database and load the results into R. For NCBI databases, the accession number is often the 4th item in the <code><a href="https://rdrr.io/r/base/Logic.html">|</a></code> (pipe) separated reference field (often the second column in a tab separated result). For example, the <code>CP002582.1</code> in the gi|326539903|gb|<strong>CP002582.1</strong>| above.</p>
+<p>So to identify a taxon for a given sequence you would blast it against e.g. the NCBI nt database and load the results into R. For NCBI databases, the accession number is often the 4th item in the <code>|</code> (pipe) separated reference field (often the second column in a tab separated result). For example, the <code>CP002582.1</code> in the gi|326539903|gb|<strong>CP002582.1</strong>| above.</p>
 <p>So just as an example, reading in blast results might look something like:</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">blastResults</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.table</a></span><span class="op">(</span><span class="st">'XXXX.blast'</span>,header<span class="op">=</span><span class="cn">FALSE</span>,stringsAsFactors<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">blastResults</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.table</a></span><span class="op">(</span><span class="st">'XXXX.blast'</span>,header<span class="op">=</span><span class="cn">FALSE</span>,stringsAsFactors<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span>
 <span class="co">#grab the 4th |-separated field from the reference name in the second column</span>
-<span class="va">accessions</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/strsplit.html">strsplit</a></span><span class="op">(</span><span class="va">blastResults</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span>,<span class="st">'\\|'</span><span class="op">)</span>,<span class="st">'['</span>,<span class="fl">4</span><span class="op">)</span></code></pre></div>
+<span class="va">accessions</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/strsplit.html" class="external-link">strsplit</a></span><span class="op">(</span><span class="va">blastResults</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span>,<span class="st">'\\|'</span><span class="op">)</span>,<span class="st">'['</span>,<span class="fl">4</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="finding-taxonomy-for-ncbi-accession-numbers" class="section level3">
-<h3 class="hasAnchor">
-<a href="#finding-taxonomy-for-ncbi-accession-numbers" class="anchor"></a>Finding taxonomy for NCBI accession numbers</h3>
+<div class="section level3">
+<h3 id="finding-taxonomy-for-ncbi-accession-numbers">Finding taxonomy for NCBI accession numbers<a class="anchor" aria-label="anchor" href="#finding-taxonomy-for-ncbi-accession-numbers"></a>
+</h3>
 <p>Now we are ready to convert NCBI accession numbers to taxonomic IDs. For example, to find the taxonomic IDs associated with NCBI accession numbers “LN847353.1” and “AL079352.3”:</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">taxaId</span><span class="op">&lt;-</span><span class="fu"><a href="reference/accessionToTaxa.html">accessionToTaxa</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"LN847353.1"</span>,<span class="st">"AL079352.3"</span><span class="op">)</span>,<span class="st">"accessionTaxa.sql"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">taxaId</span><span class="op">)</span></code></pre></div>
-<pre><code>## [1] 1313 9606</code></pre>
+<code class="sourceCode R"><span class="va">taxaId</span><span class="op">&lt;-</span><span class="fu"><a href="reference/accessionToTaxa.html">accessionToTaxa</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"LN847353.1"</span>,<span class="st">"AL079352.3"</span><span class="op">)</span>,<span class="st">"accessionTaxa.sql"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">taxaId</span><span class="op">)</span></code></pre></div>
+<pre><code><span class="co">## [1] 1313 9606</span></code></pre>
 <p>And to get the taxonomy for those IDs:</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/getTaxonomy.html">getTaxonomy</a></span><span class="op">(</span><span class="va">taxaId</span>,<span class="st">'accessionTaxa.sql'</span><span class="op">)</span></code></pre></div>
-<pre><code>##      superkingdom phylum       class      order            
-## 1313 "Bacteria"   "Firmicutes" "Bacilli"  "Lactobacillales"
-## 9606 "Eukaryota"  "Chordata"   "Mammalia" "Primates"       
-##      family             genus           species                   
-## 1313 "Streptococcaceae" "Streptococcus" "Streptococcus pneumoniae"
-## 9606 "Hominidae"        "Homo"          "Homo sapiens"</code></pre>
+<pre><code><span class="co">##      superkingdom phylum       class      order            </span>
+<span class="co">## 1313 "Bacteria"   "Firmicutes" "Bacilli"  "Lactobacillales"</span>
+<span class="co">## 9606 "Eukaryota"  "Chordata"   "Mammalia" "Primates"       </span>
+<span class="co">##      family             genus           species                   </span>
+<span class="co">## 1313 "Streptococcaceae" "Streptococcus" "Streptococcus pneumoniae"</span>
+<span class="co">## 9606 "Hominidae"        "Homo"          "Homo sapiens"</span></code></pre>
 <p>You can also get taxonomy for NCBI accession numbers without versions (the .X following the main number e.g. the “.1” in LN847353.1) using the <code>version='base'</code> argument of <code>accessionToTaxa</code>:</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">taxaId</span><span class="op">&lt;-</span><span class="fu"><a href="reference/accessionToTaxa.html">accessionToTaxa</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"LN847353"</span>,<span class="st">"AL079352"</span><span class="op">)</span>,<span class="st">"accessionTaxa.sql"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">taxaId</span><span class="op">)</span></code></pre></div>
-<pre><code>## [1] NA NA</code></pre>
+<code class="sourceCode R"><span class="va">taxaId</span><span class="op">&lt;-</span><span class="fu"><a href="reference/accessionToTaxa.html">accessionToTaxa</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"LN847353"</span>,<span class="st">"AL079352"</span><span class="op">)</span>,<span class="st">"accessionTaxa.sql"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">taxaId</span><span class="op">)</span></code></pre></div>
+<pre><code><span class="co">## [1] NA NA</span></code></pre>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">taxaId</span><span class="op">&lt;-</span><span class="fu"><a href="reference/accessionToTaxa.html">accessionToTaxa</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"LN847353"</span>,<span class="st">"AL079352"</span><span class="op">)</span>,<span class="st">"accessionTaxa.sql"</span>,version<span class="op">=</span><span class="st">'base'</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">taxaId</span><span class="op">)</span></code></pre></div>
-<pre><code>## [1] 1313 9606</code></pre>
+<code class="sourceCode R"><span class="va">taxaId</span><span class="op">&lt;-</span><span class="fu"><a href="reference/accessionToTaxa.html">accessionToTaxa</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"LN847353"</span>,<span class="st">"AL079352"</span><span class="op">)</span>,<span class="st">"accessionTaxa.sql"</span>,version<span class="op">=</span><span class="st">'base'</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">taxaId</span><span class="op">)</span></code></pre></div>
+<pre><code><span class="co">## [1] 1313 9606</span></code></pre>
 </div>
-<div id="finding-taxonomy-for-taxonomic-names" class="section level3">
-<h3 class="hasAnchor">
-<a href="#finding-taxonomy-for-taxonomic-names" class="anchor"></a>Finding taxonomy for taxonomic names</h3>
+<div class="section level3">
+<h3 id="finding-taxonomy-for-taxonomic-names">Finding taxonomy for taxonomic names<a class="anchor" aria-label="anchor" href="#finding-taxonomy-for-taxonomic-names"></a>
+</h3>
 <p>If you’d like to find IDs for taxonomic names then you can do something like:</p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">taxaId</span><span class="op">&lt;-</span><span class="fu"><a href="reference/getId.html">getId</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'Homo sapiens'</span>,<span class="st">'Bos taurus'</span>,<span class="st">'Homo'</span>,<span class="st">'Alces alces'</span><span class="op">)</span>,<span class="st">'accessionTaxa.sql'</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">taxaId</span><span class="op">)</span></code></pre></div>
-<pre><code>## [1] "9606" "9913" "9605" "9852"</code></pre>
+<code class="sourceCode R"><span class="va">taxaId</span><span class="op">&lt;-</span><span class="fu"><a href="reference/getId.html">getId</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'Homo sapiens'</span>,<span class="st">'Bos taurus'</span>,<span class="st">'Homo'</span>,<span class="st">'Alces alces'</span><span class="op">)</span>,<span class="st">'accessionTaxa.sql'</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">taxaId</span><span class="op">)</span></code></pre></div>
+<pre><code><span class="co">## [1] "9606" "9913" "9605" "9852"</span></code></pre>
 <p>And again to get the taxonomy for those IDs use <code>getTaxonomy</code>:</p>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">taxa</span><span class="op">&lt;-</span><span class="fu"><a href="reference/getTaxonomy.html">getTaxonomy</a></span><span class="op">(</span><span class="va">taxaId</span>,<span class="st">'accessionTaxa.sql'</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">taxa</span><span class="op">)</span></code></pre></div>
-<pre><code>
-##      superkingdom phylum     class      order      family      genus  
-## 9606 "Eukaryota"  "Chordata" "Mammalia" "Primates" "Hominidae" "Homo" 
-## 9913 "Eukaryota"  "Chordata" "Mammalia" NA         "Bovidae"   "Bos"  
-## 9605 "Eukaryota"  "Chordata" "Mammalia" "Primates" "Hominidae" "Homo" 
-## 9852 "Eukaryota"  "Chordata" "Mammalia" NA         "Cervidae"  "Alces"
-##      species       
-## 9606 "Homo sapiens"
-## 9913 "Bos taurus"  
-## 9605 NA            
-## 9852 "Alces alces"</code></pre>
+<span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">taxa</span><span class="op">)</span></code></pre></div>
+<pre><code><span class="co">##      superkingdom phylum     class      order      family      genus  </span>
+<span class="co">## 9606 "Eukaryota"  "Chordata" "Mammalia" "Primates" "Hominidae" "Homo" </span>
+<span class="co">## 9913 "Eukaryota"  "Chordata" "Mammalia" NA         "Bovidae"   "Bos"  </span>
+<span class="co">## 9605 "Eukaryota"  "Chordata" "Mammalia" "Primates" "Hominidae" "Homo" </span>
+<span class="co">## 9852 "Eukaryota"  "Chordata" "Mammalia" NA         "Cervidae"  "Alces"</span>
+<span class="co">##      species       </span>
+<span class="co">## 9606 "Homo sapiens"</span>
+<span class="co">## 9913 "Bos taurus"  </span>
+<span class="co">## 9605 NA            </span>
+<span class="co">## 9852 "Alces alces"</span></code></pre>
 </div>
-<div id="condensing-taxonomy" class="section level3">
-<h3 class="hasAnchor">
-<a href="#condensing-taxonomy" class="anchor"></a>Condensing taxonomy</h3>
+<div class="section level3">
+<h3 id="condensing-taxonomy">Condensing taxonomy<a class="anchor" aria-label="anchor" href="#condensing-taxonomy"></a>
+</h3>
 <p>You can use the <code>condenseTaxa</code> function to find the agreements among taxonomic hits. For example to condense the taxonomy from the previous section to the lowest taxonomic rank shared by all three taxa:</p>
 <div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/condenseTaxa.html">condenseTaxa</a></span><span class="op">(</span><span class="va">taxa</span><span class="op">)</span></code></pre></div>
-<pre><code>##   superkingdom phylum     class      order family genus species
-## 1 "Eukaryota"  "Chordata" "Mammalia" NA    NA     NA    NA</code></pre>
+<pre><code><span class="co">##   superkingdom phylum     class      order family genus species</span>
+<span class="co">## 1 "Eukaryota"  "Chordata" "Mammalia" NA    NA     NA    NA</span></code></pre>
 <p>This function can also be fed a large number of grouped hits, e.g. BLAST hits for high throughput sequencing reads after filtering for the best hits for each read, and output a condensed taxonomy for each grouping:</p>
 <div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">groupings</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'read1'</span>,<span class="st">'read2'</span>,<span class="st">'read1'</span>,<span class="st">'read2'</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">groupings</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'read1'</span>,<span class="st">'read2'</span>,<span class="st">'read1'</span>,<span class="st">'read2'</span><span class="op">)</span>
 <span class="fu"><a href="reference/condenseTaxa.html">condenseTaxa</a></span><span class="op">(</span><span class="va">taxa</span>,<span class="va">groupings</span><span class="op">)</span></code></pre></div>
-<pre><code>##       superkingdom phylum     class      order      family      genus 
-## read1 "Eukaryota"  "Chordata" "Mammalia" "Primates" "Hominidae" "Homo"
-## read2 "Eukaryota"  "Chordata" "Mammalia" NA         NA          NA    
-##       species
-## read1 NA     
-## read2 NA</code></pre>
+<pre><code><span class="co">##       superkingdom phylum     class      order      family      genus </span>
+<span class="co">## read1 "Eukaryota"  "Chordata" "Mammalia" "Primates" "Hominidae" "Homo"</span>
+<span class="co">## read2 "Eukaryota"  "Chordata" "Mammalia" NA         NA          NA    </span>
+<span class="co">##       species</span>
+<span class="co">## read1 NA     </span>
+<span class="co">## read2 NA</span></code></pre>
 </div>
-<div id="find-all-taxonomic-assignments-for-a-given-taxa" class="section level3">
-<h3 class="hasAnchor">
-<a href="#find-all-taxonomic-assignments-for-a-given-taxa" class="anchor"></a>Find all taxonomic assignments for a given taxa</h3>
+<div class="section level3">
+<h3 id="find-all-taxonomic-assignments-for-a-given-taxa">Find all taxonomic assignments for a given taxa<a class="anchor" aria-label="anchor" href="#find-all-taxonomic-assignments-for-a-given-taxa"></a>
+</h3>
 <p>To get all taxonomic assignments for a given taxa regardless of their particular rank, you can use the <code>getRawTaxonomy</code> function. Note that there are often many intermediate ranks outside the more common taxonomic ranks. The function returns a list since different IDs can have differing numbers of ranks. It is used similarly to <code>getTaxonomy</code>:</p>
 <div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="reference/getRawTaxonomy.html">getRawTaxonomy</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">9606</span>,<span class="fl">9913</span><span class="op">)</span>,<span class="st">'accessionTaxa.sql'</span><span class="op">)</span></code></pre></div>
-<pre><code>## $`9606`
-##                species                  genus              subfamily 
-##         "Homo sapiens"                 "Homo"            "Homininae" 
-##                 family            superfamily              parvorder 
-##            "Hominidae"           "Hominoidea"           "Catarrhini" 
-##             infraorder               suborder                  order 
-##          "Simiiformes"          "Haplorrhini"             "Primates" 
-##             superorder                  clade                clade.1 
-##     "Euarchontoglires"        "Boreoeutheria"             "Eutheria" 
-##                clade.2                  class                clade.3 
-##               "Theria"             "Mammalia"              "Amniota" 
-##                clade.4                class.1             superclass 
-##            "Tetrapoda" "Dipnotetrapodomorpha"        "Sarcopterygii" 
-##                clade.5                clade.6                clade.7 
-##         "Euteleostomi"           "Teleostomi"        "Gnathostomata" 
-##                clade.8              subphylum                 phylum 
-##           "Vertebrata"             "Craniata"             "Chordata" 
-##                clade.9               clade.10               clade.11 
-##        "Deuterostomia"            "Bilateria"            "Eumetazoa" 
-##                kingdom               clade.12           superkingdom 
-##              "Metazoa"         "Opisthokonta"            "Eukaryota" 
-##                no rank 
-##   "cellular organisms" 
-## 
-## $`9913`
-##                species                  genus              subfamily 
-##           "Bos taurus"                  "Bos"              "Bovinae" 
-##                 family             infraorder               suborder 
-##              "Bovidae"               "Pecora"           "Ruminantia" 
-##                  order             superorder                  clade 
-##         "Artiodactyla"       "Laurasiatheria"        "Boreoeutheria" 
-##                clade.1                clade.2                  class 
-##             "Eutheria"               "Theria"             "Mammalia" 
-##                clade.3                clade.4                class.1 
-##              "Amniota"            "Tetrapoda" "Dipnotetrapodomorpha" 
-##             superclass                clade.5                clade.6 
-##        "Sarcopterygii"         "Euteleostomi"           "Teleostomi" 
-##                clade.7                clade.8              subphylum 
-##        "Gnathostomata"           "Vertebrata"             "Craniata" 
-##                 phylum                clade.9               clade.10 
-##             "Chordata"        "Deuterostomia"            "Bilateria" 
-##               clade.11                kingdom               clade.12 
-##            "Eumetazoa"              "Metazoa"         "Opisthokonta" 
-##           superkingdom                no rank 
-##            "Eukaryota"   "cellular organisms"</code></pre>
+<code class="sourceCode R"><span class="fu"><a href="reference/getRawTaxonomy.html">getRawTaxonomy</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">9606</span>,<span class="fl">9913</span><span class="op">)</span>,<span class="st">'accessionTaxa.sql'</span><span class="op">)</span></code></pre></div>
+<pre><code><span class="co">## $`9606`</span>
+<span class="co">##                species                  genus              subfamily </span>
+<span class="co">##         "Homo sapiens"                 "Homo"            "Homininae" </span>
+<span class="co">##                 family            superfamily              parvorder </span>
+<span class="co">##            "Hominidae"           "Hominoidea"           "Catarrhini" </span>
+<span class="co">##             infraorder               suborder                  order </span>
+<span class="co">##          "Simiiformes"          "Haplorrhini"             "Primates" </span>
+<span class="co">##             superorder                  clade                clade.1 </span>
+<span class="co">##     "Euarchontoglires"        "Boreoeutheria"             "Eutheria" </span>
+<span class="co">##                clade.2                  class                clade.3 </span>
+<span class="co">##               "Theria"             "Mammalia"              "Amniota" </span>
+<span class="co">##                clade.4                class.1             superclass </span>
+<span class="co">##            "Tetrapoda" "Dipnotetrapodomorpha"        "Sarcopterygii" </span>
+<span class="co">##                clade.5                clade.6                clade.7 </span>
+<span class="co">##         "Euteleostomi"           "Teleostomi"        "Gnathostomata" </span>
+<span class="co">##                clade.8              subphylum                 phylum </span>
+<span class="co">##           "Vertebrata"             "Craniata"             "Chordata" </span>
+<span class="co">##                clade.9               clade.10               clade.11 </span>
+<span class="co">##        "Deuterostomia"            "Bilateria"            "Eumetazoa" </span>
+<span class="co">##                kingdom               clade.12           superkingdom </span>
+<span class="co">##              "Metazoa"         "Opisthokonta"            "Eukaryota" </span>
+<span class="co">##                no rank </span>
+<span class="co">##   "cellular organisms" </span>
+<span class="co">## </span>
+<span class="co">## $`9913`</span>
+<span class="co">##                species                  genus              subfamily </span>
+<span class="co">##           "Bos taurus"                  "Bos"              "Bovinae" </span>
+<span class="co">##                 family             infraorder               suborder </span>
+<span class="co">##              "Bovidae"               "Pecora"           "Ruminantia" </span>
+<span class="co">##                  order             superorder                  clade </span>
+<span class="co">##         "Artiodactyla"       "Laurasiatheria"        "Boreoeutheria" </span>
+<span class="co">##                clade.1                clade.2                  class </span>
+<span class="co">##             "Eutheria"               "Theria"             "Mammalia" </span>
+<span class="co">##                clade.3                clade.4                class.1 </span>
+<span class="co">##              "Amniota"            "Tetrapoda" "Dipnotetrapodomorpha" </span>
+<span class="co">##             superclass                clade.5                clade.6 </span>
+<span class="co">##        "Sarcopterygii"         "Euteleostomi"           "Teleostomi" </span>
+<span class="co">##                clade.7                clade.8              subphylum </span>
+<span class="co">##        "Gnathostomata"           "Vertebrata"             "Craniata" </span>
+<span class="co">##                 phylum                clade.9               clade.10 </span>
+<span class="co">##             "Chordata"        "Deuterostomia"            "Bilateria" </span>
+<span class="co">##               clade.11                kingdom               clade.12 </span>
+<span class="co">##            "Eumetazoa"              "Metazoa"         "Opisthokonta" </span>
+<span class="co">##           superkingdom                no rank </span>
+<span class="co">##            "Eukaryota"   "cellular organisms"</span></code></pre>
 </div>
-<div id="finding-accessions-for-a-given-taxonomic-id" class="section level3">
-<h3 class="hasAnchor">
-<a href="#finding-accessions-for-a-given-taxonomic-id" class="anchor"></a>Finding accessions for a given taxonomic ID</h3>
+<div class="section level3">
+<h3 id="finding-accessions-for-a-given-taxonomic-id">Finding accessions for a given taxonomic ID<a class="anchor" aria-label="anchor" href="#finding-accessions-for-a-given-taxonomic-id"></a>
+</h3>
 <p>To find all the accessions for a given taxonomic ID, you can use the <code>getAccessions</code> function. This is a bit of an unusual use case so to preserve space, an index is not created by default in <code>read.accession2taxid</code>. If you are going to use this function, you will want to rebuild the SQLite database with the <code>indexTaxa</code> argument set to true with something like:</p>
 <div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="reference/read.accession2taxid.html">read.accession2taxid</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span><span class="op">(</span><span class="st">'.'</span>,<span class="st">'accession2taxid.gz$'</span><span class="op">)</span>,<span class="st">'accessionTaxa.sql'</span>,indexTaxa<span class="op">=</span><span class="cn">TRUE</span>,overwrite<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
-<pre><code>## Reading nucl_gb.accession2taxid.gz.</code></pre>
-<pre><code>## Reading nucl_wgs.accession2taxid.gz.</code></pre>
-<pre><code>## Reading in values. This may take a while.</code></pre>
-<pre><code>## Adding index. This may also take a while.</code></pre>
+<code class="sourceCode R"><span class="fu"><a href="reference/read.accession2taxid.html">read.accession2taxid</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files</a></span><span class="op">(</span><span class="st">'.'</span>,<span class="st">'accession2taxid.gz$'</span><span class="op">)</span>,<span class="st">'accessionTaxa.sql'</span>,indexTaxa<span class="op">=</span><span class="cn">TRUE</span>,overwrite<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<pre><code><span class="co">## Reading nucl_gb.accession2taxid.gz.</span></code></pre>
+<pre><code><span class="co">## Reading nucl_wgs.accession2taxid.gz.</span></code></pre>
+<pre><code><span class="co">## Reading in values. This may take a while.</span></code></pre>
+<pre><code><span class="co">## Adding index. This may also take a while.</span></code></pre>
 <p>Then you can get the accessions for taxa 3702 with a command like (note that the limit argument is used here in order to preserve space):</p>
 <div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/getAccessions.html">getAccessions</a></span><span class="op">(</span><span class="fl">3702</span>,<span class="st">'accessionTaxa.sql'</span>,limit<span class="op">=</span><span class="fl">10</span><span class="op">)</span></code></pre></div>
-<pre><code>##    taxa accession
-## 1  3702  X58148.1
-## 2  3702  X66414.1
-## 3  3702  X60045.1
-## 4  3702  X07376.1
-## 5  3702  X54927.1
-## 6  3702  X54926.1
-## 7  3702  X54928.1
-## 8  3702  X54930.1
-## 9  3702  X54929.1
-## 10 3702  X52320.1</code></pre>
+<pre><code><span class="co">##    taxa accession</span>
+<span class="co">## 1  3702  X58148.1</span>
+<span class="co">## 2  3702  X66414.1</span>
+<span class="co">## 3  3702  X60045.1</span>
+<span class="co">## 4  3702  X07376.1</span>
+<span class="co">## 5  3702  X54927.1</span>
+<span class="co">## 6  3702  X54926.1</span>
+<span class="co">## 7  3702  X54928.1</span>
+<span class="co">## 8  3702  X54930.1</span>
+<span class="co">## 9  3702  X54929.1</span>
+<span class="co">## 10 3702  X52320.1</span></code></pre>
 </div>
-<div id="convert-taxonomy-to-newick-tree" class="section level3">
-<h3 class="hasAnchor">
-<a href="#convert-taxonomy-to-newick-tree" class="anchor"></a>Convert taxonomy to Newick tree</h3>
+<div class="section level3">
+<h3 id="convert-taxonomy-to-newick-tree">Convert taxonomy to Newick tree<a class="anchor" aria-label="anchor" href="#convert-taxonomy-to-newick-tree"></a>
+</h3>
 <p>This is probably only useful in a few specific cases but a convenience function <code>makeNewick</code> to convert taxonomy into a Newick tree is included. The function takes a matrix giving with columns corresponding to taxonomic categories and rows different to taxonomic assignments, e.g. the output from <code>condenseTaxa</code> or <code>getTaxonomy</code> and reduces it to a Newick formatted tree. For example:</p>
 <div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">taxa</span></code></pre></div>
-<pre><code>##      [,1]        [,2]       [,3]       [,4]       [,5]        [,6]   
-## [1,] "Eukaryota" "Chordata" "Mammalia" "Primates" "Hominidae" "Homo" 
-## [2,] "Eukaryota" "Chordata" "Mammalia" "Primates" "Hominidae" "Pan"  
-## [3,] "Eukaryota" "Chordata" "Mammalia" NA         "Cervidae"  "Alces"</code></pre>
+<pre><code><span class="co">##      [,1]        [,2]       [,3]       [,4]       [,5]        [,6]   </span>
+<span class="co">## [1,] "Eukaryota" "Chordata" "Mammalia" "Primates" "Hominidae" "Homo" </span>
+<span class="co">## [2,] "Eukaryota" "Chordata" "Mammalia" "Primates" "Hominidae" "Pan"  </span>
+<span class="co">## [3,] "Eukaryota" "Chordata" "Mammalia" NA         "Cervidae"  "Alces"</span></code></pre>
 <div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/makeNewick.html">makeNewick</a></span><span class="op">(</span><span class="va">taxa</span><span class="op">)</span></code></pre></div>
-<pre><code>## [1] "((((((Homo,Pan)Hominidae)Primates,((Alces)Cervidae)_)Mammalia)Chordata)Eukaryota)"</code></pre>
+<pre><code><span class="co">## [1] "((((((Homo,Pan)Hominidae)Primates,((Alces)Cervidae)_)Mammalia)Chordata)Eukaryota)"</span></code></pre>
 </div>
 </div>
-<div id="changelog" class="section level2">
-<h2 class="hasAnchor">
-<a href="#changelog" class="anchor"></a>Changelog</h2>
-<div id="v053" class="section level3">
-<h3 class="hasAnchor">
-<a href="#v053" class="anchor"></a>v0.5.3</h3>
+<div class="section level2">
+<h2 id="changelog">Changelog<a class="anchor" aria-label="anchor" href="#changelog"></a>
+</h2>
+<div class="section level3">
+<h3 id="v053">v0.5.3<a class="anchor" aria-label="anchor" href="#v053"></a>
+</h3>
 <ul>
 <li>Fix named vector bug in <code>accessionToTaxa</code>
 </li>
@@ -350,17 +327,17 @@ read2   gi|160426828|gb|CP000885.1|     68.46   1763    452     82      3       
 <li>Deal with default 60 second timeout for downloads in R</li>
 </ul>
 </div>
-<div id="v053-1" class="section level3">
-<h3 class="hasAnchor">
-<a href="#v053-1" class="anchor"></a>v0.5.3</h3>
+<div class="section level3">
+<h3 id="v053-1">v0.5.3<a class="anchor" aria-label="anchor" href="#v053-1"></a>
+</h3>
 <ul>
 <li>Remove <code>nucl_est</code> and <code>nucl_gss</code> from defaults since NCBI folded them into <code>nucl_gb</code> and removed</li>
 <li>Squash R:devel bug</li>
 </ul>
 </div>
-<div id="v050" class="section level3">
-<h3 class="hasAnchor">
-<a href="#v050" class="anchor"></a>v0.5.0</h3>
+<div class="section level3">
+<h3 id="v050">v0.5.0<a class="anchor" aria-label="anchor" href="#v050"></a>
+</h3>
 <ul>
 <li>Transitioned from data.table to SQLite</li>
 <li>Addeded convenience <code><a href="reference/prepareDatabase.html">prepareDatabase()</a></code> function</li>
@@ -368,70 +345,58 @@ read2   gi|160426828|gb|CP000885.1|     68.46   1763    452     82      3       
 </ul>
 </div>
 </div>
-<div id="manual-preparation-of-database-usually-not-necessary" class="section level2">
-<h2 class="hasAnchor">
-<a href="#manual-preparation-of-database-usually-not-necessary" class="anchor"></a>Manual preparation of database (usually not necessary)</h2>
+<div class="section level2">
+<h2 id="manual-preparation-of-database-usually-not-necessary">Manual preparation of database (usually not necessary)<a class="anchor" aria-label="anchor" href="#manual-preparation-of-database-usually-not-necessary"></a>
+</h2>
 <p><strong>Note:</strong> Since version 0.5.0, it is usually not necessary to run the following manually, the function <code><a href="reference/prepareDatabase.html">prepareDatabase()</a></code> should do most of this automatically for you (see <a href="#preparation">above</a>).</p>
 <p>In order to avoid constant internet access and slow APIs, the first step in using the package is to downloads all necessary files from NCBI. This uses a bit of disk space but makes future access reliable and fast.</p>
 <p><strong>Note:</strong> It is not necessary to manually check for the presence of these files since the functions automatically check to see if their output is present and if so skip downloading/processing. Delete the local files if you would like to redownload or reprocess them.</p>
-<div id="download-names-and-nodes" class="section level3">
-<h3 class="hasAnchor">
-<a href="#download-names-and-nodes" class="anchor"></a>Download names and nodes</h3>
+<div class="section level3">
+<h3 id="download-names-and-nodes">Download names and nodes<a class="anchor" aria-label="anchor" href="#download-names-and-nodes"></a>
+</h3>
 <p>First, download the necessary names and nodes files from <a href="ftp://ftp.ncbi.nih.gov/pub/taxonomy/">NCBI</a>:</p>
 <div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/getNamesAndNodes.html">getNamesAndNodes</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<pre><code>## [1] "./names.dmp" "./nodes.dmp"</code></pre>
+<pre><code><span class="co">## [1] "./names.dmp" "./nodes.dmp"</span></code></pre>
 </div>
-<div id="download-accession-to-taxa-files" class="section level3">
-<h3 class="hasAnchor">
-<a href="#download-accession-to-taxa-files" class="anchor"></a>Download accession to taxa files</h3>
+<div class="section level3">
+<h3 id="download-accession-to-taxa-files">Download accession to taxa files<a class="anchor" aria-label="anchor" href="#download-accession-to-taxa-files"></a>
+</h3>
 <p>Then download accession to taxa id conversion files from <a href="ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/">NCBI</a>. <strong>Note:</strong> this is a pretty <em>big</em> download (several gigabytes):</p>
 <div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#this is a big download</span>
 <span class="fu"><a href="reference/getAccession2taxid.html">getAccession2taxid</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<pre><code>## This can be a big (several gigabytes) download. Please be patient and use a fast connection.</code></pre>
-<pre><code>## [1] "./nucl_gb.accession2taxid.gz"  "./nucl_wgs.accession2taxid.gz"</code></pre>
+<pre><code><span class="co">## This can be a big (several gigabytes) download. Please be patient and use a fast connection.</span></code></pre>
+<pre><code><span class="co">## [1] "./nucl_gb.accession2taxid.gz"  "./nucl_wgs.accession2taxid.gz"</span></code></pre>
 <p>If you would also like to identify protein accession numbers, also download the prot file from NCBI (again this is a <em>big</em> download):</p>
 <div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#this is a big download</span>
 <span class="fu"><a href="reference/getAccession2taxid.html">getAccession2taxid</a></span><span class="op">(</span>types<span class="op">=</span><span class="st">'prot'</span><span class="op">)</span></code></pre></div>
-<pre><code>## This can be a big (several gigabytes) download. Please be patient and use a fast connection.</code></pre>
-<pre><code>## [1] "./prot.accession2taxid.gz"</code></pre>
+<pre><code><span class="co">## This can be a big (several gigabytes) download. Please be patient and use a fast connection.</span></code></pre>
+<pre><code><span class="co">## [1] "./prot.accession2taxid.gz"</span></code></pre>
 </div>
-<div id="convert-names-nodes-and-accessions-to-database" class="section level3">
-<h3 class="hasAnchor">
-<a href="#convert-names-nodes-and-accessions-to-database" class="anchor"></a>Convert names, nodes and accessions to database</h3>
+<div class="section level3">
+<h3 id="convert-names-nodes-and-accessions-to-database">Convert names, nodes and accessions to database<a class="anchor" aria-label="anchor" href="#convert-names-nodes-and-accessions-to-database"></a>
+</h3>
 <p>Then process the downloaded names and nodes files into a more easily accessed form:</p>
 <div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/read.names.sql.html">read.names.sql</a></span><span class="op">(</span><span class="st">'names.dmp'</span>,<span class="st">'accessionTaxa.sql'</span><span class="op">)</span>
 <span class="fu"><a href="reference/read.nodes.sql.html">read.nodes.sql</a></span><span class="op">(</span><span class="st">'nodes.dmp'</span>,<span class="st">'accessionTaxa.sql'</span><span class="op">)</span></code></pre></div>
 <p>Next process the downloaded accession files into the same database (this one could take a while):</p>
 <div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="reference/read.accession2taxid.html">read.accession2taxid</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span><span class="op">(</span><span class="st">'.'</span>,<span class="st">'accession2taxid.gz$'</span><span class="op">)</span>,<span class="st">'accessionTaxa.sql'</span><span class="op">)</span></code></pre></div>
-<pre><code>## Reading nucl_gb.accession2taxid.gz.</code></pre>
-<pre><code>## Reading nucl_wgs.accession2taxid.gz.</code></pre>
-<pre><code>## Reading prot.accession2taxid.gz.</code></pre>
-<pre><code>## Reading in values. This may take a while.</code></pre>
-<pre><code>## Adding index. This may also take a while.</code></pre>
+<code class="sourceCode R"><span class="fu"><a href="reference/read.accession2taxid.html">read.accession2taxid</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files</a></span><span class="op">(</span><span class="st">'.'</span>,<span class="st">'accession2taxid.gz$'</span><span class="op">)</span>,<span class="st">'accessionTaxa.sql'</span><span class="op">)</span></code></pre></div>
+<pre><code><span class="co">## Reading nucl_gb.accession2taxid.gz.</span></code></pre>
+<pre><code><span class="co">## Reading nucl_wgs.accession2taxid.gz.</span></code></pre>
+<pre><code><span class="co">## Reading prot.accession2taxid.gz.</span></code></pre>
+<pre><code><span class="co">## Reading in values. This may take a while.</span></code></pre>
+<pre><code><span class="co">## Adding index. This may also take a while.</span></code></pre>
 <p>Now everything should be ready for processing. All files are cached locally and so the preparation is only required once (or whenever you would like to update the data). It is not necessary to manually check for the presence of these files since the functions automatically check to see if their output is present and if so skip downloading/processing. Delete the local files if you would like to redownload or reprocess them.</p>
 </div>
 </div>
-<div id="switch-from-datatable-to-sqlite" class="section level2">
-<h2 class="hasAnchor">
-<a href="#switch-from-datatable-to-sqlite" class="anchor"></a>Switch from data.table to SQLite</h2>
-<p>Version 0.5.0 marked a change for name and node lookups from using data.table to using SQLite. This was necessary to increase performance (10-100x speedup for <code>getTaxonomy</code>) and create a simpler interface (a single SQLite database contains all necessary data). Unfortunately, this switch requires a couple breaking changes:</p>
-<ul>
-<li>
-<code>getTaxonomy</code> changes from <code><a href="reference/getTaxonomy.html">getTaxonomy(ids,namesDT,nodesDT)</a></code> to <code><a href="reference/getTaxonomy.html">getTaxonomy(ids,sqlFile)</a></code>
-</li>
-<li>
-<code>getId</code> changes from <code><a href="reference/getId.html">getId(taxa,namesDT)</a></code> to <code><a href="reference/getId.html">getId(taxa,sqlFile)</a></code>
-</li>
-<li>
-<code>read.names</code> is deprecated, instead use <code>read.names.sql</code>. For example, instead of calling <code>names&lt;-read.names('names.dmp')</code> in every session, simply call <code><a href="reference/read.names.sql.html">read.names.sql('names.dmp','accessionTaxa.sql')</a></code> once (or use the convenient <code>prepareDatabase</code> as <a href="#preparation">above</a>)).</li>
-<li>
-<code>read.nodes</code> is deprecated, instead use <code>read.names.sql</code>. For example. instead of calling <code>nodes&lt;-read.names('nodes.dmp')</code> in every session, simply call <code><a href="reference/read.nodes.sql.html">read.nodes.sql('nodes.dmp','accessionTaxa.sql')</a></code> once (or use the convenient <code>prepareDatabase</code> as <a href="#preparation">above</a>).</li>
-</ul>
+<div class="section level2">
+<h2 id="switch-from-datatable-to-sqlite">Switch from data.table to SQLite<a class="anchor" aria-label="anchor" href="#switch-from-datatable-to-sqlite"></a>
+</h2>
+<p>Version 0.5.0 marked a change for name and node lookups from using data.table to using SQLite. This was necessary to increase performance (10-100x speedup for <code>getTaxonomy</code>) and create a simpler interface (a single SQLite database contains all necessary data). Unfortunately, this switch requires a couple breaking changes: * <code>getTaxonomy</code> changes from <code>getTaxonomy(ids,namesDT,nodesDT)</code> to <code>getTaxonomy(ids,sqlFile)</code> * <code>getId</code> changes from <code>getId(taxa,namesDT)</code> to <code>getId(taxa,sqlFile)</code> * <code>read.names</code> is deprecated, instead use <code>read.names.sql</code>. For example, instead of calling <code>names&lt;-read.names('names.dmp')</code> in every session, simply call <code>read.names.sql('names.dmp','accessionTaxa.sql')</code> once (or use the convenient <code>prepareDatabase</code> as <a href="#preparation">above</a>)). * <code>read.nodes</code> is deprecated, instead use <code>read.names.sql</code>. For example. instead of calling <code>nodes&lt;-read.names('nodes.dmp')</code> in every session, simply call <code>read.nodes.sql('nodes.dmp','accessionTaxa.sql')</code> once (or use the convenient <code>prepareDatabase</code> as <a href="#preparation">above</a>).</p>
 <p>I’ve tried to ease any problems with this by overloading <code>getTaxonomy</code> and <code>getId</code> to still function (with a warning) if passed a data.table names and nodes argument and providing a simpler <code>prepareDatabase</code> function for completing all setup steps (hopefully avoiding direct calls to <code>read.names</code> and <code>read.nodes</code> for most users).</p>
 <p>I plan to eventually remove data.table functionality to avoid a split codebase so please switch to the new SQLite format in all new code.</p>
 </div>
@@ -440,48 +405,58 @@ read2   gi|160426828|gb|CP000885.1|     68.46   1763    452     82      3       
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <div class="links">
-<h2>Links</h2>
+<h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
-<li>Download from CRAN at <br><a href="https://cloud.r-project.org/package=taxonomizr">https://​cloud.r-project.org/​package=taxonomizr</a>
-</li>
-<li>Browse source code at <br><a href="https://github.com/sherrillmix/taxonomizr/">https://​github.com/​sherrillmix/​taxonomizr/​</a>
-</li>
-<li>Report a bug at <br><a href="https://github.com/sherrillmix/taxonomizr/issues">https://​github.com/​sherrillmix/​taxonomizr/​issues</a>
-</li>
+<li><a href="https://cloud.r-project.org/package=taxonomizr" class="external-link">View on CRAN</a></li>
+<li><a href="https://github.com/sherrillmix/taxonomizr/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/sherrillmix/taxonomizr/issues" class="external-link">Report a bug</a></li>
 </ul>
 </div>
+
 <div class="license">
-<h2>License</h2>
+<h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
 <li>GPL (&gt;=2) | file <a href="LICENSE-text.html">LICENSE</a>
 </li>
 </ul>
 </div>
+
+
+<div class="citation">
+<h2 data-toc-skip>Citation</h2>
+<ul class="list-unstyled">
+<li><a href="authors.html#citation">Citing taxonomizr</a></li>
+</ul>
+</div>
+
 <div class="developers">
-<h2>Developers</h2>
+<h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
 <li>Scott Sherrill-Mix <br><small class="roles"> Author, maintainer </small>  </li>
 </ul>
 </div>
 
-  <div class="dev-status">
-<h2>Dev status</h2>
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://travis-ci.org/sherrillmix/taxonomizr"><img src="https://travis-ci.org/sherrillmix/taxonomizr.svg?branch=master" alt="Build Status"></a></li>
-<li><a href="https://codecov.io/gh/sherrillmix/taxonomizr"><img src="https://codecov.io/gh/sherrillmix/taxonomizr/branch/master/graph/badge.svg" alt="codecov"></a></li>
-<li><a href="https://cran.r-project.org/package=taxonomizr"><img src="http://www.r-pkg.org/badges/version/taxonomizr" alt="CRAN_Status_Badge"></a></li>
+<li><a href="https://travis-ci.org/sherrillmix/taxonomizr" class="external-link"><img src="https://travis-ci.org/sherrillmix/taxonomizr.svg?branch=master" alt="Build Status"></a></li>
+<li><a href="https://codecov.io/gh/sherrillmix/taxonomizr" class="external-link"><img src="https://codecov.io/gh/sherrillmix/taxonomizr/branch/master/graph/badge.svg" alt="codecov"></a></li>
+<li><a href="https://cran.r-project.org/package=taxonomizr" class="external-link"><img src="http://www.r-pkg.org/badges/version/taxonomizr" alt="CRAN_Status_Badge"></a></li>
 </ul>
 </div>
-</div>
+
+  </div>
 </div>
 
 
       <footer><div class="copyright">
-  <p>Developed by Scott Sherrill-Mix.</p>
+  <p></p>
+<p>Developed by Scott Sherrill-Mix.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
       </footer>
@@ -489,6 +464,8 @@ read2   gi|160426828|gb|CP000885.1|     68.46   1763    452     82      3       
 
   
 
+
+  
 
   </body>
 </html>
