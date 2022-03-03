@@ -6,7 +6,7 @@
 \usage{
 normalizeTaxa(
   rawTaxa,
-  cladeRegex = "^clade$|^clade\\\\.[0-9]+$|^$",
+  cladeRegex = "^clade$|^clade\\\\.[0-9]+$|^$|no rank",
   rootFill = "_ROOT_",
   lineageOrder = c()
 )
