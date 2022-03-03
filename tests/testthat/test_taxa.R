@@ -805,6 +805,8 @@ test_that("Test normalizeTaxa",{
   expect_equal(normalizeTaxa(list('A'=c('species'='X','clade'='Z','genus'='Y'),'BB'=c('species'='A','genus'='C'),'CCC'=c('species'='12'))),matrix(c('Y','C',NA,'Z',NA,NA,'X','A','12'),nrow=3,dimnames=list(c('A','BB','CCC'),c('genus','genus.1','species'))))
   expect_error(normalizeTaxa(list('A'=c('species'='X','clade'='Z','genus'='Y'),'BB'=c('species'='A','genus'='C'),'CCC'=c('kingdom'='12'))),'[Aa]mbiguous')
   expect_equal(normalizeTaxa(list('A'=c('species'='X','clade'='Z','genus'='Y'),'BB'=c('species'='A','genus'='C'),'CCC'=c('kingdom'='12')),lineageOrder=c('genus','kingdom')),matrix(c(NA,NA,'12','Y','C',NA,'Z',NA,NA,'X','A',NA),nrow=3,dimnames=list(c('A','BB','CCC'),c('kingdom','genus','genus.1','species'))))
+  expect_equal(normalizeTaxa(list(c('species'='X','clade'='W','genus'='Y'),c('clade'='Z','species'='A','genus'='C'))),matrix(c('Y','C','W',NA,'X','A',NA,'Z'),nrow=2,dimnames=list(c(),c('genus','genus.1','species','species.1'))))
+  expect_equal(normalizeTaxa(list(c('species'='X','TEST'='W','genus'='Y'),c('ANOTHER'='Z','species'='A','genus'='C')),cladeRegex='TEST|ANOTHER'),matrix(c('Y','C','W',NA,'X','A',NA,'Z'),nrow=2,dimnames=list(c(),c('genus','genus.1','species','species.1'))))
 })
 
 test_that("Test topoSort",{
