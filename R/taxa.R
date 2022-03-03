@@ -1101,7 +1101,7 @@ makeNewick<-function(taxa,naSub='_'){
 #'      'no rank' = "cellular organisms")
 #' )
 #' normalizeTaxa(rawTaxa)
-normalizeTaxa<-function(rawTaxa,cladeRegex='^clade$|^clade\\.[0-9]+$|^$',rootFill='_ROOT_',lineageOrder=c()){
+normalizeTaxa<-function(rawTaxa,cladeRegex='^clade$|^clade\\.[0-9]+$|^$|no rank',rootFill='_ROOT_',lineageOrder=c()){
   if(!is.list(rawTaxa))rawTaxa<-list(rawTaxa)
   levels<-lapply(rawTaxa,names)
   nonClade<-lapply(levels,function(xx)xx[!grepl(cladeRegex,xx)])
