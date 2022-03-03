@@ -122,12 +122,12 @@ prepareDatabase('accessionTaxa.sql')
 ## [1] "accessionTaxa.sql"
 ```
 
-Note that if you only want the names and nodes taxonomic data and do not want to assign taxonomy to accession ID then you can just get the much smaller data sets and exclude the large download and time consuming databasing of accession IDs by setting `getAccessions=FALSE` e.g.:
+Note that if you only want the taxonomic data and do not want to assign taxonomy to accession ID then you can just get the much smaller `names` and `nodes` data sets and exclude the large download and time consuming databasing of accession IDs by setting `getAccessions=FALSE` e.g.:
 
 
 
 ```r
-`prepareDatabase(getAccessions=FALSE)
+prepareDatabase(getAccessions=FALSE)
 ```
 
 ```
@@ -371,7 +371,7 @@ normalizeTaxa(raw)
 ## 9913 "Bos taurus"
 ```
 
-`normalizeTaxa` does its best to figure out the order of taxonomic levels automatically but can some times be left with ambiguous cases. This will result in an error like:
+`normalizeTaxa` does its best to figure out the order of taxonomic levels automatically but can sometimes be left with ambiguous cases. This will result in an error like:
 
 
 ```

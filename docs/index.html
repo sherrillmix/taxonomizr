@@ -135,8 +135,9 @@
 <code class="sourceCode R"><span class="fu"><a href="reference/prepareDatabase.html">prepareDatabase</a></span><span class="op">(</span><span class="st">'accessionTaxa.sql'</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## SQLite database accessionTaxa.sql already exists. Delete to regenerate</span></code></pre>
 <pre><code><span class="co">## [1] "accessionTaxa.sql"</span></code></pre>
-<p>Note that if you only want the names and nodes taxonomic data and do not want to assign taxonomy to accession ID then you can just get the much smaller data sets and exclude the large download and time consuming databasing of accession IDs by setting <code>getAccessions=FALSE</code> e.g.:</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" title="1"><span class="st">`</span><span class="dt">prepareDatabase(getAccessions=FALSE)</span></a></code></pre></div>
+<p>Note that if you only want the taxonomic data and do not want to assign taxonomy to accession ID then you can just get the much smaller <code>names</code> and <code>nodes</code> data sets and exclude the large download and time consuming databasing of accession IDs by setting <code>getAccessions=FALSE</code> e.g.:</p>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="reference/prepareDatabase.html">prepareDatabase</a></span><span class="op">(</span>getAccessions<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## Downloading names and nodes with getNamesAndNodes()</span>
 <span class="co">##  [100%] Downloaded 57373562 bytes...</span>
 <span class="co">##  [100%] Downloaded 49 bytes...</span>
@@ -306,7 +307,7 @@ read2   gi|160426828|gb|CP000885.1|     68.46   1763    452     82      3       
 <span class="co">##      species       </span>
 <span class="co">## 9606 "Homo sapiens"</span>
 <span class="co">## 9913 "Bos taurus"</span></code></pre>
-<p><code>normalizeTaxa</code> does its best to figure out the order of taxonomic levels automatically but can some times be left with ambiguous cases. This will result in an error like:</p>
+<p><code>normalizeTaxa</code> does its best to figure out the order of taxonomic levels automatically but can sometimes be left with ambiguous cases. This will result in an error like:</p>
 <pre><code>Error in topoSort(c(nonClade, list(lineageOrder)), errorIfAmbiguous = TRUE) : 
   Ambiguous ordering found in topoSort (suborder vs infraorder)</code></pre>
 <p>That’s saying that the algorithm is unclear from the data whether suborder or infraorder is the more specific taxonomic level. To clarify, give the <code>lineageOrder</code> parameter a vector going from most to least specific like:</p>
