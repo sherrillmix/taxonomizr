@@ -121,8 +121,21 @@ prepareDatabase('accessionTaxa.sql')
 ## [1] "accessionTaxa.sql"
 ```
 
+Note that if you only want the names and nodes taxonomic data and do not want to assign taxonomy to accession ID then you can just get the much smaller data sets and exclude the large download and time consuming databasing of accession IDs by setting `getAccessions=FALSE` e.g.:
 
 
+```{r,eval=FALSE}
+`prepareDatabase(getAccessions=FALSE)
+```
+
+```
+## Downloading names and nodes with getNamesAndNodes()
+##  [100%] Downloaded 57373562 bytes...
+##  [100%] Downloaded 49 bytes...
+## Preprocessing names with read.names.sql()
+## Preprocessing nodes with read.nodes.sql()
+## [1] "nameNode.sqlite"
+```
 
 ## Assigning taxonomy
 
@@ -345,6 +358,28 @@ normalizeTaxa(raw)
 ## 9913 "Bos taurus"
 ```
 
+`normalizeTaxa` does its best to figure out the order of taxonomic levels automatically but can some times be left with ambiguous cases. This will result in an error like:
+
+
+```
+Error in topoSort(c(nonClade, list(lineageOrder)), errorIfAmbiguous = TRUE) : 
+  Ambiguous ordering found in topoSort (suborder vs infraorder)
+```
+
+That's saying that the algorithm is unclear from the data whether suborder or infraorder is the more specific taxonomic level. To clarify, give the `lineageOrder` parameter a vector going from most to least specific like:
+
+```
+normalizeTaxa(raw,lineageOrder=c('infraorder','suborder'))
+```
+
+For especially troublesome sets, you may have to repeat this step several times getting a new error each time to find all the ambiguities. This would result in building up a vector specifying the ordering of several ambiguous levels like:
+
+```
+normalizeTaxa(raw,lineageOrder=c('infraorder','suborder','superorder','infraclass','subclass','class'))
+
+```
+
+
 ### Finding accessions for a given taxonomic ID
 
 To find all the accessions for a given taxonomic ID, you can use the `getAccessions` function. This is a bit of an unusual use case so to preserve space, an index is not created by default in `read.accession2taxid`. If you are going to use this function, you will want to rebuild the SQLite database with the `indexTaxa` argument set to true with something like:
@@ -404,6 +439,10 @@ makeNewick(taxa)
 
 
 ## Changelog
+
+### v0.8.2
+  * Add "no rank" to `normalizeTaxa`'s default exclusion
+  * Expand README
 
 ### v0.8.1
   * Add `normalizeTaxa` function
