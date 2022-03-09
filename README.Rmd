@@ -451,7 +451,7 @@ If these nodes are not desired then set `excludeTerminalNAs` to `FALSE`:
 makeNewick(taxa,excludeTerminalNAs=TRUE)
 ```
 
-Note that taxa may be that most specific taxa in the taxonomy matrix but will not be a leaf in the resulting tree if it appears in other taxonomy e.g. Chordata in this example. 
+Note that taxa may be the most specific taxon for a given taxa in the taxonomy matrix but will not be a leaf in the resulting tree if it appears in other taxonomy e.g. Chordata in this example. 
 
 
 

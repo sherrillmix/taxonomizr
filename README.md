@@ -509,7 +509,7 @@ makeNewick(taxa,excludeTerminalNAs=TRUE)
 ## [1] "((((((Homo,Pan)Hominidae)Primates)Mammalia)Chordata)Eukaryota);"
 ```
 
-Note that taxa may be that most specific taxa in the taxonomy matrix but will not be a leaf in the resulting tree if it appears in other taxonomy e.g. Chordata in this example. 
+Note that taxa may be the most specific taxon for a given taxa in the taxonomy matrix but will not be a leaf in the resulting tree if it appears in other taxonomy e.g. Chordata in this example. 
 
 
 
