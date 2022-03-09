@@ -1039,20 +1039,37 @@ getAccessions<-function(taxaId,sqlFile,version=c('version','base'),limit=NULL){
 #' Create a Newick formatted tree from a data.frame of taxonomic assignments
 #' @param taxa a matrix with a row for each leaf of the tree and a column for each taxonomic classification e.g. the output from getTaxonomy
 #' @param naSub a character string to substitute in place of NAs in the taxonomy
+#' @param excludeTerminalNAs If TRUE then do not output nodes downstream of the last named taxonomic level in a row
+#' @param quote If not NULL then wrap all entries with this character
+#' @param terminator If not NULL then add this character to the end of the tree
 #' @return a string giving a Newick formatted tree
 #' @seealso \code{\link{getTaxonomy}}
 #' @export
 #' @examples
 #' taxa<-matrix(c('A','A','A','B','B','C','D','D','E','F','G','H'),nrow=3)
 #' makeNewick(taxa)
-makeNewick<-function(taxa,naSub='_'){
-  if(!is.null(naSub))taxa[is.na(taxa)]<-naSub
+#' taxa<-matrix(c('A','A','A','B',NA,'C','D','D',NA,'F','G',NA),nrow=3)
+#' makeNewick(taxa)
+#' makeNewick(taxa,excludeTerminalNAs=TRUE)
+#' makeNewick(taxa,quote="'")
+makeNewick<-function(taxa,naSub='_',excludeTerminalNAs=FALSE,quote=NULL,terminator=';'){
   if(ncol(taxa)==0)return('')
+  if(!is.null(quote))taxa<-apply(taxa,2,function(xx)ifelse(is.na(xx),xx,sprintf('%s%s%s',quote,xx,quote)))
+  if(!is.null(naSub))taxa[is.na(taxa)]<-naSub
   bases<-unique(taxa[,1])
-  innerTree<-sapply(bases,function(ii)makeNewick(taxa[taxa[,1]==ii,-1,drop=FALSE]))
+  innerTree<-sapply(bases,function(ii)makeNewick(taxa[taxa[,1]==ii,-1,drop=FALSE],naSub=naSub,excludeTerminalNAs=excludeTerminalNAs,terminator=NULL))
+  #check if innertree is just NAs
+  if(excludeTerminalNAs){
+    innerTree[grepl(sprintf('^([()]|%s)+$',naSub),innerTree)]<-''
+    select<-innerTree!=''|bases!=naSub
+    innerTree<-innerTree[select]
+    bases<-bases[select]
+  }
   out<-sprintf('(%s)',paste(sprintf('%s%s',innerTree,bases),collapse=','))
+  if(!is.null(terminator))out<-sprintf('%s%s',out,terminator)
   return(out)
 }
+
 
 
 #' Bring multiple raw taxonomies into alignment

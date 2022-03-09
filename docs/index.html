@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">taxonomizr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.8.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.8.4</span>
       </span>
     </div>
 
@@ -352,14 +352,44 @@ read2   gi|160426828|gb|CP000885.1|     68.46   1763    452     82      3       
 <span class="co">## [3,] "Eukaryota" "Chordata" "Mammalia" NA         "Cervidae"  "Alces"</span></code></pre>
 <div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/makeNewick.html">makeNewick</a></span><span class="op">(</span><span class="va">taxa</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## [1] "((((((Homo,Pan)Hominidae)Primates,((Alces)Cervidae)_)Mammalia)Chordata)Eukaryota)"</span></code></pre>
+<pre><code><span class="co">## [1] "((((((Homo,Pan)Hominidae)Primates,((Alces)Cervidae)_)Mammalia)Chordata)Eukaryota);"</span></code></pre>
+<p>If quotes are needed, then specify the <code>quote</code> argument:</p>
+<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="reference/makeNewick.html">makeNewick</a></span><span class="op">(</span><span class="va">taxa</span>,quote<span class="op">=</span><span class="st">"'"</span><span class="op">)</span></code></pre></div>
+<pre><code><span class="co">## [1] "(((((('Homo','Pan')'Hominidae')'Primates',(('Alces')'Cervidae')_)'Mammalia')'Chordata')'Eukaryota');"</span></code></pre>
+<p>By default, <code>makeNewick</code> includes trailing nodes that are all NA in the tree e.g.:</p>
+<div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">taxa</span><span class="op">[</span><span class="fl">3</span>,<span class="fl">3</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span><span class="op">&lt;-</span><span class="cn">NA</span>
+<span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">taxa</span><span class="op">)</span></code></pre></div>
+<pre><code><span class="co">##      [,1]        [,2]       [,3]       [,4]       [,5]        [,6]  </span>
+<span class="co">## [1,] "Eukaryota" "Chordata" "Mammalia" "Primates" "Hominidae" "Homo"</span>
+<span class="co">## [2,] "Eukaryota" "Chordata" "Mammalia" "Primates" "Hominidae" "Pan" </span>
+<span class="co">## [3,] "Eukaryota" "Chordata" NA         NA         NA          NA</span></code></pre>
+<div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="reference/makeNewick.html">makeNewick</a></span><span class="op">(</span><span class="va">taxa</span><span class="op">)</span></code></pre></div>
+<pre><code><span class="co">## [1] "((((((Homo,Pan)Hominidae)Primates)Mammalia,(((_)_)_)_)Chordata)Eukaryota);"</span></code></pre>
+<p>If these nodes are not desired then set <code>excludeTerminalNAs</code> to <code>FALSE</code>:</p>
+<div class="sourceCode" id="cb64"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="reference/makeNewick.html">makeNewick</a></span><span class="op">(</span><span class="va">taxa</span>,excludeTerminalNAs<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<pre><code><span class="co">## [1] "((((((Homo,Pan)Hominidae)Primates)Mammalia)Chordata)Eukaryota);"</span></code></pre>
+<p>Note that taxa may be that most specific taxa in the taxonomy matrix but will not be a leaf in the resulting tree if it appears in other taxonomy e.g. Chordata in this example.</p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="changelog">Changelog<a class="anchor" aria-label="anchor" href="#changelog"></a>
 </h2>
 <div class="section level3">
-<h3 id="v082">v0.8.2<a class="anchor" aria-label="anchor" href="#v082"></a>
+<h3 id="v084">v0.8.4<a class="anchor" aria-label="anchor" href="#v084"></a>
+</h3>
+<ul>
+<li>Add quote option to <code>makeNewick</code>
+</li>
+<li>Trim trailing NAs off the tree in <code>makeNewick</code> if <code>excludeTerminalNAs</code> is TRUE</li>
+<li>Add terminal semicolon to end of <code>makeNewick</code> tree unless <code>terminator</code> is NULL</li>
+</ul>
+</div>
+<div class="section level3">
+<h3 id="v083">v0.8.3<a class="anchor" aria-label="anchor" href="#v083"></a>
 </h3>
 <ul>
 <li>Add “no rank” to <code>normalizeTaxa</code>’s default exclusion</li>
@@ -367,10 +397,17 @@ read2   gi|160426828|gb|CP000885.1|     68.46   1763    452     82      3       
 </ul>
 </div>
 <div class="section level3">
-<h3 id="v081">v0.8.1<a class="anchor" aria-label="anchor" href="#v081"></a>
+<h3 id="v082">v0.8.2<a class="anchor" aria-label="anchor" href="#v082"></a>
 </h3>
 <ul>
 <li>Add <code>normalizeTaxa</code> function</li>
+</ul>
+</div>
+<div class="section level3">
+<h3 id="v081">v0.8.1<a class="anchor" aria-label="anchor" href="#v081"></a>
+</h3>
+<ul>
+<li>Fix minor typos</li>
 </ul>
 </div>
 <div class="section level3">
@@ -433,7 +470,7 @@ read2   gi|160426828|gb|CP000885.1|     68.46   1763    452     82      3       
 <h3 id="download-names-and-nodes">Download names and nodes<a class="anchor" aria-label="anchor" href="#download-names-and-nodes"></a>
 </h3>
 <p>First, download the necessary names and nodes files from <a href="ftp://ftp.ncbi.nih.gov/pub/taxonomy/">NCBI</a>:</p>
-<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb66"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/getNamesAndNodes.html">getNamesAndNodes</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## [1] "./names.dmp" "./nodes.dmp"</span></code></pre>
 </div>
@@ -441,13 +478,13 @@ read2   gi|160426828|gb|CP000885.1|     68.46   1763    452     82      3       
 <h3 id="download-accession-to-taxa-files">Download accession to taxa files<a class="anchor" aria-label="anchor" href="#download-accession-to-taxa-files"></a>
 </h3>
 <p>Then download accession to taxa id conversion files from <a href="ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/">NCBI</a>. <strong>Note:</strong> this is a pretty <em>big</em> download (several gigabytes):</p>
-<div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#this is a big download</span>
 <span class="fu"><a href="reference/getAccession2taxid.html">getAccession2taxid</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## This can be a big (several gigabytes) download. Please be patient and use a fast connection.</span></code></pre>
 <pre><code><span class="co">## [1] "./nucl_gb.accession2taxid.gz"  "./nucl_wgs.accession2taxid.gz"</span></code></pre>
 <p>If you would also like to identify protein accession numbers, also download the prot file from NCBI (again this is a <em>big</em> download):</p>
-<div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb71"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#this is a big download</span>
 <span class="fu"><a href="reference/getAccession2taxid.html">getAccession2taxid</a></span><span class="op">(</span>types<span class="op">=</span><span class="st">'prot'</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## This can be a big (several gigabytes) download. Please be patient and use a fast connection.</span></code></pre>
@@ -457,11 +494,11 @@ read2   gi|160426828|gb|CP000885.1|     68.46   1763    452     82      3       
 <h3 id="convert-names-nodes-and-accessions-to-database">Convert names, nodes and accessions to database<a class="anchor" aria-label="anchor" href="#convert-names-nodes-and-accessions-to-database"></a>
 </h3>
 <p>Then process the downloaded names and nodes files into a more easily accessed form:</p>
-<div class="sourceCode" id="cb66"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb74"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/read.names.sql.html">read.names.sql</a></span><span class="op">(</span><span class="st">'names.dmp'</span>,<span class="st">'accessionTaxa.sql'</span><span class="op">)</span>
 <span class="fu"><a href="reference/read.nodes.sql.html">read.nodes.sql</a></span><span class="op">(</span><span class="st">'nodes.dmp'</span>,<span class="st">'accessionTaxa.sql'</span><span class="op">)</span></code></pre></div>
 <p>Next process the downloaded accession files into the same database (this one could take a while):</p>
-<div class="sourceCode" id="cb67"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb75"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/read.accession2taxid.html">read.accession2taxid</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files</a></span><span class="op">(</span><span class="st">'.'</span>,<span class="st">'accession2taxid.gz$'</span><span class="op">)</span>,<span class="st">'accessionTaxa.sql'</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## Reading nucl_gb.accession2taxid.gz.</span></code></pre>
 <pre><code><span class="co">## Reading nucl_wgs.accession2taxid.gz.</span></code></pre>

@@ -462,18 +462,73 @@ makeNewick(taxa)
 ```
 
 ```
-## [1] "((((((Homo,Pan)Hominidae)Primates,((Alces)Cervidae)_)Mammalia)Chordata)Eukaryota)"
+## [1] "((((((Homo,Pan)Hominidae)Primates,((Alces)Cervidae)_)Mammalia)Chordata)Eukaryota);"
 ```
+
+If quotes are needed, then specify the `quote` argument:
+
+
+```r
+makeNewick(taxa,quote="'")
+```
+
+```
+## [1] "(((((('Homo','Pan')'Hominidae')'Primates',(('Alces')'Cervidae')_)'Mammalia')'Chordata')'Eukaryota');"
+```
+
+By default, `makeNewick` includes trailing nodes that are all NA in the tree e.g.:
+
+
+```r
+taxa[3,3:6]<-NA
+print(taxa)
+```
+
+```
+##      [,1]        [,2]       [,3]       [,4]       [,5]        [,6]  
+## [1,] "Eukaryota" "Chordata" "Mammalia" "Primates" "Hominidae" "Homo"
+## [2,] "Eukaryota" "Chordata" "Mammalia" "Primates" "Hominidae" "Pan" 
+## [3,] "Eukaryota" "Chordata" NA         NA         NA          NA
+```
+
+```r
+makeNewick(taxa)
+```
+
+```
+## [1] "((((((Homo,Pan)Hominidae)Primates)Mammalia,(((_)_)_)_)Chordata)Eukaryota);"
+```
+
+If these nodes are not desired then set `excludeTerminalNAs` to `FALSE`:
+
+```r
+makeNewick(taxa,excludeTerminalNAs=TRUE)
+```
+
+```
+## [1] "((((((Homo,Pan)Hominidae)Primates)Mammalia)Chordata)Eukaryota);"
+```
+
+Note that taxa may be that most specific taxa in the taxonomy matrix but will not be a leaf in the resulting tree if it appears in other taxonomy e.g. Chordata in this example. 
+
 
 
 ## Changelog
 
-### v0.8.2
+### v0.8.4
+  * Add quote option to `makeNewick`
+  * Trim trailing NAs off the tree in `makeNewick` if `excludeTerminalNAs` is TRUE
+  * Add terminal semicolon to end of `makeNewick` tree unless `terminator` is NULL
+
+### v0.8.3
   * Add "no rank" to `normalizeTaxa`'s default exclusion
   * Expand README
 
-### v0.8.1
+### v0.8.2
   * Add `normalizeTaxa` function
+
+### v0.8.1
+  * Fix minor typos
 
 ### v0.8.0
   * Switch to `curl::curl_download` to avoid Windows issues

@@ -4,12 +4,24 @@
 \alias{makeNewick}
 \title{Create a Newick tree from taxonomy}
 \usage{
-makeNewick(taxa, naSub = "_")
+makeNewick(
+  taxa,
+  naSub = "_",
+  excludeTerminalNAs = FALSE,
+  quote = NULL,
+  terminator = ";"
+)
 }
 \arguments{
 \item{taxa}{a matrix with a row for each leaf of the tree and a column for each taxonomic classification e.g. the output from getTaxonomy}
 
 \item{naSub}{a character string to substitute in place of NAs in the taxonomy}
+
+\item{excludeTerminalNAs}{If TRUE then do not output nodes downstream of the last named taxonomic level in a row}
+
+\item{quote}{If not NULL then wrap all entries with this character}
+
+\item{terminator}{If not NULL then add this character to the end of the tree}
 }
 \value{
 a string giving a Newick formatted tree
@@ -20,6 +32,10 @@ Create a Newick formatted tree from a data.frame of taxonomic assignments
 \examples{
 taxa<-matrix(c('A','A','A','B','B','C','D','D','E','F','G','H'),nrow=3)
 makeNewick(taxa)
+taxa<-matrix(c('A','A','A','B',NA,'C','D','D',NA,'F','G',NA),nrow=3)
+makeNewick(taxa)
+makeNewick(taxa,excludeTerminalNAs=TRUE)
+makeNewick(taxa,quote="'")
 }
 \seealso{
 \code{\link{getTaxonomy}}
