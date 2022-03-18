@@ -16,8 +16,10 @@ The major functions are:
 More specialized functions are:
  * `getId`: convert a biological name to taxonomic ID
  * `getRawTaxonomy`: find all taxonomic ranks for a taxonomic ID
- * `getAccessions`: find accessions for a given taxonomic ID
+ * `normalizeTaxa`: combine raw taxonomies with different taxonomic ranks
+ * `condenseTaxa`: condense a set of taxa to their most specific common branch
  * `makeNewick`: generate a Newick formatted tree from taxonomic output
+ * `getAccessions`: find accessions for a given taxonomic ID
 
 And a simple use case might look like (see below for more details):
 
@@ -441,7 +443,7 @@ getAccessions(3702,'accessionTaxa.sql',limit=10)
 
 ### Convert taxonomy to Newick tree
 
-This is probably only useful in a few specific cases but a convenience function `makeNewick` to convert taxonomy into a Newick tree is included. The function takes a matrix giving with columns corresponding to taxonomic categories and rows different to taxonomic assignments, e.g. the output from `condenseTaxa` or `getTaxonomy` or `normalizeTaxa` and reduces it to a Newick formatted tree. For example:
+This is probably only useful in a few specific cases but a convenience function `makeNewick` to convert taxonomy into a Newick tree is included. The function takes a matrix with columns corresponding to taxonomic categories and rows corresponding to taxonomic assignments, e.g. the output from `condenseTaxa` or `getTaxonomy` or `normalizeTaxa` and reduces it to a Newick formatted tree. For example:
 
 
 

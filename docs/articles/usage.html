@@ -91,7 +91,7 @@
 </h2>
 <p><code>taxonomizr</code> provides some simple functions to parse NCBI taxonomy files and accession dumps and efficiently use them to assign <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/taxonomyhome.html/" class="external-link">taxonomy</a> to accession numbers or taxonomic IDs. This is useful for example to assign taxonomy to BLAST results. This is all done locally after downloading the appropriate files from NCBI using included functions (see <a href="#preparation">below</a>).</p>
 <p>The major functions are: * <code>prepareDatabase</code>: download data from NCBI and prepare SQLite database * <code>accessionToTaxa</code>: convert accession numbers to taxonomic IDs * <code>getTaxonomy</code>: convert taxonomic IDs to taxonomy</p>
-<p>More specialized functions are: * <code>getId</code>: convert a biological name to taxonomic ID * <code>getRawTaxonomy</code>: find all taxonomic ranks for a taxonomic ID * <code>getAccessions</code>: find accessions for a given taxonomic ID * <code>makeNewick</code>: generate a Newick formatted tree from taxonomic output</p>
+<p>More specialized functions are: * <code>getId</code>: convert a biological name to taxonomic ID * <code>getRawTaxonomy</code>: find all taxonomic ranks for a taxonomic ID * <code>normalizeTaxa</code>: combine raw taxonomies with different taxonomic ranks * <code>condenseTaxa</code>: condense a set of taxa to their most specific common branch * <code>makeNewick</code>: generate a Newick formatted tree from taxonomic output * <code>getAccessions</code>: find accessions for a given taxonomic ID</p>
 <p>And a simple use case might look like (see below for more details):</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">taxonomizr</span><span class="op">)</span>
@@ -350,7 +350,7 @@ read2   gi|160426828|gb|CP000885.1|     68.46   1763    452     82      3       
 <div class="section level3">
 <h3 id="convert-taxonomy-to-newick-tree">Convert taxonomy to Newick tree<a class="anchor" aria-label="anchor" href="#convert-taxonomy-to-newick-tree"></a>
 </h3>
-<p>This is probably only useful in a few specific cases but a convenience function <code>makeNewick</code> to convert taxonomy into a Newick tree is included. The function takes a matrix giving with columns corresponding to taxonomic categories and rows different to taxonomic assignments, e.g. the output from <code>condenseTaxa</code> or <code>getTaxonomy</code> or <code>normalizeTaxa</code> and reduces it to a Newick formatted tree. For example:</p>
+<p>This is probably only useful in a few specific cases but a convenience function <code>makeNewick</code> to convert taxonomy into a Newick tree is included. The function takes a matrix with columns corresponding to taxonomic categories and rows corresponding to taxonomic assignments, e.g. the output from <code>condenseTaxa</code> or <code>getTaxonomy</code> or <code>normalizeTaxa</code> and reduces it to a Newick formatted tree. For example:</p>
 <div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">taxa</span></code></pre></div>
 <pre><code><span class="co">##      [,1]        [,2]       [,3]       [,4]       [,5]        [,6]   </span>
