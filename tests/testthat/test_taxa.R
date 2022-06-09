@@ -121,8 +121,17 @@ test_that("Test trimTaxa",{
   tmp2<-tempfile()
   dir.create(tmp2)
   #should error (can't write to directory)
-  expect_error(.C('taxaTrim',c(tmp,tmp2),PACKAGE='taxonomizr'),'file')
-  tmp2<-tempfile()
+  expect_error(.C('taxaTrim',c(tmp,tmp2),PACKAGE='taxonomizr'),'output file')
+  file.remove(tmp2)
+  file.create(tmp2)
+  Sys.chmod(tmp2,'0111')
+  expect_error(.C('taxaTrim',c(tmp2,tmp),PACKAGE='taxonomizr'),'input file')
+  expect_error(.C('taxaTrim',c(tmp,tmp2),PACKAGE='taxonomizr'),'output file')
+  file.remove(tmp2)
+  if(file.exists('/dev/full')){
+    expect_error(.C('taxaTrim',c(tmp,'/dev/full'),PACKAGE='taxonomizr'),'write')
+    expect_error(taxonomizr:::trimTaxa(tmp,'/dev/full'),'write')
+  }
   expect_error(taxonomizr:::trimTaxa(tmp,tmp2),NA)
   expect_equal(readLines(tmp2),c('2\t3','3\t4','4\t5'))
   writeLines(c(out,'1\t2\t3\t4\t5'),tmp)
@@ -143,6 +152,22 @@ test_that("Test trimTaxa",{
   expect_error(taxonomizr:::trimTaxa(tmp,tmp2,c(2,4)),NA)
   expect_equal(readLines(tmp2),rep(c('2\t4','3\t5','4\t6'),2))
   with_mock(`R.utils::gunzip`=function(...){},expect_error(taxonomizr:::trimTaxa(tmp,tmp2),'unzip'))
+  out<-c(
+    'head\t1\t2\t3',
+    'a\t2\t3\t4',
+    'b\t3\t4\t5\tJUNK',
+    'c\t4\t5\t6'
+  )
+  writeLines(out,tmp)
+  expect_error(.C('taxaTrim',c(tmp,tmp2),PACKAGE='taxonomizr'),'Malformed.*3')
+  out<-c(
+    'head\t1\t2\t3',
+    'a\t2\t3\t4',
+    'b\t3\t4\t5',
+    'c\t4\t5'
+  )
+  writeLines(out,tmp)
+  expect_error(.C('taxaTrim',c(tmp,tmp2),PACKAGE='taxonomizr'),'Malformed.*4')
 })
 
 test_that("Test read.accession2taxid",{
