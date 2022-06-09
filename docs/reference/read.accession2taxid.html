@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">taxonomizr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.9.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.9.1</span>
       </span>
     </div>
 
@@ -79,7 +79,8 @@
 <dt>vocal</dt>
 <dd><p>if TRUE output status messages</p></dd>
 <dt>extraSqlCommand</dt>
-<dd><p>for advanced use. A string giving a command to be called on the SQLite database before loading data e.g. "pragma temp_store = 2;" to keep all temp files in memory (don't do this unless you have a lot (&gt;100 Gb) of RAM)</p></dd>
+<dd><p>for advanced use. A string giving a command to be called on the SQLite database before loading data. A couple potential uses:</p><ul><li><p>"pragma temp_store = 2;" to keep all SQLite temp files in memory. Don't do this unless you have a lot (&gt;100 Gb) of RAM</p></li>
+</ul></dd>
 <dt>indexTaxa</dt>
 <dd><p>if TRUE add an index for taxa ID. This would only be necessary if you want to look up accessions by taxa ID e.g. <code><a href="getAccessions.html">getAccessions</a></code></p></dd>
 <dt>overwrite</dt>

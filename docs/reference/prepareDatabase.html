@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">taxonomizr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.9.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.9.1</span>
       </span>
     </div>
 
@@ -80,7 +80,30 @@
 <dt>vocal</dt>
 <dd><p>if TRUE output messages describing progress</p></dd>
 <dt>...</dt>
-<dd><p>additional arguments to getNamesAndNodes, getAccession2taxid or read.accession2taxid</p></dd>
+<dd><p>Arguments passed on to <code><a href="getNamesAndNodes.html">getNamesAndNodes</a></code>, <code><a href="getAccession2taxid.html">getAccession2taxid</a></code>, <code><a href="read.accession2taxid.html">read.accession2taxid</a></code></p><dl><dt><code>url</code></dt>
+<dd><p>the url where taxdump.tar.gz is located</p></dd>
+
+    <dt><code>fileNames</code></dt>
+<dd><p>the filenames desired from the tar.gz file</p></dd>
+
+    <dt><code>baseUrl</code></dt>
+<dd><p>the url of the directory where accession2taxid.gz files are located</p></dd>
+
+    <dt><code>types</code></dt>
+<dd><p>the types if accession2taxid.gz files desired where type is the prefix of xxx.accession2taxid.gz. The default is to download all nucl_ accessions. For protein accessions, try <code>types=c('prot')</code>.</p></dd>
+
+    <dt><code>extraSqlCommand</code></dt>
+<dd><p>for advanced use. A string giving a command to be called on the SQLite database before loading data. A couple potential uses:</p><ul><li><p>"pragma temp_store = 2;" to keep all SQLite temp files in memory. Don't do this unless you have a lot (&gt;100 Gb) of RAM</p></li>
+</ul></dd>
+
+    <dt><code>indexTaxa</code></dt>
+<dd><p>if TRUE add an index for taxa ID. This would only be necessary if you want to look up accessions by taxa ID e.g. <code><a href="getAccessions.html">getAccessions</a></code></p></dd>
+
+    <dt><code>overwrite</code></dt>
+<dd><p>If TRUE, delete accessionTaxa table in database if present and regenerate</p></dd>
+
+  
+</dl></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>
