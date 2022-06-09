@@ -20,7 +20,8 @@ read.accession2taxid(
 
 \item{vocal}{if TRUE output status messages}
 
-\item{extraSqlCommand}{for advanced use. A string giving a command to be called on the SQLite database before loading data e.g. "pragma temp_store = 2;" to keep all temp files in memory (don't do this unless you have a lot (>100 Gb) of RAM)}
+\item{extraSqlCommand}{for advanced use. A string giving a command to be called on the SQLite database before loading data. A couple potential uses: 
+\itemize{\item "PRAGMA temp_store_directory = '/MY/TMP/DIR'" to store SQLite temporary files in directory /MY/TMP/DIR. Useful if the temporary directory used by SQLite (which is not necessarily in the same location as R's) is small on your system \item "pragma temp_store = 2;" to keep all SQLite temp files in memory. Don't do this unless you have a lot (>100 Gb) of RAM}}
 
 \item{indexTaxa}{if TRUE add an index for taxa ID. This would only be necessary if you want to look up accessions by taxa ID e.g. \code{\link{getAccessions}}}
 

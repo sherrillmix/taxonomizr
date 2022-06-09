@@ -21,7 +21,18 @@ prepareDatabase(
 
 \item{vocal}{if TRUE output messages describing progress}
 
-\item{...}{additional arguments to getNamesAndNodes, getAccession2taxid or read.accession2taxid}
+\item{...}{
+  Arguments passed on to \code{\link[=getNamesAndNodes]{getNamesAndNodes}}, \code{\link[=getAccession2taxid]{getAccession2taxid}}, \code{\link[=read.accession2taxid]{read.accession2taxid}}
+  \describe{
+    \item{\code{url}}{the url where taxdump.tar.gz is located}
+    \item{\code{fileNames}}{the filenames desired from the tar.gz file}
+    \item{\code{baseUrl}}{the url of the directory where accession2taxid.gz files are located}
+    \item{\code{types}}{the types if accession2taxid.gz files desired where type is the prefix of xxx.accession2taxid.gz. The default is to download all nucl_ accessions. For protein accessions, try \code{types=c('prot')}.}
+    \item{\code{extraSqlCommand}}{for advanced use. A string giving a command to be called on the SQLite database before loading data. A couple potential uses: 
+\itemize{\item "PRAGMA temp_store_directory = '/MY/TMP/DIR'" to store SQLite temporary files in directory /MY/TMP/DIR. Useful if the temporary directory used by SQLite (which is not necessarily in the same location as R's) is small on your system \item "pragma temp_store = 2;" to keep all SQLite temp files in memory. Don't do this unless you have a lot (>100 Gb) of RAM}}
+    \item{\code{indexTaxa}}{if TRUE add an index for taxa ID. This would only be necessary if you want to look up accessions by taxa ID e.g. \code{\link{getAccessions}}}
+    \item{\code{overwrite}}{If TRUE, delete accessionTaxa table in database if present and regenerate}
+  }}
 }
 \value{
 a vector of character string giving the path to the SQLite file

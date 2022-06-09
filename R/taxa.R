@@ -273,7 +273,8 @@ trimTaxa<-function(inFile,outFile,desiredCols=c(2,3)){
 #' @param taxaFiles a string or vector of strings giving the path(s) to files to be read in
 #' @param sqlFile a string giving the path where the output SQLite file should be saved
 #' @param vocal if TRUE output status messages
-#' @param extraSqlCommand for advanced use. A string giving a command to be called on the SQLite database before loading data e.g. "pragma temp_store = 2;" to keep all temp files in memory (don't do this unless you have a lot (>100 Gb) of RAM)
+#' @param extraSqlCommand for advanced use. A string giving a command to be called on the SQLite database before loading data. A couple potential uses: 
+#' \itemize{\item "PRAGMA temp_store_directory = '/MY/TMP/DIR'" to store SQLite temporary files in directory /MY/TMP/DIR. Useful if the temporary directory used by SQLite (which is not necessarily in the same location as R's) is small on your system \item "pragma temp_store = 2;" to keep all SQLite temp files in memory. Don't do this unless you have a lot (>100 Gb) of RAM}
 #' @param indexTaxa if TRUE add an index for taxa ID. This would only be necessary if you want to look up accessions by taxa ID e.g. \code{\link{getAccessions}}
 #' @param overwrite If TRUE, delete accessionTaxa table in database if present and regenerate
 #' @return TRUE if sucessful
@@ -946,7 +947,10 @@ getId<-function(taxa,sqlFile='nameNode.sqlite',onlyScientific=TRUE){
 #' @param tmpDir location for storing the downloaded files from NCBI. (Note that it may be useful to store these somewhere convenient to avoid redownloading)
 #' @param getAccessions if TRUE download the very large accesssion2taxid files necessary to convert accessions to taxonomic IDs
 #' @param vocal if TRUE output messages describing progress
-#' @param ... additional arguments to getNamesAndNodes, getAccession2taxid or read.accession2taxid
+#' @param ... additional arguments to getNamesAndNodes, getAccession2taxid or read.accession2taxid:
+#' @inheritDotParams getNamesAndNodes -outDir
+#' @inheritDotParams getAccession2taxid -outDir
+#' @inheritDotParams read.accession2taxid -taxaFiles -sqlFile
 #' @return a vector of character string giving the path to the SQLite file
 #' @seealso \code{\link{getNamesAndNodes}}, \code{\link{getAccession2taxid}}, \code{\link{read.accession2taxid}}, \code{\link{read.nodes.sql}}, \code{\link{read.names.sql}}
 #' @export
