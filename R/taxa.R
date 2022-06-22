@@ -720,7 +720,7 @@ accessionToTaxa<-function(accessions,sqlFile,version=c('version','base')){
   RSQLite::dbExecute(db,'DROP TABLE tmp.query')
   RSQLite::dbExecute(db,'DETACH tmp')
   file.remove(tmp)
-  if(!identical(taxaDf$accession,unname(accessions)))stop(simpleError('Query and SQL mismatch'))
+  if(!identical(taxaDf$accession,unname(as.character(accessions))))stop(simpleError('Query and SQL mismatch'))
   return(taxaDf$taxa)
 }
 
