@@ -50,7 +50,7 @@ RSQLite::dbGetQuery(db,'SELECT * FROM accessionTaxa')
 RSQLite::dbDisconnect(db)
 }
 \references{
-\url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid}
+\url{https://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/}
 }
 \seealso{
 \code{\link{read.nodes.sql}}, \code{\link{read.names.sql}}

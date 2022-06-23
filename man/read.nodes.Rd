@@ -28,7 +28,7 @@ writeLines(nodes,tmpFile)
 read.nodes(tmpFile)
 }
 \references{
-\url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/}
+\url{https://ftp.ncbi.nih.gov/pub/taxonomy/}
 }
 \seealso{
 \code{\link{read.names}}, \code{\link{read.nodes.sql}}

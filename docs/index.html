@@ -379,6 +379,19 @@ read2   gi|160426828|gb|CP000885.1|     68.46   1763    452     82      3       
 <h2 id="changelog">Changelog<a class="anchor" aria-label="anchor" href="#changelog"></a>
 </h2>
 <div class="section level3">
+<h3 id="v092">v0.9.2<a class="anchor" aria-label="anchor" href="#v092"></a>
+</h3>
+<ul>
+<li>Allow factors as input to accessionToTaxa</li>
+<li>Document sqlite pragmas for <code>read.accession2taxid</code>
+</li>
+<li>Inherit … argument documentation for <code>prepareDatabase</code>
+</li>
+<li>Catch input/output error while processing large files</li>
+<li>Update various user-facing links from ftp to https for easier access</li>
+</ul>
+</div>
+<div class="section level3">
 <h3 id="v084">v0.8.4<a class="anchor" aria-label="anchor" href="#v084"></a>
 </h3>
 <ul>
@@ -461,7 +474,7 @@ read2   gi|160426828|gb|CP000885.1|     68.46   1763    452     82      3       
 <div class="section level3">
 <h3 id="download-names-and-nodes">Download names and nodes<a class="anchor" aria-label="anchor" href="#download-names-and-nodes"></a>
 </h3>
-<p>First, download the necessary names and nodes files from <a href="ftp://ftp.ncbi.nih.gov/pub/taxonomy/">NCBI</a>:</p>
+<p>First, download the necessary names and nodes files from <a href="https://ftp.ncbi.nih.gov/pub/taxonomy/" class="external-link">NCBI</a>:</p>
 <div class="sourceCode" id="cb66"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/getNamesAndNodes.html">getNamesAndNodes</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## [1] "./names.dmp" "./nodes.dmp"</span></code></pre>
@@ -469,7 +482,7 @@ read2   gi|160426828|gb|CP000885.1|     68.46   1763    452     82      3       
 <div class="section level3">
 <h3 id="download-accession-to-taxa-files">Download accession to taxa files<a class="anchor" aria-label="anchor" href="#download-accession-to-taxa-files"></a>
 </h3>
-<p>Then download accession to taxa id conversion files from <a href="ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/">NCBI</a>. <strong>Note:</strong> this is a pretty <em>big</em> download (several gigabytes):</p>
+<p>Then download accession to taxa id conversion files from <a href="https://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/" class="external-link">NCBI</a>. <strong>Note:</strong> this is a pretty <em>big</em> download (several gigabytes):</p>
 <div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#this is a big download</span>
 <span class="fu"><a href="reference/getAccession2taxid.html">getAccession2taxid</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
@@ -547,7 +560,7 @@ read2   gi|160426828|gb|CP000885.1|     68.46   1763    452     82      3       
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://travis-ci.org/sherrillmix/taxonomizr" class="external-link"><img src="https://travis-ci.org/sherrillmix/taxonomizr.svg?branch=master" alt="Build Status"></a></li>
-<li><a href="https://codecov.io/gh/sherrillmix/taxonomizr" class="external-link"><img src="https://codecov.io/gh/sherrillmix/taxonomizr/branch/master/graph/badge.svg" alt="codecov"></a></li>
+<li><a href="https://app.codecov.io/gh/sherrillmix/taxonomizr" class="external-link"><img src="https://codecov.io/gh/sherrillmix/taxonomizr/branch/master/graph/badge.svg" alt="codecov"></a></li>
 <li><a href="https://cran.r-project.org/package=taxonomizr" class="external-link"><img src="http://www.r-pkg.org/badges/version/taxonomizr" alt="CRAN_Status_Badge"></a></li>
 </ul>
 </div>

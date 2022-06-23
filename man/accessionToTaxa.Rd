@@ -35,7 +35,7 @@ read.accession2taxid(inFile,sqlFile,vocal=FALSE)
 accessionToTaxa(c("Z17430.1","Z17429.1","X62402.1",'NOTREAL'),sqlFile)
 }
 \references{
-\url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid}
+\url{https://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/}
 }
 \seealso{
 \code{\link{getTaxonomy}}, \code{\link{read.accession2taxid}}

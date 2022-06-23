@@ -33,7 +33,7 @@ writeLines(nodes,tmpFile)
 read.nodes.sql(tmpFile,sqlFile)
 }
 \references{
-\url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/}
+\url{https://ftp.ncbi.nih.gov/pub/taxonomy/}
 }
 \seealso{
 \code{\link{read.names.sql}}

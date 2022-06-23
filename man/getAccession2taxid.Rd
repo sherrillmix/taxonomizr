@@ -35,7 +35,7 @@ Download a nucl_xxx.accession2taxid.gz from NCBI servers. These can then be used
 }
 }
 \references{
-\url{ftp://ftp.ncbi.nih.gov/pub/taxonomy/}, \url{https://www.ncbi.nlm.nih.gov/Sequin/acc.html}
+\url{https://ftp.ncbi.nih.gov/pub/taxonomy/}, \url{https://www.ncbi.nlm.nih.gov/genbank/acc_prefix/}
 }
 \seealso{
 \code{\link{read.accession2taxid}}
