@@ -118,20 +118,24 @@ test_that("Test trimTaxa",{
     'c\t4\t5\t6'
   )
   writeLines(out,tmp)
-  tmp2<-tempfile()
-  dir.create(tmp2)
+  tmpDir<-tempfile()
+  dir.create(tmpDir)
   #should error (can't write to directory)
-  expect_error(.C('taxaTrim',c(tmp,tmp2),PACKAGE='taxonomizr'),'output file')
-  file.remove(tmp2)
-  file.create(tmp2)
-  Sys.chmod(tmp2,'0111')
-  expect_error(.C('taxaTrim',c(tmp2,tmp),PACKAGE='taxonomizr'),'input file')
-  expect_error(.C('taxaTrim',c(tmp,tmp2),PACKAGE='taxonomizr'),'output file')
-  file.remove(tmp2)
+  expect_error(.C('taxaTrim',c(tmp,tmpDir),PACKAGE='taxonomizr'),'output file')
+  file.remove(tmpDir)
+  tmpPerm<-tempfile()
+  file.create(tmpPerm)
+  #some systems can't set permissions
+  if(Sys.chmod(tmpPerm,'0000') && file.access(tmpPerm,6)==-1 && any(class(tryCatch(readLines(tmpPerm),error=function(xx)xx))=='error') && any(class(tryCatch(writeLines('ABC',tmpPerm),error=function(xx)xx))=='error')){
+    expect_error(.C('taxaTrim',c(tmpPerm,tmp),PACKAGE='taxonomizr'),'input file')
+    expect_error(.C('taxaTrim',c(tmp,tmpPerm),PACKAGE='taxonomizr'),'output file')
+  }
+  file.remove(tmpPerm) 
   if(file.exists('/dev/full')){
     expect_error(.C('taxaTrim',c(tmp,'/dev/full'),PACKAGE='taxonomizr'),'write')
     expect_error(taxonomizr:::trimTaxa(tmp,'/dev/full'),'write')
   }
+  tmp2<-tempfile()
   expect_error(taxonomizr:::trimTaxa(tmp,tmp2),NA)
   expect_equal(readLines(tmp2),c('2\t3','3\t4','4\t5'))
   writeLines(c(out,'1\t2\t3\t4\t5'),tmp)
