@@ -1,7 +1,7 @@
 # Convert accession numbers to taxonomy
 
 [![Build Status](https://travis-ci.org/sherrillmix/taxonomizr.svg?branch=master)](https://travis-ci.org/sherrillmix/taxonomizr)
-[![codecov](https://codecov.io/gh/sherrillmix/taxonomizr/branch/master/graph/badge.svg)](https://codecov.io/gh/sherrillmix/taxonomizr)
+[![codecov](https://codecov.io/gh/sherrillmix/taxonomizr/branch/master/graph/badge.svg)](https://app.codecov.io/gh/sherrillmix/taxonomizr)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/taxonomizr)](https://cran.r-project.org/package=taxonomizr)
 
 ## Introduction
@@ -516,6 +516,12 @@ Note that taxa may be the most specific taxon for a given taxa in the taxonomy m
 
 
 ## Changelog
+### v0.9.2
+  * Allow factors as input to accessionToTaxa
+  * Document sqlite pragmas for `read.accession2taxid`
+  * Inherit ... argument documentation for `prepareDatabase`
+  * Catch input/output error while processing large files
+  * Update various user-facing links from ftp to https for easier access
 
 ### v0.8.4
   * Add quote option to `makeNewick`
@@ -564,7 +570,7 @@ In order to avoid constant internet access and slow APIs, the first step in usin
 **Note:** It is not necessary to manually check for the presence of these files since the functions automatically check to see if their output is present and if so skip downloading/processing. Delete the local files if you would like to redownload or reprocess them.
 
 ### Download names and nodes
-First, download the necessary names and nodes files from [NCBI](ftp://ftp.ncbi.nih.gov/pub/taxonomy/):
+First, download the necessary names and nodes files from [NCBI](https://ftp.ncbi.nih.gov/pub/taxonomy/):
 
 ```r
 getNamesAndNodes()
@@ -576,7 +582,7 @@ getNamesAndNodes()
 
 ### Download accession to taxa files
 
-Then download accession to taxa id conversion files from [NCBI](ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/). **Note:** this is a pretty _big_ download (several gigabytes):
+Then download accession to taxa id conversion files from [NCBI](https://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/). **Note:** this is a pretty _big_ download (several gigabytes):
 
 ```r
 #this is a big download
