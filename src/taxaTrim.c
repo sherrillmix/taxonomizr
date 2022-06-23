@@ -6,7 +6,6 @@ void safe_fputc(int ch, FILE *stream){
   //char byte;
   //if((byte=fputc(ch,stream)) != ch || ferror(stream) !=0)error("Could not write to file. Out of disk space?");
   //Rprintf("Chars: %d %d %d %d %d\n",ch,byte,ferror(stream),fflush(stream),ferror(stream));
-  char byte;
   if(fputc(ch,stream) != ch || ferror(stream) !=0)error("Could not write to file. Out of disk space?");
 }
 
