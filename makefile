@@ -4,13 +4,16 @@ PACKAGEFILE:=../$(NAME)_$(VERSION).tar.gz
 
 all: $(PACKAGEFILE) README.md docs
 
-.PHONY: all install localInstall
+.PHONY: all install localInstall cranCheck
 
 install:
 	R -e 'devtools::install_github("sherrillmix/$(NAME)")'
 
 localInstall:
 	R -e 'devtools::install()'
+
+cranCheck:
+	R -e 'rhub::check_for_cran()'
 
 docs: man README.md DESCRIPTION
 	R -e 'chooseCRANmirror(ind=1);pkgdown::build_site()'

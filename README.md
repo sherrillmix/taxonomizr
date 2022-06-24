@@ -517,7 +517,7 @@ Note that taxa may be the most specific taxon for a given taxa in the taxonomy m
 
 ## Changelog
 ### v0.9.2
-  * Allow factors as input to accessionToTaxa
+  * Allow factors as input to `accessionToTaxa`
   * Document sqlite pragmas for `read.accession2taxid`
   * Inherit ... argument documentation for `prepareDatabase`
   * Catch input/output error while processing large files
