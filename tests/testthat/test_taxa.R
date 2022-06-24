@@ -109,7 +109,7 @@ test_that("Test streamingRead",{
 
 test_that("Test trimTaxa",{
   expect_error(taxonomizr:::trimTaxa('NotARealFile','test'),'file')
-  expect_error(.C('taxaTrim',c('NotARealFile','test'),PACKAGE='taxonomizr'),'file')
+  expect_error(.C('taxaTrim',c('NotARealFile','test'),1:2,2,PACKAGE='taxonomizr'),'file')
   tmp<-tempfile()
   out<-c(
     'head\t1\t2\t3',
@@ -121,18 +121,18 @@ test_that("Test trimTaxa",{
   tmpDir<-tempfile()
   dir.create(tmpDir)
   #should error (can't write to directory)
-  expect_error(.C('taxaTrim',c(tmp,tmpDir),PACKAGE='taxonomizr'),'output file')
+  expect_error(.C('taxaTrim',c(tmp,tmpDir),1:2,2,PACKAGE='taxonomizr'),'output file')
   file.remove(tmpDir)
   tmpPerm<-tempfile()
   file.create(tmpPerm)
   #some systems can't set permissions
   if(Sys.chmod(tmpPerm,'0000') && file.access(tmpPerm,6)==-1 && any(class(tryCatch(readLines(tmpPerm),error=function(xx)xx))=='error') && any(class(tryCatch(writeLines('ABC',tmpPerm),error=function(xx)xx))=='error')){
-    expect_error(.C('taxaTrim',c(tmpPerm,tmp),PACKAGE='taxonomizr'),'input file')
-    expect_error(.C('taxaTrim',c(tmp,tmpPerm),PACKAGE='taxonomizr'),'output file')
+    expect_error(.C('taxaTrim',c(tmpPerm,tmp),1:2,2,PACKAGE='taxonomizr'),'input file')
+    expect_error(.C('taxaTrim',c(tmp,tmpPerm),1:2,2,PACKAGE='taxonomizr'),'output file')
   }
   file.remove(tmpPerm) 
   if(file.exists('/dev/full')){
-    expect_error(.C('taxaTrim',c(tmp,'/dev/full'),PACKAGE='taxonomizr'),'write')
+    expect_error(.C('taxaTrim',c(tmp,'/dev/full'),1:2,2,PACKAGE='taxonomizr'),'write')
     expect_error(taxonomizr:::trimTaxa(tmp,'/dev/full'),'write')
   }
   tmp2<-tempfile()
@@ -163,7 +163,7 @@ test_that("Test trimTaxa",{
     'c\t4\t5\t6'
   )
   writeLines(out,tmp)
-  expect_error(.C('taxaTrim',c(tmp,tmp2),PACKAGE='taxonomizr'),'Malformed.*3')
+  expect_error(.C('taxaTrim',c(tmp,tmp2),1:2,2,PACKAGE='taxonomizr'),'Malformed.*3')
   out<-c(
     'head\t1\t2\t3',
     'a\t2\t3\t4',
@@ -171,7 +171,7 @@ test_that("Test trimTaxa",{
     'c\t4\t5'
   )
   writeLines(out,tmp)
-  expect_error(.C('taxaTrim',c(tmp,tmp2),PACKAGE='taxonomizr'),'Malformed.*4')
+  expect_error(.C('taxaTrim',c(tmp,tmp2),1:2,2,PACKAGE='taxonomizr'),'Malformed.*4')
 })
 
 test_that("Test read.accession2taxid",{
