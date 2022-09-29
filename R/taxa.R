@@ -100,9 +100,9 @@ read.names.sql<-function(nameFile,sqlFile='nameNode.sqlite',overwrite=FALSE){
   }
   splitLines<-do.call(rbind,strsplit(readLines(nameFile),'\\s*\\|\\s*'))
   isScientific<-splitLines[,4]=='scientific name'
-  splitLines<-splitLines[,-(3:4)]
-  colnames(splitLines)<-c('id','name')
-  splitLines<-data.frame('id'=as.integer(splitLines[,'id']),'name'=splitLines[,'name'],'scientific'=isScientific,stringsAsFactors=FALSE)
+  splitLines<-splitLines[,-(3)]
+  colnames(splitLines)<-c('id','name','type')
+  splitLines<-data.frame('id'=as.integer(splitLines[,'id']),'name'=splitLines[,'name'],'scientific'=isScientific,'type'=splitLines[,'type'],stringsAsFactors=FALSE)
   db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
   on.exit(RSQLite::dbDisconnect(db),add=TRUE)
   RSQLite::dbWriteTable(conn = db, name = "names", value=splitLines)
@@ -899,7 +899,7 @@ getId2<-function(taxa,taxaNames){
 #' @param sqlFile a string giving the path to a SQLite file containing a names tables
 #' @param onlyScientific If TRUE then only match to scientific names. If FALSE use all names in database for matching (potentially increasing ambiguous matches).
 #' @return a vector of character strings giving taxa IDs (potentially comma concatenated for any taxa with ambiguous names)
-#' @seealso \code{\link{getTaxonomy}}, \code{\link{read.names.sql}}
+#' @seealso \code{\link{getTaxonomy}}, \code{\link{read.names.sql}}, \code{\link{getCommon}}
 #' @export
 #' @examples
 #' namesText<-c(
@@ -937,6 +937,73 @@ getId<-function(taxa,sqlFile='nameNode.sqlite',onlyScientific=TRUE){
   out<-tapply(taxaDf$id,taxaDf$name,FUN=function(xx)paste(sort(xx),collapse=','))
   return(as.character(unname(out[taxa])))
 }
+
+#' Find common names for a given taxa
+#'
+#' Find all common names recorded for a taxa in the NCBI taxonomy. Use \code{\link{getTaxonomy}} for scientific names.
+#'
+#' @param taxa a vector of accession numbers
+#' @param sqlFile a string giving the path to a SQLite file containing a names tables
+#' @param types a vector of strings giving the type of names desired e.g. "common name". If NULL then all types are returned
+#' @return a named list of data.frames where each element corresponds to the query taxa IDs. Each data.frame contains columns name and type and each gives an available names and its name type
+#' @seealso \code{\link{getTaxonomy}}, \code{\link{read.names.sql}}, \code{\link{getId}}
+#' @export
+#' @examples
+#' namesText<-"9894\t|\tGiraffa camelopardalis (Linnaeus, 1758)\t|\t\t|\tauthority\t|
+#' 9894\t|\tGiraffa camelopardalis\t|\t\t|\tscientific name\t|
+#' 9894\t|\tgiraffe\t|\t\t|\tgenbank common name\t|
+#' 9909\t|\taurochs\t|\t\t|\tgenbank common name\t|
+#' 9909\t|\tBos primigenius Bojanus, 1827\t|\t\t|\tauthority\t|
+#' 9909\t|\tBos primigenius\t|\t\t|\tscientific name\t|
+#' 9913\t|\tBos bovis\t|\t\t|\tsynonym\t|
+#' 9913\t|\tBos primigenius taurus\t|\t\t|\tsynonym\t|
+#' 9913\t|\tBos taurus Linnaeus, 1758\t|\t\t|\tauthority\t|
+#' 9913\t|\tBos taurus\t|\t\t|\tscientific name\t|
+#' 9913\t|\tBovidae sp. Adi Nefas\t|\t\t|\tincludes\t|
+#' 9913\t|\tbovine\t|\t\t|\tcommon name\t|
+#' 9913\t|\tcattle\t|\t\t|\tgenbank common name\t|
+#' 9913\t|\tcow\t|\t\t|\tcommon name\t|
+#' 9913\t|\tdairy cow\t|\t\t|\tcommon name\t|
+#' 9913\t|\tdomestic cattle\t|\t\t|\tcommon name\t|
+#' 9913\t|\tdomestic cow\t|\t\t|\tcommon name\t|
+#' 9913\t|\tox\t|\t\t|\tcommon name\t|
+#' 9913\t|\toxen\t|\t\t|\tcommon name\t|
+#' 9916\t|\tBoselaphus\t|\t\t|\tscientific name\t|"
+#' tmpFile<-tempfile()
+#' writeLines(namesText,tmpFile)
+#' sqlFile<-tempfile()
+#' read.names.sql(tmpFile,sqlFile)
+#' getCommon(9909,sqlFile)
+#' sapply(getCommon(c(9894,9913),sqlFile),function(xx)paste(xx$name,collapse='; '))
+#' getCommon(c(9999999,9916,9894,9913),sqlFile,c("common name","genbank common name"))
+getCommon<-function(taxa,sqlFile='nameNode.sqlite',types=NULL){
+  if('data.table' %in% class(sqlFile))stop('data.table name nodes file not supported')
+  tmp<-tempfile()
+  on.exit(file.remove(tmp))
+  uniqTaxa<-unique(taxa)
+  tmpDb <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=tmp)
+  on.exit(RSQLite::dbDisconnect(tmpDb),add=TRUE)
+  RSQLite::dbWriteTable(tmpDb,'query',data.frame('accession'=uniqTaxa,stringsAsFactors=FALSE),overwrite=TRUE)
+  db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
+  on.exit(RSQLite::dbDisconnect(db),add=TRUE)
+  if(!'type' %in% RSQLite::dbListFields(db,'names'))stop('The type field is not included in the ',sqlFile,' database. Please recreate the database to update')
+  RSQLite::dbExecute(db, sprintf("ATTACH '%s' AS tmp",tmp))
+  query<-sprintf('SELECT tmp.query.accession, names.name, names.type FROM tmp.query JOIN names ON tmp.query.accession=names.id%s',ifelse(is.null(types),'', sprintf(' WHERE names.type IN ("%s")',paste(types,collapse='","'))))
+  taxaDf<-RSQLite::dbGetQuery(db,query)
+  out<-split(taxaDf[,c('name','type')],taxaDf$accession)
+  out<-lapply(out,function(xx){rownames(xx)<-NULL;xx})
+  return(unname(out[as.character(taxa)]))
+}
+
+#attachTempDb<-function(db,df){
+  #tmp<-tempfile()
+  #on.exit(file.remove(tmp)) #will this kill the connection for the upstream function? Move to object?
+  #uniqTaxa<-unique(taxa)
+  #tmpDb <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=tmp)
+  #on.exit(RSQLite::dbDisconnect(tmpDb),add=TRUE)
+  #RSQLite::dbWriteTable(tmpDb,'query',data.frame('accession'=uniqTaxa,stringsAsFactors=FALSE),overwrite=TRUE)
+  #RSQLite::dbExecute(db, sprintf("ATTACH '%s' AS tmp",tmp))
+#}
 
 
 #' Download data from NCBI and set up SQLite database

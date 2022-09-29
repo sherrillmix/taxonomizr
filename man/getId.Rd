@@ -38,5 +38,5 @@ getId('Not a real name',sqlFile)
 getId('Multi',sqlFile)
 }
 \seealso{
-\code{\link{getTaxonomy}}, \code{\link{read.names.sql}}
+\code{\link{getTaxonomy}}, \code{\link{read.names.sql}}, \code{\link{getCommon}}
 }

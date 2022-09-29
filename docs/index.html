@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">taxonomizr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.9.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.9.4</span>
       </span>
     </div>
 
@@ -213,15 +213,68 @@ read2   gi|160426828|gb|CP000885.1|     68.46   1763    452     82      3       
 <span class="co">## 9852 "Alces alces"</span></code></pre>
 </div>
 <div class="section level3">
+<h3 id="finding-common-names-for-taxonomic-ids">Finding common names for taxonomic IDs<a class="anchor" aria-label="anchor" href="#finding-common-names-for-taxonomic-ids"></a>
+</h3>
+<p>If you’d like to find all common and other types of names for a given taxa ID then you can use <code>getCommon</code>:</p>
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="reference/getCommon.html">getCommon</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">9913</span>,<span class="fl">9606</span><span class="op">)</span>,<span class="st">'accessionTaxa.sql'</span><span class="op">)</span></code></pre></div>
+<pre><code><span class="co">## [[1]]</span>
+<span class="co">##                         name                type</span>
+<span class="co">## 1                  Bos bovis             synonym</span>
+<span class="co">## 2     Bos primigenius taurus             synonym</span>
+<span class="co">## 3  Bos taurus Linnaeus, 1758           authority</span>
+<span class="co">## 4                 Bos taurus     scientific name</span>
+<span class="co">## 5      Bovidae sp. Adi Nefas            includes</span>
+<span class="co">## 6                     bovine         common name</span>
+<span class="co">## 7                     cattle genbank common name</span>
+<span class="co">## 8                        cow         common name</span>
+<span class="co">## 9                  dairy cow         common name</span>
+<span class="co">## 10           domestic cattle         common name</span>
+<span class="co">## 11              domestic cow         common name</span>
+<span class="co">## 12                        ox         common name</span>
+<span class="co">## 13                      oxen         common name</span>
+<span class="co">## </span>
+<span class="co">## [[2]]</span>
+<span class="co">##                          name                type</span>
+<span class="co">## 1 Homo sapiens Linnaeus, 1758           authority</span>
+<span class="co">## 2                Homo sapiens     scientific name</span>
+<span class="co">## 3                       human genbank common name</span></code></pre>
+<p>Or specify only a certain type(s) of name (“common” names seem to often be split between “common name” and “genbank common name”):</p>
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="reference/getCommon.html">getCommon</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">9913</span>,<span class="fl">9606</span>,<span class="fl">9894</span><span class="op">)</span>,<span class="st">'accessionTaxa.sql'</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'genbank common name'</span>,<span class="st">'common name'</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<pre><code><span class="co">## [[1]]</span>
+<span class="co">##              name                type</span>
+<span class="co">## 1          bovine         common name</span>
+<span class="co">## 2          cattle genbank common name</span>
+<span class="co">## 3             cow         common name</span>
+<span class="co">## 4       dairy cow         common name</span>
+<span class="co">## 5 domestic cattle         common name</span>
+<span class="co">## 6    domestic cow         common name</span>
+<span class="co">## 7              ox         common name</span>
+<span class="co">## 8            oxen         common name</span>
+<span class="co">## </span>
+<span class="co">## [[2]]</span>
+<span class="co">##    name                type</span>
+<span class="co">## 1 human genbank common name</span>
+<span class="co">## </span>
+<span class="co">## [[3]]</span>
+<span class="co">##      name                type</span>
+<span class="co">## 1 giraffe genbank common name</span></code></pre>
+<p>Note that databases created with <code>taxonomizr</code> versions earlier than v0.9.4 do not contain the <code>type</code> field and so the database will have to be reloaded to use this function. For example, this could be done by calling:</p>
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">taxonomizr</span><span class="fu">::</span><span class="fu"><a href="reference/getNamesAndNodes.html">getNamesAndNodes</a></span><span class="op">(</span><span class="op">)</span>
+<span class="fu">taxonomizr</span><span class="fu">::</span><span class="fu"><a href="reference/read.names.sql.html">read.names.sql</a></span><span class="op">(</span><span class="st">'names.dmp'</span>,<span class="st">'nameNode.sqlite'</span>,overwrite<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+</div>
+<div class="section level3">
 <h3 id="condensing-taxonomy">Condensing taxonomy<a class="anchor" aria-label="anchor" href="#condensing-taxonomy"></a>
 </h3>
 <p>You can use the <code>condenseTaxa</code> function to find the agreements among taxonomic hits. For example to condense the taxonomy from the previous section to the lowest taxonomic rank shared by all three taxa:</p>
-<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/condenseTaxa.html">condenseTaxa</a></span><span class="op">(</span><span class="va">taxa</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">##   superkingdom phylum     class      order family genus species</span>
 <span class="co">## 1 "Eukaryota"  "Chordata" "Mammalia" NA    NA     NA    NA</span></code></pre>
 <p>This function can also be fed a large number of grouped hits, e.g. BLAST hits for high throughput sequencing reads after filtering for the best hits for each read, and output a condensed taxonomy for each grouping:</p>
-<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">groupings</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'read1'</span>,<span class="st">'read2'</span>,<span class="st">'read1'</span>,<span class="st">'read2'</span><span class="op">)</span>
 <span class="fu"><a href="reference/condenseTaxa.html">condenseTaxa</a></span><span class="op">(</span><span class="va">taxa</span>,<span class="va">groupings</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">##       superkingdom phylum     class      order      family      genus </span>
@@ -235,7 +288,7 @@ read2   gi|160426828|gb|CP000885.1|     68.46   1763    452     82      3       
 <h3 id="find-all-taxonomic-assignments-for-a-given-taxa">Find all taxonomic assignments for a given taxa<a class="anchor" aria-label="anchor" href="#find-all-taxonomic-assignments-for-a-given-taxa"></a>
 </h3>
 <p>To get all taxonomic assignments for a given taxa regardless of their particular rank, you can use the <code>getRawTaxonomy</code> function. Note that there are often many intermediate ranks outside the more common taxonomic ranks. The function returns a list since different IDs can have differing numbers of ranks. It is used similarly to <code>getTaxonomy</code>:</p>
-<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/getRawTaxonomy.html">getRawTaxonomy</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">9606</span>,<span class="fl">9913</span><span class="op">)</span>,<span class="st">'accessionTaxa.sql'</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## $`9606`</span>
 <span class="co">##                species                  genus              subfamily </span>
@@ -283,7 +336,7 @@ read2   gi|160426828|gb|CP000885.1|     68.46   1763    452     82      3       
 <span class="co">##           superkingdom                no rank </span>
 <span class="co">##            "Eukaryota"   "cellular organisms"</span></code></pre>
 <p>These raw taxonomy with varying numbers of levels can be normalized so that all taxa share the same number of levels (aligning by taxonomic levels that are not the unspecific “clade”) using the <code>normalizeTaxa</code> function:</p>
-<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">raw</span><span class="op">&lt;-</span><span class="fu"><a href="reference/getRawTaxonomy.html">getRawTaxonomy</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">9606</span>,<span class="fl">9913</span><span class="op">)</span>,<span class="st">'accessionTaxa.sql'</span><span class="op">)</span>
 <span class="fu"><a href="reference/normalizeTaxa.html">normalizeTaxa</a></span><span class="op">(</span><span class="va">raw</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">##      no rank              superkingdom superkingdom.1 kingdom   kingdom.1  </span>
@@ -319,14 +372,14 @@ read2   gi|160426828|gb|CP000885.1|     68.46   1763    452     82      3       
 <h3 id="finding-accessions-for-a-given-taxonomic-id">Finding accessions for a given taxonomic ID<a class="anchor" aria-label="anchor" href="#finding-accessions-for-a-given-taxonomic-id"></a>
 </h3>
 <p>To find all the accessions for a given taxonomic ID, you can use the <code>getAccessions</code> function. This is a bit of an unusual use case so to preserve space, an index is not created by default in <code>read.accession2taxid</code>. If you are going to use this function, you will want to rebuild the SQLite database with the <code>indexTaxa</code> argument set to true with something like:</p>
-<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/read.accession2taxid.html">read.accession2taxid</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files</a></span><span class="op">(</span><span class="st">'.'</span>,<span class="st">'accession2taxid.gz$'</span><span class="op">)</span>,<span class="st">'accessionTaxa.sql'</span>,indexTaxa<span class="op">=</span><span class="cn">TRUE</span>,overwrite<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## Reading nucl_gb.accession2taxid.gz.</span></code></pre>
 <pre><code><span class="co">## Reading nucl_wgs.accession2taxid.gz.</span></code></pre>
 <pre><code><span class="co">## Reading in values. This may take a while.</span></code></pre>
 <pre><code><span class="co">## Adding index. This may also take a while.</span></code></pre>
 <p>Then you can get the accessions for taxa 3702 with a command like (note that the limit argument is used here in order to preserve space):</p>
-<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/getAccessions.html">getAccessions</a></span><span class="op">(</span><span class="fl">3702</span>,<span class="st">'accessionTaxa.sql'</span>,limit<span class="op">=</span><span class="fl">10</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">##    taxa accession</span>
 <span class="co">## 1  3702  X58148.1</span>
@@ -344,32 +397,32 @@ read2   gi|160426828|gb|CP000885.1|     68.46   1763    452     82      3       
 <h3 id="convert-taxonomy-to-newick-tree">Convert taxonomy to Newick tree<a class="anchor" aria-label="anchor" href="#convert-taxonomy-to-newick-tree"></a>
 </h3>
 <p>This is probably only useful in a few specific cases but a convenience function <code>makeNewick</code> to convert taxonomy into a Newick tree is included. The function takes a matrix with columns corresponding to taxonomic categories and rows corresponding to taxonomic assignments, e.g. the output from <code>condenseTaxa</code> or <code>getTaxonomy</code> or <code>normalizeTaxa</code> and reduces it to a Newick formatted tree. For example:</p>
-<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">taxa</span></code></pre></div>
 <pre><code><span class="co">##      [,1]        [,2]       [,3]       [,4]       [,5]        [,6]   </span>
 <span class="co">## [1,] "Eukaryota" "Chordata" "Mammalia" "Primates" "Hominidae" "Homo" </span>
 <span class="co">## [2,] "Eukaryota" "Chordata" "Mammalia" "Primates" "Hominidae" "Pan"  </span>
 <span class="co">## [3,] "Eukaryota" "Chordata" "Mammalia" NA         "Cervidae"  "Alces"</span></code></pre>
-<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/makeNewick.html">makeNewick</a></span><span class="op">(</span><span class="va">taxa</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## [1] "((((((Homo,Pan)Hominidae)Primates,((Alces)Cervidae)_)Mammalia)Chordata)Eukaryota);"</span></code></pre>
 <p>If quotes are needed, then specify the <code>quote</code> argument:</p>
-<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/makeNewick.html">makeNewick</a></span><span class="op">(</span><span class="va">taxa</span>,quote<span class="op">=</span><span class="st">"'"</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## [1] "(((((('Homo','Pan')'Hominidae')'Primates',(('Alces')'Cervidae')_)'Mammalia')'Chordata')'Eukaryota');"</span></code></pre>
 <p>By default, <code>makeNewick</code> includes trailing nodes that are all NA in the tree e.g.:</p>
-<div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">taxa</span><span class="op">[</span><span class="fl">3</span>,<span class="fl">3</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span><span class="op">&lt;-</span><span class="cn">NA</span>
 <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">taxa</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">##      [,1]        [,2]       [,3]       [,4]       [,5]        [,6]  </span>
 <span class="co">## [1,] "Eukaryota" "Chordata" "Mammalia" "Primates" "Hominidae" "Homo"</span>
 <span class="co">## [2,] "Eukaryota" "Chordata" "Mammalia" "Primates" "Hominidae" "Pan" </span>
 <span class="co">## [3,] "Eukaryota" "Chordata" NA         NA         NA          NA</span></code></pre>
-<div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb67"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/makeNewick.html">makeNewick</a></span><span class="op">(</span><span class="va">taxa</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## [1] "((((((Homo,Pan)Hominidae)Primates)Mammalia,(((_)_)_)_)Chordata)Eukaryota);"</span></code></pre>
 <p>If these nodes are not desired then set <code>excludeTerminalNAs</code> to <code>FALSE</code>:</p>
-<div class="sourceCode" id="cb64"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb69"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/makeNewick.html">makeNewick</a></span><span class="op">(</span><span class="va">taxa</span>,excludeTerminalNAs<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## [1] "((((((Homo,Pan)Hominidae)Primates)Mammalia)Chordata)Eukaryota);"</span></code></pre>
 <p>Note that taxa may be the most specific taxon for a given taxa in the taxonomy matrix but will not be a leaf in the resulting tree if it appears in other taxonomy e.g. Chordata in this example.</p>
@@ -378,6 +431,11 @@ read2   gi|160426828|gb|CP000885.1|     68.46   1763    452     82      3       
 <div class="section level2">
 <h2 id="changelog">Changelog<a class="anchor" aria-label="anchor" href="#changelog"></a>
 </h2>
+<div class="section level3">
+<h3 id="v094">v0.9.4<a class="anchor" aria-label="anchor" href="#v094"></a>
+</h3>
+<ul><li>Add <code>getCommon</code> function to get all names in the database for a given taxa ID</li></ul>
+</div>
 <div class="section level3">
 <h3 id="v093">v0.9.3<a class="anchor" aria-label="anchor" href="#v093"></a>
 </h3>
@@ -481,7 +539,7 @@ read2   gi|160426828|gb|CP000885.1|     68.46   1763    452     82      3       
 <h3 id="download-names-and-nodes">Download names and nodes<a class="anchor" aria-label="anchor" href="#download-names-and-nodes"></a>
 </h3>
 <p>First, download the necessary names and nodes files from <a href="https://ftp.ncbi.nih.gov/pub/taxonomy/" class="external-link">NCBI</a>:</p>
-<div class="sourceCode" id="cb66"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb71"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/getNamesAndNodes.html">getNamesAndNodes</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## [1] "./names.dmp" "./nodes.dmp"</span></code></pre>
 </div>
@@ -489,13 +547,13 @@ read2   gi|160426828|gb|CP000885.1|     68.46   1763    452     82      3       
 <h3 id="download-accession-to-taxa-files">Download accession to taxa files<a class="anchor" aria-label="anchor" href="#download-accession-to-taxa-files"></a>
 </h3>
 <p>Then download accession to taxa id conversion files from <a href="https://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/" class="external-link">NCBI</a>. <strong>Note:</strong> this is a pretty <em>big</em> download (several gigabytes):</p>
-<div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb73"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#this is a big download</span>
 <span class="fu"><a href="reference/getAccession2taxid.html">getAccession2taxid</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## This can be a big (several gigabytes) download. Please be patient and use a fast connection.</span></code></pre>
 <pre><code><span class="co">## [1] "./nucl_gb.accession2taxid.gz"  "./nucl_wgs.accession2taxid.gz"</span></code></pre>
 <p>If you would also like to identify protein accession numbers, also download the prot file from NCBI (again this is a <em>big</em> download):</p>
-<div class="sourceCode" id="cb71"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb76"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#this is a big download</span>
 <span class="fu"><a href="reference/getAccession2taxid.html">getAccession2taxid</a></span><span class="op">(</span>types<span class="op">=</span><span class="st">'prot'</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## This can be a big (several gigabytes) download. Please be patient and use a fast connection.</span></code></pre>
@@ -505,11 +563,11 @@ read2   gi|160426828|gb|CP000885.1|     68.46   1763    452     82      3       
 <h3 id="convert-names-nodes-and-accessions-to-database">Convert names, nodes and accessions to database<a class="anchor" aria-label="anchor" href="#convert-names-nodes-and-accessions-to-database"></a>
 </h3>
 <p>Then process the downloaded names and nodes files into a more easily accessed form:</p>
-<div class="sourceCode" id="cb74"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb79"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/read.names.sql.html">read.names.sql</a></span><span class="op">(</span><span class="st">'names.dmp'</span>,<span class="st">'accessionTaxa.sql'</span><span class="op">)</span>
 <span class="fu"><a href="reference/read.nodes.sql.html">read.nodes.sql</a></span><span class="op">(</span><span class="st">'nodes.dmp'</span>,<span class="st">'accessionTaxa.sql'</span><span class="op">)</span></code></pre></div>
 <p>Next process the downloaded accession files into the same database (this one could take a while):</p>
-<div class="sourceCode" id="cb75"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb80"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/read.accession2taxid.html">read.accession2taxid</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files</a></span><span class="op">(</span><span class="st">'.'</span>,<span class="st">'accession2taxid.gz$'</span><span class="op">)</span>,<span class="st">'accessionTaxa.sql'</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## Reading nucl_gb.accession2taxid.gz.</span></code></pre>
 <pre><code><span class="co">## Reading nucl_wgs.accession2taxid.gz.</span></code></pre>

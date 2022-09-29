@@ -254,6 +254,75 @@ print(taxa)
 ## 9852 "Alces alces"
 ```
 
+### Finding common names for taxonomic IDs
+If you'd like to find all common and other types of names for a given taxa ID then you can use `getCommon`:
+
+
+```r
+getCommon(c(9913,9606),'accessionTaxa.sql')
+```
+
+```
+## [[1]]
+##                         name                type
+## 1                  Bos bovis             synonym
+## 2     Bos primigenius taurus             synonym
+## 3  Bos taurus Linnaeus, 1758           authority
+## 4                 Bos taurus     scientific name
+## 5      Bovidae sp. Adi Nefas            includes
+## 6                     bovine         common name
+## 7                     cattle genbank common name
+## 8                        cow         common name
+## 9                  dairy cow         common name
+## 10           domestic cattle         common name
+## 11              domestic cow         common name
+## 12                        ox         common name
+## 13                      oxen         common name
+## 
+## [[2]]
+##                          name                type
+## 1 Homo sapiens Linnaeus, 1758           authority
+## 2                Homo sapiens     scientific name
+## 3                       human genbank common name
+```
+
+Or specify only a certain type(s) of name ("common" names seem to often be split between "common name" and "genbank common name"):
+
+
+```r
+getCommon(c(9913,9606,9894),'accessionTaxa.sql',c('genbank common name','common name'))
+```
+
+```
+## [[1]]
+##              name                type
+## 1          bovine         common name
+## 2          cattle genbank common name
+## 3             cow         common name
+## 4       dairy cow         common name
+## 5 domestic cattle         common name
+## 6    domestic cow         common name
+## 7              ox         common name
+## 8            oxen         common name
+## 
+## [[2]]
+##    name                type
+## 1 human genbank common name
+## 
+## [[3]]
+##      name                type
+## 1 giraffe genbank common name
+```
+
+Note that databases created with `taxonomizr` versions earlier than v0.9.4 do not contain the `type` field and so the database will have to be reloaded to use this function. For example, this could be done by calling:
+
+
+```r
+taxonomizr::getNamesAndNodes()
+taxonomizr::read.names.sql('names.dmp','nameNode.sqlite',overwrite=TRUE)
+```
+
+
 ### Condensing taxonomy
 You can use the `condenseTaxa` function to find the agreements among taxonomic hits. For example to condense the taxonomy from the previous section to the lowest taxonomic rank shared by all three taxa:
 
@@ -516,6 +585,9 @@ Note that taxa may be the most specific taxon for a given taxa in the taxonomy m
 
 
 ## Changelog
+### v0.9.4
+  * Add `getCommon` function to get all names in the database for a given taxa ID
+
 ### v0.9.3
   * Fix bug in testing script
 
