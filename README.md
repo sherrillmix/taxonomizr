@@ -148,10 +148,6 @@ And if you area assigning taxonomy to protein data, then you would want to grab 
 prepareDatabase(types='prot')
 ```
 
-```r
-prepareDatabase(types='prot')
-```
-
 ```
 ## Downloading names and nodes with getNamesAndNodes()
 ```
