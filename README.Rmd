@@ -134,6 +134,58 @@ prepareDatabase(getAccessions=FALSE)
 ## [1] "nameNode.sqlite"
 ```
 
+And if you area assigning taxonomy to protein data, then you would want to grab the `prot.accession2taxid.gz` from NCBI by specifying the `types='prot'` argument (or `types=c("nucl_gb", "nucl_wgs","prot")` for proteins and nucleotides):
+
+```{r,eval=FALSE}
+prepareDatabase(types='prot')
+```
+
+```r
+prepareDatabase(types='prot')
+```
+
+```
+## Downloading names and nodes with getNamesAndNodes()
+```
+
+```
+## Preprocessing names with read.names.sql()
+```
+
+```
+## Preprocessing nodes with read.nodes.sql()
+```
+
+```
+## Downloading accession2taxid with getAccession2taxid()
+```
+
+```
+## This can be a big (several gigabytes) download. Please be patient and use a fast connection.
+```
+
+```
+## Preprocessing accession2taxid with read.accession2taxid()
+```
+
+```
+## Reading ./prot.accession2taxid.gz.
+```
+
+```
+## Reading in values. This may take a while.
+```
+
+```
+## Adding index. This may also take a while.
+```
+
+```
+## [1] "nameNode.sqlite"
+```
+
+
+
 ## Assigning taxonomy
 
 ### Producing accession numbers
