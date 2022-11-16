@@ -73,18 +73,29 @@
     <h2>Arguments</h2>
     <dl><dt>bigFile</dt>
 <dd><p>a string giving the path to a file to be read in or a connection opened with "r" mode</p></dd>
+
+
 <dt>n</dt>
 <dd><p>number of lines to read per chuck</p></dd>
+
+
 <dt>FUN</dt>
 <dd><p>a function taking the unparsed lines from a chunk of the bigfile as a single argument and returning the desired output</p></dd>
+
+
 <dt>...</dt>
 <dd><p>any additional arguments to FUN</p></dd>
+
+
 <dt>vocal</dt>
 <dd><p>if TRUE cat a "." as each chunk is processed</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>a list containing the results from applying func to the multiple chunks of the file</p>
+    
+
+<p>a list containing the results from applying func to the multiple chunks of the file</p>
     </div>
 
     <div id="ref-examples">
@@ -144,7 +155,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "yz"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="fu">streamingRead</span><span class="op">(</span><span class="va">tmpFile</span>,<span class="fl">2</span>,<span class="va">sample</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "a" "d" "e" "g" "j" "k" "n" "o" "r" "t" "u" "x" "y"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "a" "c" "e" "g" "i" "k" "m" "p" "q" "s" "v" "x" "z"</span>
 </code></pre></div>
     </div>
   </div>
@@ -159,7 +170,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

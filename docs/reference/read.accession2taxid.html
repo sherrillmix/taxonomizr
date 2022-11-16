@@ -74,21 +74,34 @@
     <h2>Arguments</h2>
     <dl><dt>taxaFiles</dt>
 <dd><p>a string or vector of strings giving the path(s) to files to be read in</p></dd>
+
+
 <dt>sqlFile</dt>
 <dd><p>a string giving the path where the output SQLite file should be saved</p></dd>
+
+
 <dt>vocal</dt>
 <dd><p>if TRUE output status messages</p></dd>
+
+
 <dt>extraSqlCommand</dt>
 <dd><p>for advanced use. A string giving a command to be called on the SQLite database before loading data. A couple potential uses:</p><ul><li><p>"pragma temp_store = 2;" to keep all SQLite temp files in memory. Don't do this unless you have a lot (&gt;100 Gb) of RAM</p></li>
 </ul></dd>
+
+
 <dt>indexTaxa</dt>
 <dd><p>if TRUE add an index for taxa ID. This would only be necessary if you want to look up accessions by taxa ID e.g. <code><a href="getAccessions.html">getAccessions</a></code></p></dd>
+
+
 <dt>overwrite</dt>
 <dd><p>If TRUE, delete accessionTaxa table in database if present and regenerate</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>TRUE if sucessful</p>
+    
+
+<p>TRUE if sucessful</p>
     </div>
     <div id="references">
     <h2>References</h2>
@@ -134,7 +147,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

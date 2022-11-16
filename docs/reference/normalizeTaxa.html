@@ -72,16 +72,25 @@
     <h2>Arguments</h2>
     <dl><dt>rawTaxa</dt>
 <dd><p>A list of vectors with each vector containing a named character vector with entries specifying taxonomy for a clade and names giving the corresponding taxonomic levels e.g. the output from <code><a href="getRawTaxonomy.html">getRawTaxonomy</a></code></p></dd>
+
+
 <dt>cladeRegex</dt>
 <dd><p>A regex to identify ambiguous taxonomic levels. In the case of NCBI taxonomy, these unidentified levels are all labelled "clade" and <code><a href="getRawTaxonomy.html">getRawTaxonomy</a></code> may attach a unique digit attach to the end for uniqueness.</p></dd>
+
+
 <dt>rootFill</dt>
 <dd><p>If a clade is upstream of the highest taxonomic level then it will be labeled with this prefix</p></dd>
+
+
 <dt>lineageOrder</dt>
 <dd><p>A vector giving an ordering for lineages from most specific to most generic. This should be unnecessary unless the taxonomy contains ambiguities e.g. one taxa goes from species to kingdom while another goes from genus to kingdom leaving it ambiguous whether genus or species is more specific</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>a matrix with a row for each taxa and a column for each taxonomic level</p>
+    
+
+<p>a matrix with a row for each taxa and a column for each taxonomic level</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
@@ -171,7 +180,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>
