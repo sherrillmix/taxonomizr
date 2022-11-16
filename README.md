@@ -4,6 +4,12 @@
 [![codecov](https://codecov.io/gh/sherrillmix/taxonomizr/branch/master/graph/badge.svg)](https://app.codecov.io/gh/sherrillmix/taxonomizr)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/taxonomizr)](https://cran.r-project.org/package=taxonomizr)
 
+## Note: NCBI Name changes in early 2023
+Please note that the [NCBI is planning to change their naming of several major prokaryote phylums](https://ncbiinsights.ncbi.nlm.nih.gov/2022/11/14/prokaryotic-phylum-name-changes/) e.g. [Firmicutes will become Bacillota](https://ftp.ncbi.nih.gov/pub/taxonomy/Major_phylum_updates_for_prokaryotes_2023.txt). The exact date that this transition will percolate into the taxonomy downloads used for this package is not precisely defined but it seems likely to be sometime early in 2023. Please watch out for any problems that could arise. For example: 
+  * names of assigned taxonomy may shift after updating a database to a post-change version
+  * comparisons of old analyses performed pre-change to new analyses performed post-change will need to be done with care
+If I understand things correctly, then the actual taxonomy ID will not change so it might be wise to retain the taxonomy ID for all analyses. Then on final analysis, the taxonomic names can be assigned based on whatever naming scheme is in use at that time.
+
 ## Introduction
 
 `taxonomizr` provides some simple functions to parse NCBI taxonomy files and accession dumps and efficiently use them to assign [taxonomy](https://www.ncbi.nlm.nih.gov/Taxonomy/taxonomyhome.html/) to accession numbers or taxonomic IDs. This is useful for example to assign taxonomy to BLAST results. This is all done locally after downloading the appropriate files from NCBI using included functions (see [below](#preparation)). 
