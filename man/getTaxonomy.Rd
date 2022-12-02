@@ -25,7 +25,7 @@ getTaxonomy(
 a matrix of taxonomic strings with a row for each id and a column for each desiredTaxa rank
 }
 \description{
-Take NCBI taxa IDs and get the corresponding taxa ranks from name and node SQLite database
+Take NCBI taxa IDs and get the corresponding taxa ranks from a name and node SQLite database
 }
 \examples{
 sqlFile<-tempfile()
