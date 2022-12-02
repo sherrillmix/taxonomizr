@@ -602,6 +602,9 @@ Note that taxa may be the most specific taxon for a given taxa in the taxonomy m
 
 
 ## Changelog
+### v0.10.1
+  * Add `getDescendants` function to get all descendants for a given taxon
+
 ### v0.9.4
   * Add `getCommon` function to get all names in the database for a given taxa ID
 
