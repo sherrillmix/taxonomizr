@@ -183,6 +183,7 @@ read.nodes.sql<-function(nodeFile,sqlFile='nameNode.sqlite',overwrite=FALSE){
   on.exit(RSQLite::dbDisconnect(db),add=TRUE)
   RSQLite::dbWriteTable(conn = db, name = "nodes", value =splitLines)
   RSQLite::dbExecute(db,"CREATE INDEX index_nodes_id ON nodes (id)")
+  RSQLite::dbExecute(db,"CREATE INDEX index_nodes_parent ON nodes (parent)")
   return(invisible(sqlFile))
 }
 
@@ -210,7 +211,7 @@ lastNotNa<-function(x,default='Unknown'){
 #' A convenience function to read in a large file piece by piece, process it (hopefully reducing the size either by summarizing or removing extra rows or columns) and return the output
 #'
 #' @param bigFile a string giving the path to a file to be read in or a connection opened with "r" mode
-#' @param n number of lines to read per chuck
+#' @param n number of lines to read per chunk
 #' @param FUN a function taking the unparsed lines from a chunk of the bigfile as a single argument and returning the desired output
 #' @param vocal if TRUE cat a "." as each chunk is processed
 #' @param ... any additional arguments to FUN
@@ -442,7 +443,7 @@ getTaxonomy2<-function(ids,taxaNodes ,taxaNames, desiredTaxa=c('superkingdom','p
 }
 
 
-getParentNodes<-function(ids,sqlFile='nameNode.sqlite'){
+getParentNodes<-function(ids,sqlFile='nameNode.sqlite',getDescendants=FALSE){
   ids<-as.numeric(ids)
   tmp<-tempfile()
   on.exit(file.remove(tmp))
@@ -453,10 +454,16 @@ getParentNodes<-function(ids,sqlFile='nameNode.sqlite'){
   db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
   on.exit(RSQLite::dbDisconnect(db),add=TRUE)
   RSQLite::dbExecute(db, sprintf("ATTACH '%s' AS tmp",tmp))
-  taxaDf<-RSQLite::dbGetQuery(db,'SELECT tmp.query.id, name,parent, rank FROM tmp.query LEFT OUTER JOIN nodes ON tmp.query.id=nodes.id LEFT OUTER JOIN names ON tmp.query.id=names.id WHERE names.scientific=1 OR names.scientific IS NULL')
-  if(!identical(taxaDf$id,unname(ids)))stop(simpleError('Problem finding ids')) #don't actually need the unname here since as.numeric strips names but good to be safe
-  return(taxaDf[,c('name','parent','rank')])
+  if(getDescendants){
+    taxaDf<-RSQLite::dbGetQuery(db,'SELECT nodes.id as descendant, name, rank FROM tmp.query LEFT OUTER JOIN nodes ON tmp.query.id=nodes.parent LEFT OUTER JOIN names ON descendant=names.id WHERE names.scientific=1 OR names.scientific IS NULL')
+    return(taxaDf[,c('name','descendant','rank')])
+  }else{
+    taxaDf<-RSQLite::dbGetQuery(db,'SELECT tmp.query.id, name,parent, rank FROM tmp.query LEFT OUTER JOIN nodes ON tmp.query.id=nodes.id LEFT OUTER JOIN names ON tmp.query.id=names.id WHERE names.scientific=1 OR names.scientific IS NULL')
+    if(!identical(taxaDf$id,unname(ids))&!getDescendants)stop(simpleError('Problem finding ids')) #don't actually need the unname here since as.numeric strips names but good to be safe
+    return(taxaDf[,c('name','parent','rank')])
+  }
 }
+
 
 checkDownloadMd5<-function(url,file,errorIfNoMd5=FALSE){
   md5<-sprintf('%s.md5',url)
@@ -473,7 +480,7 @@ checkDownloadMd5<-function(url,file,errorIfNoMd5=FALSE){
 
 #' Get taxonomic ranks for a taxa
 #'
-#' Take NCBI taxa IDs and get the corresponding taxa ranks from name and node SQLite database
+#' Take NCBI taxa IDs and get the corresponding taxa ranks from a name and node SQLite database
 #'
 #' @param ids a vector of ids to find taxonomy for
 #' @param sqlFile a string giving the path to a SQLite file containing names and nodes tables
@@ -549,7 +556,7 @@ checkDownloadMd5<-function(url,file,errorIfNoMd5=FALSE){
 #' writeLines(nodesText,tmpFile)
 #' taxaNodes<-read.nodes.sql(tmpFile,sqlFile)
 #' getTaxonomy(c(9606,9605),sqlFile)
-getTaxonomy<-function (ids,sqlFile='nameNode.sqlite',..., desiredTaxa=c('superkingdom','phylum','class','order','family','genus','species')){
+getTaxonomy<-function(ids,sqlFile='nameNode.sqlite',..., desiredTaxa=c('superkingdom','phylum','class','order','family','genus','species')){
   if('data.table' %in% class(sqlFile)){
     return(getTaxonomy2(ids,sqlFile,...,desiredTaxa=desiredTaxa))
   }
@@ -571,6 +578,99 @@ getTaxonomy<-function (ids,sqlFile='nameNode.sqlite',..., desiredTaxa=c('superki
   }
   out<-taxa[format(ids,scientific=FALSE),,drop=FALSE]
   return(out)
+}
+
+#' Get descendant ranks for a taxa
+#'
+#' Take a NCBI taxa ID and get the descendant taxa matching a given rank from a name and node SQLite database
+#'
+#' @param ids a vector of ids to find descendants for
+#' @param sqlFile a string giving the path to a SQLite file containing names and nodes tables
+#' @param desiredTaxa a vector of strings giving the desired taxa levels
+#' @return a vector of strings giving the names a for each descendant taxa
+#' @export
+#' @seealso \code{\link{read.nodes.sql}}, \code{\link{read.names.sql}}
+#' @examples
+#' sqlFile<-tempfile()
+#' namesText<-c(
+#'   "1\t|\troot\t|\t\t|\tscientific name\t|",
+#'   "2\t|\tBacteria\t|\tBacteria <prokaryotes>\t|\tscientific name\t|",
+#'   "2\t|\tProcaryotae\t|\tProcaryotae <Bacteria>\t|\tin-part\t|",
+#'   "9606\t|\tHomo sapiens\t|\t\t|\tscientific name",
+#'   "9605\t|\tHomo\t|\t\t|\tscientific name",
+#'   "207598\t|\tHomininae\t|\t\t|\tscientific name",
+#'   "9604\t|\tHominidae\t|\t\t|\tscientific name",
+#'   "314295\t|\tHominoidea\t|\t\t|\tscientific name",
+#'   "9526\t|\tCatarrhini\t|\t\t|\tscientific name",
+#'   "314293\t|\tSimiiformes\t|\t\t|\tscientific name",
+#'   "376913\t|\tHaplorrhini\t|\t\t|\tscientific name",
+#'   "9443\t|\tPrimates\t|\t\t|\tscientific name",
+#'   "314146\t|\tEuarchontoglires\t|\t\t|\tscientific name",
+#'   "1437010\t|\tBoreoeutheria\t|\t\t|\tscientific name",
+#'   "9347\t|\tEutheria\t|\t\t|\tscientific name",
+#'   "32525\t|\tTheria\t|\t\t|\tscientific name",
+#'   "40674\t|\tMammalia\t|\t\t|\tscientific name",
+#'   "32524\t|\tAmniota\t|\t\t|\tscientific name",
+#'   "32523\t|\tTetrapoda\t|\t\t|\tscientific name",
+#'   "1338369\t|\tDipnotetrapodomorpha\t|\t\t|\tscientific name",
+#'   "8287\t|\tSarcopterygii\t|\t\t|\tscientific name",
+#'   "117571\t|\tEuteleostomi\t|\t\t|\tscientific name",
+#'   "117570\t|\tTeleostomi\t|\t\t|\tscientific name",
+#'   "7776\t|\tGnathostomata\t|\t\t|\tscientific name",
+#'   "7742\t|\tVertebrata\t|\t\t|\tscientific name",
+#'   "89593\t|\tCraniata\t|\t\t|\tscientific name",
+#'   "7711\t|\tChordata\t|\t\t|\tscientific name",
+#'   "33511\t|\tDeuterostomia\t|\t\t|\tscientific name",
+#'   "33213\t|\tBilateria\t|\t\t|\tscientific name",
+#'   "6072\t|\tEumetazoa\t|\t\t|\tscientific name",
+#'   "33208\t|\tMetazoa\t|\t\t|\tscientific name",
+#'   "33154\t|\tOpisthokonta\t|\t\t|\tscientific name",
+#'   "2759\t|\tEukaryota\t|\t\t|\tscientific name",
+#'   "131567\t|\tcellular organisms\t|\t\t|\tscientific name",
+#'   "1425170\t|\tHomo heidelbergensis\t|\t\t|\tscientific name"
+#' )
+#' tmpFile<-tempfile()
+#' writeLines(namesText,tmpFile)
+#' taxaNames<-read.names.sql(tmpFile,sqlFile)
+#' nodesText<-c(
+#'  "1\t|\t1\t|\tno rank\t|\t\t|\t8\t|\t0\t|\t1\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
+#'   "2\t|\t131567\t|\tsuperkingdom\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
+#'   "6\t|\t335928\t|\tgenus\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\t\t|",
+#'   "7\t|\t6\t|\tspecies\t|\tAC\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|",
+#'   "9\t|\t32199\t|\tspecies\t|\tBA\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|",
+#'   "9606\t|\t9605\t|\tspecies", "9605\t|\t207598\t|\tgenus", "207598\t|\t9604\t|\tsubfamily",
+#'   "9604\t|\t314295\t|\tfamily", "314295\t|\t9526\t|\tsuperfamily",
+#'   "9526\t|\t314293\t|\tparvorder", "314293\t|\t376913\t|\tinfraorder",
+#'   "376913\t|\t9443\t|\tsuborder", "9443\t|\t314146\t|\torder",
+#'   "314146\t|\t1437010\t|\tsuperorder", "1437010\t|\t9347\t|\tno rank",
+#'   "9347\t|\t32525\t|\tno rank", "32525\t|\t40674\t|\tno rank",
+#'   "40674\t|\t32524\t|\tclass", "32524\t|\t32523\t|\tno rank", "32523\t|\t1338369\t|\tno rank",
+#'   "1338369\t|\t8287\t|\tno rank", "8287\t|\t117571\t|\tno rank",
+#'   "117571\t|\t117570\t|\tno rank", "117570\t|\t7776\t|\tno rank",
+#'   "7776\t|\t7742\t|\tno rank", "7742\t|\t89593\t|\tno rank", "89593\t|\t7711\t|\tsubphylum",
+#'   "7711\t|\t33511\t|\tphylum", "33511\t|\t33213\t|\tno rank", "33213\t|\t6072\t|\tno rank",
+#'   "6072\t|\t33208\t|\tno rank", "33208\t|\t33154\t|\tkingdom",
+#'   "33154\t|\t2759\t|\tno rank", "2759\t|\t131567\t|\tsuperkingdom",
+#'   "131567\t|\t1\t|\tno rank", '1425170\t|\t9605\t|\tspecies'
+#' )
+#' writeLines(nodesText,tmpFile)
+#' taxaNodes<-read.nodes.sql(tmpFile,sqlFile)
+#' getDescendants(c(9604),sqlFile)
+getDescendants<-function(ids,sqlFile='nameNode.sqlite', desiredTaxa='species'){
+  ids<-unique(as.numeric(ids))
+  if(length(ids)==0)return(NULL)
+  rep<-0
+  currentIds<-ids
+  allIds<-c()
+  while(length(currentIds)>0){
+    descendants<-getParentNodes(currentIds,sqlFile,TRUE)
+    descendants<-descendants[!is.na(descendants$descendant),]
+    allIds<-c(allIds,descendants[descendants$rank %in% desiredTaxa,'name'])
+    rep<-rep+1
+    currentIds<-descendants$descendant
+    if(rep>200)stop('Found cycle in taxonomy')
+  }
+  return(allIds)
 }
 
 #' Get all taxonomy for a taxa

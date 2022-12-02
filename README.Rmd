@@ -29,6 +29,7 @@ More specialized functions are:
  * `condenseTaxa`: condense a set of taxa to their most specific common branch
  * `makeNewick`: generate a Newick formatted tree from taxonomic output
  * `getAccessions`: find accessions for a given taxonomic ID
+ * `getDescendants`: find descendants for a given taxonomic ID
 
 And a simple use case might look like (see below for more details):
 
@@ -296,6 +297,30 @@ print(taxa)
 ## 9605 NA            
 ## 9852 "Alces alces"
 ```
+### Finding descendants for a given taxa
+The function `getDescents` can be used to find all the descendants at a taxonomic level for a given taxa. For example to find all species (the default) in the Homininae subfamily (taxonomic ID 207598):
+```{r,eval=FALSE}
+getDescendants(207598,'accessionTaxa.sql')
+```
+
+```
+## [1] "Gorilla gorilla"                   "Gorilla beringei"                 
+## [3] "Pan paniscus"                      "Pan troglodytes"                  
+## [5] "Homo sapiens"                      "Homo heidelbergensis"             
+## [7] "Homo sapiens environmental sample" "Homo sp."
+```
+
+Or all genuses:
+```{r,eval=FALSE}
+getDescendants(207598,'accessionTaxa.sql','genus')
+```
+
+```
+## [1] "Gorilla" "Pan"     "Homo"
+```
+
+
+Note that an index for the nodes table was added in v0.10.1 to make this run faster. If your database was created prior to v0.10.1 and you need maximum speed for finding descendants then then please regenerate the database.
 
 ### Finding common names for taxonomic IDs
 If you'd like to find all common and other types of names for a given taxa ID then you can use `getCommon`:
