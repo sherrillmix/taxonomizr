@@ -455,7 +455,7 @@ getParentNodes<-function(ids,sqlFile='nameNode.sqlite',getDescendants=FALSE){
   on.exit(RSQLite::dbDisconnect(db),add=TRUE)
   RSQLite::dbExecute(db, sprintf("ATTACH '%s' AS tmp",tmp))
   if(getDescendants){
-    taxaDf<-RSQLite::dbGetQuery(db,'SELECT nodes.id as descendant, name, rank FROM tmp.query LEFT OUTER JOIN nodes ON tmp.query.id=nodes.parent LEFT OUTER JOIN names ON descendant=names.id WHERE names.scientific=1 OR names.scientific IS NULL')
+    taxaDf<-RSQLite::dbGetQuery(db,'SELECT nodes.id as descendant, name, rank FROM tmp.query LEFT OUTER JOIN nodes ON tmp.query.id=nodes.parent LEFT OUTER JOIN names ON descendant=names.id WHERE (names.scientific=1 OR names.scientific IS NULL) AND nodes.id != nodes.parent')
     return(taxaDf[,c('name','descendant','rank')])
   }else{
     taxaDf<-RSQLite::dbGetQuery(db,'SELECT tmp.query.id, name,parent, rank FROM tmp.query LEFT OUTER JOIN nodes ON tmp.query.id=nodes.id LEFT OUTER JOIN names ON tmp.query.id=names.id WHERE names.scientific=1 OR names.scientific IS NULL')
@@ -665,7 +665,7 @@ getDescendants<-function(ids,sqlFile='nameNode.sqlite', desiredTaxa='species'){
   while(length(currentIds)>0){
     descendants<-getParentNodes(currentIds,sqlFile,TRUE)
     descendants<-descendants[!is.na(descendants$descendant),]
-    allIds<-c(allIds,descendants[descendants$rank %in% desiredTaxa,'name'])
+    allIds<-unique(c(allIds,descendants[descendants$rank %in% desiredTaxa,'name']))
     rep<-rep+1
     currentIds<-descendants$descendant
     if(rep>200)stop('Found cycle in taxonomy')

@@ -211,7 +211,7 @@ test_that("Test read.accession2taxid",{
   }
 })
 
-test_that("Test getTaxonomy and getRawTaxonomy",{
+test_that("Test getTaxonomy and getRawTaxonomy and getDescendants",{
   namesText<-c(
     "1\t|\tall\t|\t\t|\tsynonym\t|",
     "1\t|\troot\t|\t\t|\tscientific name\t|",
@@ -233,7 +233,9 @@ test_that("Test getTaxonomy and getRawTaxonomy",{
     "7711\t|\tChordata\t|\t\t|\tscientific name", "33511\t|\tDeuterostomia\t|\t\t|\tscientific name",
     "33213\t|\tBilateria\t|\t\t|\tscientific name", "6072\t|\tEumetazoa\t|\t\t|\tscientific name",
     "33208\t|\tMetazoa\t|\t\t|\tscientific name", "33154\t|\tOpisthokonta\t|\t\t|\tscientific name",
-    "2759\t|\tEukaryota\t|\t\t|\tscientific name", "131567\t|\tcellular organisms\t|\t\t|\tscientific name"
+    "2759\t|\tEukaryota\t|\t\t|\tscientific name", "131567\t|\tcellular organisms\t|\t\t|\tscientific name",
+    "1425170\t|\tHomo heidelbergensis\t|\t\t|\tscientific name",
+    "1234567890\t|\tMADE UP\t|\t\t|\tscientific name"
   )
   nodesText<-c(
    "1\t|\t1\t|\tno rank\t|\t\t|\t8\t|\t0\t|\t1\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
@@ -254,7 +256,8 @@ test_that("Test getTaxonomy and getRawTaxonomy",{
     "7711\t|\t33511\t|\tphylum", "33511\t|\t33213\t|\tno rank", "33213\t|\t6072\t|\tno rank",
     "6072\t|\t33208\t|\tno rank", "33208\t|\t33154\t|\tkingdom",
     "33154\t|\t2759\t|\tno rank", "2759\t|\t131567\t|\tsuperkingdom",
-    "131567\t|\t1\t|\tno rank"
+    "131567\t|\t1\t|\tno rank",  '1425170\t|\t9605\t|\tspecies',
+    "1234567890\t|\t1234567891\t|\tspecies", "1234567891\t|\t40674\t|\tfamily"
   )
   tmp<-tempfile()
   read.names.sql(textConnection(namesText),tmp)
@@ -297,6 +300,24 @@ test_that("Test getTaxonomy and getRawTaxonomy",{
   read.nodes.sql(textConnection(cycle),tmp2)
   expect_error(getTaxonomy(9606,tmp2),'cycle')
   expect_error(getRawTaxonomy(9606,tmp2),'cycle')
+  expect_equal(getDescendants(9606,tmp),as.character(c()))
+  expect_equal(getDescendants(999999999,tmp),as.character(c()))
+  expect_equal(getDescendants(-13123,tmp),as.character(c()))
+  expect_equal(getDescendants(NA,tmp),as.character(c()))
+  expect_equal(sort(getDescendants('207598',tmp)),sort(c('Homo sapiens','Homo heidelbergensis')))
+  expect_equal(sort(getDescendants(207598,tmp)),sort(c('Homo sapiens','Homo heidelbergensis')))
+  expect_equal(sort(getDescendants('1',tmp)),sort(c('Homo sapiens','Homo heidelbergensis','MADE UP')))
+  expect_equal(sort(getDescendants('40674',tmp)),sort(c('Homo sapiens','Homo heidelbergensis','MADE UP')))
+  expect_equal(getDescendants('1234567891',tmp),c('MADE UP'))
+  expect_equal(sort(getDescendants('32525',tmp)),sort(c('Homo sapiens','Homo heidelbergensis')))
+  expect_equal(sort(getDescendants(c('1234567891','32525'),tmp)),sort(c('Homo sapiens','Homo heidelbergensis','MADE UP')))
+  expect_equal(sort(getDescendants(c('1','1234567891','32525'),tmp)),sort(c('Homo sapiens','Homo heidelbergensis','MADE UP')))
+  expect_equal(getDescendants('1',tmp,'suborder'),c('Haplorrhini'))
+  expect_equal(sort(getDescendants('1',tmp,c('suborder','species'))),sort(c('Haplorrhini','Homo sapiens','Homo heidelbergensis','MADE UP')))
+  expect_equal(sort(getDescendants('1',tmp,'family')),sort(c('Hominidae',NA)))
+  expect_equal(sort(getDescendants('1',tmp,'superkingdom')),sort(c('Bacteria','Eukaryota')))
+  expect_warning(getDescendants("ASDASD",tmp),'coercion')
+  expect_error(getDescendants(9606,tmp2),'cycle')
 })
 
 test_that("Test getTaxonomy and getRawTaxonomy with duplicated taxa ranks",{
