@@ -15,7 +15,7 @@ streamingRead(
 \arguments{
 \item{bigFile}{a string giving the path to a file to be read in or a connection opened with "r" mode}
 
-\item{n}{number of lines to read per chuck}
+\item{n}{number of lines to read per chunk}
 
 \item{FUN}{a function taking the unparsed lines from a chunk of the bigfile as a single argument and returning the desired output}
 
