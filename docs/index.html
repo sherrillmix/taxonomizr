@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">taxonomizr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.10.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.10.2</span>
       </span>
     </div>
 
@@ -467,6 +467,14 @@ read2   gi|160426828|gb|CP000885.1|     68.46   1763    452     82      3       
 <div class="section level2">
 <h2 id="changelog">Changelog<a class="anchor" aria-label="anchor" href="#changelog"></a>
 </h2>
+<div class="section level3">
+<h3 id="v0102">v0.10.2<a class="anchor" aria-label="anchor" href="#v0102"></a>
+</h3>
+<ul>
+<li>Behind the scenes switch to <code>multi_download</code> function from <code>curl</code> package to allow download resumption on interrupted downloads. This adds a dependency that <code>curl</code> package be &gt;=5.0.0.</li>
+<li>Add <code>protocol</code> option to choose between FTP and HTTP protocols for downloading. The two protocols should perform similarly and the relative speeds of NCBI’s ftp and http servers seem to vary so probably not a whole lot of reason to choose one over the other unless a firewall is blocking FTP ports.</li>
+</ul>
+</div>
 <div class="section level3">
 <h3 id="v0101">v0.10.1<a class="anchor" aria-label="anchor" href="#v0101"></a>
 </h3>

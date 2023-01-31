@@ -26,6 +26,7 @@ prepareDatabase(
   \describe{
     \item{\code{url}}{the url where taxdump.tar.gz is located}
     \item{\code{fileNames}}{the filenames desired from the tar.gz file}
+    \item{\code{protocol}}{the protocol to be used for downloading. Probably either \code{'http'} or \code{'ftp'}. Overridden if \code{url} is provided directly}
     \item{\code{baseUrl}}{the url of the directory where accession2taxid.gz files are located}
     \item{\code{types}}{the types if accession2taxid.gz files desired where type is the prefix of xxx.accession2taxid.gz. The default is to download all nucl_ accessions. For protein accessions, try \code{types=c('prot')}.}
     \item{\code{extraSqlCommand}}{for advanced use. A string giving a command to be called on the SQLite database before loading data. A couple potential uses: 

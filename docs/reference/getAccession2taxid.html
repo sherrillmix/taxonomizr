@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">taxonomizr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.10.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.10.2</span>
       </span>
     </div>
 
@@ -62,8 +62,9 @@
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">getAccession2taxid</span><span class="op">(</span>
   outDir <span class="op">=</span> <span class="st">"."</span>,
-  baseUrl <span class="op">=</span> <span class="st">"ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/"</span>,
-  types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"nucl_gb"</span>, <span class="st">"nucl_wgs"</span><span class="op">)</span>
+  baseUrl <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"%s://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/"</span>, <span class="va">protocol</span><span class="op">)</span>,
+  types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"nucl_gb"</span>, <span class="st">"nucl_wgs"</span><span class="op">)</span>,
+  protocol <span class="op">=</span> <span class="st">"ftp"</span>
 <span class="op">)</span></code></pre></div>
     </div>
 
@@ -79,6 +80,10 @@
 
 <dt>types</dt>
 <dd><p>the types if accession2taxid.gz files desired where type is the prefix of xxx.accession2taxid.gz. The default is to download all nucl_ accessions. For protein accessions, try <code>types=c('prot')</code>.</p></dd>
+
+
+<dt>protocol</dt>
+<dd><p>the protocol to be used for downloading. Probably either <code>'http'</code> or <code>'ftp'</code>. Overridden if <code>baseUrl</code> is provided directly</p></dd>
 
 </dl></div>
     <div id="value">

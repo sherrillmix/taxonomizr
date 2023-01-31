@@ -6,8 +6,9 @@
 \usage{
 getNamesAndNodes(
   outDir = ".",
-  url = "ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz",
-  fileNames = c("names.dmp", "nodes.dmp")
+  url = sprintf("\%s://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz", protocol),
+  fileNames = c("names.dmp", "nodes.dmp"),
+  protocol = "ftp"
 )
 }
 \arguments{
@@ -16,6 +17,8 @@ getNamesAndNodes(
 \item{url}{the url where taxdump.tar.gz is located}
 
 \item{fileNames}{the filenames desired from the tar.gz file}
+
+\item{protocol}{the protocol to be used for downloading. Probably either \code{'http'} or \code{'ftp'}. Overridden if \code{url} is provided directly}
 }
 \value{
 a vector of file path strings of the locations of the output files

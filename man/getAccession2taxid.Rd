@@ -6,8 +6,9 @@
 \usage{
 getAccession2taxid(
   outDir = ".",
-  baseUrl = "ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/",
-  types = c("nucl_gb", "nucl_wgs")
+  baseUrl = sprintf("\%s://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/", protocol),
+  types = c("nucl_gb", "nucl_wgs"),
+  protocol = "ftp"
 )
 }
 \arguments{
@@ -16,6 +17,8 @@ getAccession2taxid(
 \item{baseUrl}{the url of the directory where accession2taxid.gz files are located}
 
 \item{types}{the types if accession2taxid.gz files desired where type is the prefix of xxx.accession2taxid.gz. The default is to download all nucl_ accessions. For protein accessions, try \code{types=c('prot')}.}
+
+\item{protocol}{the protocol to be used for downloading. Probably either \code{'http'} or \code{'ftp'}. Overridden if \code{baseUrl} is provided directly}
 }
 \value{
 a vector of file path strings of the locations of the output files
