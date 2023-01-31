@@ -883,7 +883,7 @@ condenseTaxa<-function(taxaTable,groupings=rep(1,nrow(taxaTable))){
 #' @param outDir the directory to put names.dmp and nodes.dmp in
 #' @param url the url where taxdump.tar.gz is located
 #' @param fileNames the filenames desired from the tar.gz file
-#' @param protocol the protocol to be used for downloading. Probably either \code{'http'} or \code{'ftp'}.
+#' @param protocol the protocol to be used for downloading. Probably either \code{'http'} or \code{'ftp'}. Overridden if \code{url} is provided directly
 #' @return a vector of file path strings of the locations of the output files
 #' @seealso \code{\link{read.nodes.sql}}, \code{\link{read.names.sql}}
 #' @references \url{https://ftp.ncbi.nih.gov/pub/taxonomy/}, \url{https://www.ncbi.nlm.nih.gov/Taxonomy/taxonomyhome.html/}
@@ -920,7 +920,7 @@ getNamesAndNodes<-function(outDir='.',url=sprintf('%s://ftp.ncbi.nih.gov/pub/tax
 #' @param outDir the directory to put the accession2taxid.gz files in
 #' @param baseUrl the url of the directory where accession2taxid.gz files are located
 #' @param types the types if accession2taxid.gz files desired where type is the prefix of xxx.accession2taxid.gz. The default is to download all nucl_ accessions. For protein accessions, try \code{types=c('prot')}.
-#' @param protocol the protocol to be used for downloading. Probably either \code{'http'} or \code{'ftp'}.
+#' @param protocol the protocol to be used for downloading. Probably either \code{'http'} or \code{'ftp'}. Overridden if \code{baseUrl} is provided directly
 #' @return a vector of file path strings of the locations of the output files
 #' @seealso \code{\link{read.accession2taxid}}
 #' @references \url{https://ftp.ncbi.nih.gov/pub/taxonomy/}, \url{https://www.ncbi.nlm.nih.gov/genbank/acc_prefix/}
