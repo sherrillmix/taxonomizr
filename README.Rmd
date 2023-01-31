@@ -606,6 +606,10 @@ Note that taxa may be the most specific taxon for a given taxa in the taxonomy m
 
 
 ## Changelog
+### v0.10.2
+  * Behind the scenes switch to `multi_download` function from `curl` package to allow download resumption on interrupted downloads. This adds a dependency that `curl` package be >=5.0.0.
+  * Add `protocol` option to choose between FTP and HTTP protocols for downloading. The two protocols should perform similarly and the relative speeds of NCBI's ftp and http servers seem to vary so probably not a whole lot of reason to choose one over the other unless a firewall is blocking FTP ports.
+
 ### v0.10.1
   * Add `getDescendants` function to get all descendants for a given taxon
 

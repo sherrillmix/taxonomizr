@@ -883,6 +883,7 @@ condenseTaxa<-function(taxaTable,groupings=rep(1,nrow(taxaTable))){
 #' @param outDir the directory to put names.dmp and nodes.dmp in
 #' @param url the url where taxdump.tar.gz is located
 #' @param fileNames the filenames desired from the tar.gz file
+#' @param protocol the protocol to be used for downloading. Probably either \code{'http'} or \code{'ftp'}.
 #' @return a vector of file path strings of the locations of the output files
 #' @seealso \code{\link{read.nodes.sql}}, \code{\link{read.names.sql}}
 #' @references \url{https://ftp.ncbi.nih.gov/pub/taxonomy/}, \url{https://www.ncbi.nlm.nih.gov/Taxonomy/taxonomyhome.html/}
@@ -891,20 +892,20 @@ condenseTaxa<-function(taxaTable,groupings=rep(1,nrow(taxaTable))){
 #' \dontrun{
 #'   getNamesAndNodes()
 #' }
-getNamesAndNodes<-function(outDir='.',url='ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz',fileNames=c('names.dmp','nodes.dmp')){
+getNamesAndNodes<-function(outDir='.',url=sprintf('%s://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz',protocol),fileNames=c('names.dmp','nodes.dmp'),protocol='ftp'){
   outFiles<-file.path(outDir,fileNames)
   if(all(file.exists(outFiles))){
     message(paste(outFiles,collapse=', '),' already exist. Delete to redownload')
     return(outFiles)
   }
   base<-basename(url)
-  tmp<-tempfile()
-  dir.create(tmp)
-  tarFile<-file.path(tmp,base)
-  curl::curl_download(url,tarFile,mode='wb',quiet=FALSE)
+  tmpDir<-tempfile()
+  dir.create(tmpDir)
+  tarFile<-file.path(tempdir(),base)
+  resumableDownload(url,tarFile,quiet=FALSE)
   if(!checkDownloadMd5(url,tarFile))stop('Downloaded file does not match ',url,' File corrupted or download ended early?')
-  utils::untar(tarFile,fileNames,exdir=tmp,tar='internal')
-  tmpFiles<-file.path(tmp,fileNames)
+  utils::untar(tarFile,fileNames,exdir=tmpDir,tar='internal')
+  tmpFiles<-file.path(tmpDir,fileNames)
   if(!all(file.exists(tmpFiles)))stop("Problem finding files ",paste(tmpFiles[!file.exists(tmpFiles)],collapse=', '))
   mapply(file.copy,tmpFiles,outFiles)
   if(!all(file.exists(outFiles)))stop("Problem copying files ",paste(outFiles[!file.exists(outFiles)],collapse=', '))
@@ -919,6 +920,7 @@ getNamesAndNodes<-function(outDir='.',url='ftp://ftp.ncbi.nih.gov/pub/taxonomy/t
 #' @param outDir the directory to put the accession2taxid.gz files in
 #' @param baseUrl the url of the directory where accession2taxid.gz files are located
 #' @param types the types if accession2taxid.gz files desired where type is the prefix of xxx.accession2taxid.gz. The default is to download all nucl_ accessions. For protein accessions, try \code{types=c('prot')}.
+#' @param protocol the protocol to be used for downloading. Probably either \code{'http'} or \code{'ftp'}.
 #' @return a vector of file path strings of the locations of the output files
 #' @seealso \code{\link{read.accession2taxid}}
 #' @references \url{https://ftp.ncbi.nih.gov/pub/taxonomy/}, \url{https://www.ncbi.nlm.nih.gov/genbank/acc_prefix/}
@@ -933,7 +935,7 @@ getNamesAndNodes<-function(outDir='.',url='ftp://ftp.ncbi.nih.gov/pub/taxonomy/t
 #'
 #'   getAccession2taxid()
 #' }
-getAccession2taxid<-function(outDir='.',baseUrl='ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/',types=c('nucl_gb','nucl_wgs')){
+getAccession2taxid<-function(outDir='.',baseUrl=sprintf('%s://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/',protocol),types=c('nucl_gb','nucl_wgs'),protocol='ftp'){
   message('This can be a big (several gigabytes) download. Please be patient and use a fast connection.')
   fileNames<-sprintf('%s.accession2taxid.gz',types)
   outFiles<-file.path(outDir,fileNames)
@@ -944,7 +946,7 @@ getAccession2taxid<-function(outDir='.',baseUrl='ftp://ftp.ncbi.nih.gov/pub/taxo
   if(!substring(baseUrl,nchar(baseUrl)) %in% c('/','\\'))baseUrl<-sprintf('%s/',baseUrl)
   urls<-paste(baseUrl,fileNames,sep='')
   mapply(function(xx,yy){
-    curl::curl_download(xx,yy,mode='wb',quiet=FALSE)
+    resumableDownload(xx,yy)
     if(!checkDownloadMd5(xx,yy))stop('Downloaded file does not match ',xx,' File corrupted or download ended early?')
   },urls,outFiles)
   return(outFiles)
@@ -1362,6 +1364,38 @@ topoSort<-function(vectors,maxIter=1000,errorIfAmbiguous=FALSE){
   }
   return(unname(out))
 }
+
+#' Download file using curl allowing resumption of interrupted files
+#'
+#' A helper function that uses the \code{curl} package's \code{multi_download} to download a file using a temporary file to store progress and resume downloading on interruption.
+#' @param url The address to download from
+#' @param outFile The file location to store final download at
+#' @param tmpFile The file location to store the intermediate download at
+#' @param quiet If TRUE show the progress reported by \code{multi_download}
+#' @param resume If TRUE try to resume interrupted downloads using intermediate file \code{tmpFile}. Otherwise delete \code{tempFile} on error
+#' @param ... Additional arguments to \code{multi_download}
+#' @return invisibly return the output frmo multi_download
+#' @seealso \code{\link[curl]{multi_download}}
+#' @examples
+#' \dontrun{
+#'   url<-'https://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/prot.accession2taxid.FULL.1.gz'
+#'   resumableDownload(url,'downloadedFile.gz')
+#' }
+resumableDownload<-function(url,outFile=basename(url),tmpFile=sprintf('%s.__TMP__',outFile),quiet=FALSE,resume=TRUE,...){
+  if(!resume) on.exit(unlink(tmpFile))
+  out<-curl::multi_download(url,tmpFile,progress=!quiet,resume=resume,...)
+  if(is.na(out$success)||!out$success){
+    if(length(out$error)>0&&!is.na(out$error))extraError<-sprintf(' with error: "%s"',out$error)
+    else extraError<-''
+    if(resume&&file.exists(tmpFile)&&file.size(tmpFile)>0){
+      extraError<-sprintf('%s. Progress is saved in %s and continued download can be attempted by repeating the previous command.\nDelete %s or set resume=FALSE to start from scratch',extraError,tmpFile,tmpFile)
+    }
+    stop('Download failed',extraError,'.')
+  }
+  file.rename(tmpFile,outFile)
+  invisible(out)
+}
+
 
 #' Switch from data.table to SQLite
 #'
