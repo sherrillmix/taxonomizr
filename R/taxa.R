@@ -810,12 +810,13 @@ accessionToTaxa<-function(accessions,sqlFile,version=c('version','base')){
   tmpDb <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=tmp)
   on.exit(if(file.exists(tmp))file.remove(tmp))
   on.exit(RSQLite::dbDisconnect(tmpDb),add=TRUE)
-  RSQLite::dbWriteTable(tmpDb,'query',data.frame('accession'=accessions,stringsAsFactors=FALSE),overwrite=TRUE)
+  RSQLite::dbWriteTable(tmpDb,'query',data.frame('accession'=as.character(accessions),stringsAsFactors=FALSE),overwrite=TRUE)
   #load the big sql
   db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
   on.exit(RSQLite::dbDisconnect(db),add=TRUE)
   #attach the temp table
   RSQLite::dbExecute(db, sprintf("ATTACH '%s' AS tmp",tmp))
+  #hangs on next if accessions are numeric
   taxaDf<-RSQLite::dbGetQuery(db,sprintf('SELECT tmp.query.accession, taxa FROM tmp.query LEFT OUTER JOIN accessionTaxa ON tmp.query.accession=accessionTaxa.%s',version))
   RSQLite::dbExecute(db,'DROP TABLE tmp.query')
   RSQLite::dbExecute(db,'DETACH tmp')
