@@ -671,6 +671,9 @@ Note that taxa may be the most specific taxon for a given taxa in the taxonomy m
 
 ## Changelog
 
+### v0.10.4
+  * Minor improvement to output md5 and modification date for downloads to aid in debugging network issues
+
 ### v0.10.3
   * Minor fix to prevent `accessionToTaxa` from hanging when given numeric inputs
 
