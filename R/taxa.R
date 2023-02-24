@@ -468,13 +468,14 @@ getParentNodes<-function(ids,sqlFile='nameNode.sqlite',getDescendants=FALSE){
 checkDownloadMd5<-function(url,file,errorIfNoMd5=FALSE){
   md5<-sprintf('%s.md5',url)
   tmp<-tempfile()
-  check<-tryCatch(curl::curl_download(md5,tmp,mode='wb',quiet=FALSE),warning=function(xx)FALSE,error=function(xx)FALSE)
+  check<-tryCatch(curl::curl_download(md5,tmp,mode='wb',quiet=TRUE),warning=function(xx)FALSE,error=function(xx)FALSE)
   if(check==FALSE){
     if(errorIfNoMd5)stop("Problem downloading md5 ",md5)
-    else return(TRUE)
+    else return(list('result'=TRUE,'remote'=as.character(NA),'local'=as.character(NA)))
   }
   hash<-strsplit(readLines(tmp),' ')[[1]][1]
-  return(hash==tools::md5sum(file))
+  localHash<-tools::md5sum(file)
+  return(list('result'=unname(hash==localHash),'remote'=hash,'local'=unname(localHash)))
 }
 
 
@@ -904,7 +905,8 @@ getNamesAndNodes<-function(outDir='.',url=sprintf('%s://ftp.ncbi.nih.gov/pub/tax
   dir.create(tmpDir)
   tarFile<-file.path(tempdir(),base)
   resumableDownload(url,tarFile,quiet=FALSE)
-  if(!checkDownloadMd5(url,tarFile))stop('Downloaded file does not match ',url,' File corrupted or download ended early?')
+  check<-checkDownloadMd5(url,tarFile)
+  if(!check[['result']])stop('Downloaded file does not match ',url,' File corrupted or download ended early?\nLocal: ',check[['local']],'\nRemote: ',check[['remote']])
   utils::untar(tarFile,fileNames,exdir=tmpDir,tar='internal')
   tmpFiles<-file.path(tmpDir,fileNames)
   if(!all(file.exists(tmpFiles)))stop("Problem finding files ",paste(tmpFiles[!file.exists(tmpFiles)],collapse=', '))
@@ -948,7 +950,8 @@ getAccession2taxid<-function(outDir='.',baseUrl=sprintf('%s://ftp.ncbi.nih.gov/p
   urls<-paste(baseUrl,fileNames,sep='')
   mapply(function(xx,yy){
     resumableDownload(xx,yy)
-    if(!checkDownloadMd5(xx,yy))stop('Downloaded file does not match ',xx,' File corrupted or download ended early?')
+    check<-checkDownloadMd5(xx,yy)
+    if(!check[['result']])stop('Downloaded file does not match ',xx,' File corrupted or download ended early?\nLocal: ',check[['local']],'\nRemote: ',check[['remote']])
   },urls,outFiles)
   return(outFiles)
 }
@@ -1394,6 +1397,7 @@ resumableDownload<-function(url,outFile=basename(url),tmpFile=sprintf('%s.__TMP_
     stop('Download failed',extraError,'.')
   }
   file.rename(tmpFile,outFile)
+  if(!quiet)message('Downloaded file: ',out$url,'\nModified: ',out$modified,'\nStatus: ',out$status_code)
   invisible(out)
 }
 

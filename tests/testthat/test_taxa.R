@@ -558,17 +558,16 @@ test_that("Test checkDownloadMd5",{
   writeLines('THISISSOMEDATA',tmp)
   writeLines('THISISSOMEOTHERDATA',tmp2)
   md5<-tools::md5sum(tmp)
-  expect_true(checkDownloadMd5(sprintf('file://%s',tmp),tmp2)) #no md5 so can't check and doesn't error
-  expect_error(checkDownloadMd5(sprintf('file://%s',tmp),tmp2,TRUE),'md5') #no md5 so can't check and error flag set
-  writeLines(sprintf('%s EXTRASTUFF',md5),sprintf('%s.md5',tmp))
-  expect_false(checkDownloadMd5(sprintf('file://%s',tmp),tmp2))
-  file.copy(tmp,tmp2,TRUE)
-  expect_true(checkDownloadMd5(sprintf('file://%s',tmp),tmp2))
-  writeLines(sprintf('SOMEOTHERMD5 EXTRASTUFF %s',md5),sprintf('%s.md5',tmp))
-  expect_false(checkDownloadMd5(sprintf('file://%s',tmp),tmp2))
+  expect_equal(checkDownloadMd5(sprintf('file://%s',tmp),tmp),list('result'=TRUE,'remote'=as.character(NA),'local'=as.character(NA))) #no md5 so can't check and doesn't error
+  expect_equal(checkDownloadMd5(sprintf('file://%s',tmp),tmp),list('result'=TRUE,'remote'=as.character(NA),'local'=as.character(NA))) #repeat in case funny cache or something
+  expect_error(checkDownloadMd5(sprintf('file://%s',tmp),tmp,TRUE)[['result']],'md5') #no md5 so can't check and error flag set
+  badMd5<-sprintf('%sEXTRASTUFF',md5)
+  writeLines(badMd5,sprintf('%s.md5',tmp))
+  expect_equal(checkDownloadMd5(sprintf('file://%s',tmp),tmp),list('result'=FALSE,'remote'=unname(badMd5),'local'=unname(md5)))
+  writeLines(md5,sprintf('%s.md5',tmp))
+  expect_equal(checkDownloadMd5(sprintf('file://%s',tmp),tmp),list('result'=TRUE,'remote'=unname(md5),'local'=unname(md5)))
+  expect_equal(checkDownloadMd5(sprintf('file://%s',tmp),tmp2),list('result'=FALSE,'remote'=unname(md5),'local'=unname(tools::md5sum(tmp2))))
 })
-
-
 
 test_that("Test accessionToTaxa",{
   taxa<-c(
@@ -952,6 +951,8 @@ test_that("Test resumableDownload",{
   expect_equal(readLines(tmpFile2),c('NEWZ','ZZ','a','test'))
   writeLines("NEWZ\nZZ",tmpFile3)
   expect_true(resumableDownload(sprintf('file://%s',tmpFile),tmpFile2,tmpFile=tmpFile3,resume=FALSE)$success)
+  expect_message(resumableDownload(sprintf('file://%s',tmpFile),tmpFile2,tmpFile=tmpFile3,resume=FALSE),'Modified')
+  expect_message(resumableDownload(sprintf('file://%s',tmpFile),tmpFile2,tmpFile=tmpFile3,resume=FALSE,quiet=TRUE),NA)
   expect_equal(readLines(tmpFile2),c('This','is','a','test'))
   expect_error(resumableDownload('file://NOTAREALFILE.FAKE',tmpFile2),'error')
   expect_silent(resumableDownload(sprintf('file://%s',tmpFile),tmpFile2,tmpFile=tmpFile3,quiet=TRUE)) #this doesn't actually verify curl is silent
