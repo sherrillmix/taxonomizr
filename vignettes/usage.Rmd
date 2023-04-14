@@ -603,6 +603,11 @@ Note that taxa may be the most specific taxon for a given taxa in the taxonomy m
 
 ## Changelog
 
+### v0.10.5
+  * Catch 404 errors and report as errors
+  * Add resume argument to download functions
+  * Don't retain temp files for downloads if less than 10kb
+
 ### v0.10.4
   * Minor improvement to output md5 and modification date for downloads to aid in debugging network issues
 

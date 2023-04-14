@@ -8,7 +8,8 @@ getNamesAndNodes(
   outDir = ".",
   url = sprintf("\%s://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz", protocol),
   fileNames = c("names.dmp", "nodes.dmp"),
-  protocol = "ftp"
+  protocol = "ftp",
+  resume = TRUE
 )
 }
 \arguments{
@@ -19,6 +20,8 @@ getNamesAndNodes(
 \item{fileNames}{the filenames desired from the tar.gz file}
 
 \item{protocol}{the protocol to be used for downloading. Probably either \code{'http'} or \code{'ftp'}. Overridden if \code{url} is provided directly}
+
+\item{resume}{if TRUE attempt to resume downloading an interrupted file without starting over from the beginning}
 }
 \value{
 a vector of file path strings of the locations of the output files

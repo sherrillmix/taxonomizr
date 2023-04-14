@@ -8,7 +8,8 @@ getAccession2taxid(
   outDir = ".",
   baseUrl = sprintf("\%s://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/", protocol),
   types = c("nucl_gb", "nucl_wgs"),
-  protocol = "ftp"
+  protocol = "ftp",
+  resume = TRUE
 )
 }
 \arguments{
@@ -19,6 +20,8 @@ getAccession2taxid(
 \item{types}{the types if accession2taxid.gz files desired where type is the prefix of xxx.accession2taxid.gz. The default is to download all nucl_ accessions. For protein accessions, try \code{types=c('prot')}.}
 
 \item{protocol}{the protocol to be used for downloading. Probably either \code{'http'} or \code{'ftp'}. Overridden if \code{baseUrl} is provided directly}
+
+\item{resume}{if TRUE attempt to resume downloading an interrupted file without starting over from the beginning}
 }
 \value{
 a vector of file path strings of the locations of the output files

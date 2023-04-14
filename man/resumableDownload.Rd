@@ -27,7 +27,7 @@ resumableDownload(
 \item{...}{Additional arguments to \code{multi_download}}
 }
 \value{
-invisibly return the output frmo multi_download
+invisibly return the output from multi_download
 }
 \description{
 A helper function that uses the \code{curl} package's \code{multi_download} to download a file using a temporary file to store progress and resume downloading on interruption.

@@ -886,6 +886,7 @@ condenseTaxa<-function(taxaTable,groupings=rep(1,nrow(taxaTable))){
 #' @param url the url where taxdump.tar.gz is located
 #' @param fileNames the filenames desired from the tar.gz file
 #' @param protocol the protocol to be used for downloading. Probably either \code{'http'} or \code{'ftp'}. Overridden if \code{url} is provided directly
+#' @param resume if TRUE attempt to resume downloading an interrupted file without starting over from the beginning
 #' @return a vector of file path strings of the locations of the output files
 #' @seealso \code{\link{read.nodes.sql}}, \code{\link{read.names.sql}}
 #' @references \url{https://ftp.ncbi.nih.gov/pub/taxonomy/}, \url{https://www.ncbi.nlm.nih.gov/Taxonomy/taxonomyhome.html/}
@@ -894,7 +895,7 @@ condenseTaxa<-function(taxaTable,groupings=rep(1,nrow(taxaTable))){
 #' \dontrun{
 #'   getNamesAndNodes()
 #' }
-getNamesAndNodes<-function(outDir='.',url=sprintf('%s://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz',protocol),fileNames=c('names.dmp','nodes.dmp'),protocol='ftp'){
+getNamesAndNodes<-function(outDir='.',url=sprintf('%s://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz',protocol),fileNames=c('names.dmp','nodes.dmp'),protocol='ftp',resume=TRUE){
   outFiles<-file.path(outDir,fileNames)
   if(all(file.exists(outFiles))){
     message(paste(outFiles,collapse=', '),' already exist. Delete to redownload')
@@ -904,7 +905,7 @@ getNamesAndNodes<-function(outDir='.',url=sprintf('%s://ftp.ncbi.nih.gov/pub/tax
   tmpDir<-tempfile()
   dir.create(tmpDir)
   tarFile<-file.path(tempdir(),base)
-  resumableDownload(url,tarFile,quiet=FALSE)
+  resumableDownload(url,tarFile,resume=resume)
   check<-checkDownloadMd5(url,tarFile)
   if(!check[['result']])stop('Downloaded file does not match ',url,' File corrupted or download ended early?\nLocal: ',check[['local']],'\nRemote: ',check[['remote']])
   utils::untar(tarFile,fileNames,exdir=tmpDir,tar='internal')
@@ -924,6 +925,7 @@ getNamesAndNodes<-function(outDir='.',url=sprintf('%s://ftp.ncbi.nih.gov/pub/tax
 #' @param baseUrl the url of the directory where accession2taxid.gz files are located
 #' @param types the types if accession2taxid.gz files desired where type is the prefix of xxx.accession2taxid.gz. The default is to download all nucl_ accessions. For protein accessions, try \code{types=c('prot')}.
 #' @param protocol the protocol to be used for downloading. Probably either \code{'http'} or \code{'ftp'}. Overridden if \code{baseUrl} is provided directly
+#' @param resume if TRUE attempt to resume downloading an interrupted file without starting over from the beginning
 #' @return a vector of file path strings of the locations of the output files
 #' @seealso \code{\link{read.accession2taxid}}
 #' @references \url{https://ftp.ncbi.nih.gov/pub/taxonomy/}, \url{https://www.ncbi.nlm.nih.gov/genbank/acc_prefix/}
@@ -938,18 +940,18 @@ getNamesAndNodes<-function(outDir='.',url=sprintf('%s://ftp.ncbi.nih.gov/pub/tax
 #'
 #'   getAccession2taxid()
 #' }
-getAccession2taxid<-function(outDir='.',baseUrl=sprintf('%s://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/',protocol),types=c('nucl_gb','nucl_wgs'),protocol='ftp'){
-  message('This can be a big (several gigabytes) download. Please be patient and use a fast connection.')
+getAccession2taxid<-function(outDir='.',baseUrl=sprintf('%s://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/',protocol),types=c('nucl_gb','nucl_wgs'),protocol='ftp',resume=TRUE){
   fileNames<-sprintf('%s.accession2taxid.gz',types)
   outFiles<-file.path(outDir,fileNames)
   if(all(file.exists(outFiles))){
     message(paste(outFiles,collapse=', '),' already exist. Delete to redownload')
     return(outFiles)
   }
+  message('This can be a big (several gigabytes) download. Please be patient and use a fast connection.')
   if(!substring(baseUrl,nchar(baseUrl)) %in% c('/','\\'))baseUrl<-sprintf('%s/',baseUrl)
   urls<-paste(baseUrl,fileNames,sep='')
   mapply(function(xx,yy){
-    resumableDownload(xx,yy)
+    resumableDownload(xx,yy,resume=resume)
     check<-checkDownloadMd5(xx,yy)
     if(!check[['result']])stop('Downloaded file does not match ',xx,' File corrupted or download ended early?\nLocal: ',check[['local']],'\nRemote: ',check[['remote']])
   },urls,outFiles)
@@ -1378,7 +1380,7 @@ topoSort<-function(vectors,maxIter=1000,errorIfAmbiguous=FALSE){
 #' @param quiet If TRUE show the progress reported by \code{multi_download}
 #' @param resume If TRUE try to resume interrupted downloads using intermediate file \code{tmpFile}. Otherwise delete \code{tempFile} on error
 #' @param ... Additional arguments to \code{multi_download}
-#' @return invisibly return the output frmo multi_download
+#' @return invisibly return the output from multi_download
 #' @seealso \code{\link[curl]{multi_download}}
 #' @examples
 #' \dontrun{
@@ -1386,13 +1388,23 @@ topoSort<-function(vectors,maxIter=1000,errorIfAmbiguous=FALSE){
 #'   resumableDownload(url,'downloadedFile.gz')
 #' }
 resumableDownload<-function(url,outFile=basename(url),tmpFile=sprintf('%s.__TMP__',outFile),quiet=FALSE,resume=TRUE,...){
+  minTmpFileSize<-10000
   if(!resume) on.exit(unlink(tmpFile))
   out<-curl::multi_download(url,tmpFile,progress=!quiet,resume=resume,...)
+  if(out$status_code >399){ #could also use not %in% c(0,200,206) here but assuming outside 200/300 range = error
+    out$success<-FALSE
+    if(!'error' %in% colnames(out) || is.na(out$error))out$error<-sprintf('Error status code %d returned',out$status_code)
+  }
   if(is.na(out$success)||!out$success){
     if(length(out$error)>0&&!is.na(out$error))extraError<-sprintf(' with error: "%s"',out$error)
     else extraError<-''
-    if(resume&&file.exists(tmpFile)&&file.size(tmpFile)>0){
-      extraError<-sprintf('%s. Progress is saved in %s and continued download can be attempted by repeating the previous command.\nDelete %s or set resume=FALSE to start from scratch',extraError,tmpFile,tmpFile)
+    if(resume&&file.exists(tmpFile)){
+      if(file.size(tmpFile)>minTmpFileSize){
+        extraError<-sprintf('%s. Progress is saved in %s and continued download can be attempted by repeating the previous command.\nDelete %s or set resume=FALSE to start from scratch',extraError,tmpFile,tmpFile)
+      }else{
+        #too small to be useful so clear
+        unlink(tmpFile)
+      }
     }
     stop('Download failed',extraError,'.')
   }

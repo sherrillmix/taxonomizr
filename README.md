@@ -5,8 +5,8 @@
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/taxonomizr)](https://cran.r-project.org/package=taxonomizr)
 
 ## Note: NCBI Name changes in early 2023
-Please note that the [NCBI is planning to change their naming of several major prokaryote phylums](https://ncbiinsights.ncbi.nlm.nih.gov/2022/11/14/prokaryotic-phylum-name-changes/) e.g. [Firmicutes will become Bacillota](https://ftp.ncbi.nih.gov/pub/taxonomy/Major_phylum_updates_for_prokaryotes_2023.txt). The exact date that this transition will percolate into the taxonomy downloads used for this package is not precisely defined but it seems likely to be sometime early in 2023.
 
+Please note that the [NCBI is planning to change their naming of several major prokaryote phylums](https://ncbiinsights.ncbi.nlm.nih.gov/2022/11/14/prokaryotic-phylum-name-changes/) e.g. [Firmicutes will become Bacillota](https://ftp.ncbi.nih.gov/pub/taxonomy/Major_phylum_updates_for_prokaryotes_2023.txt). The exact date that this transition will percolate into the taxonomy downloads used for this package is not precisely defined but it seems likely to be sometime early in 2023.
 Please watch out for any problems that could arise. For example: 
   * names of assigned taxonomy may shift after updating a database to a post-change version
   * comparisons of old analyses performed pre-change to new analyses performed post-change will need to be done with care
@@ -670,6 +670,11 @@ Note that taxa may be the most specific taxon for a given taxa in the taxonomy m
 
 
 ## Changelog
+
+### v0.10.5
+  * Catch 404 errors and report as errors
+  * Add resume argument to download functions
+  * Don't retain temp files for downloads if less than 10kb
 
 ### v0.10.4
   * Minor improvement to output md5 and modification date for downloads to aid in debugging network issues
