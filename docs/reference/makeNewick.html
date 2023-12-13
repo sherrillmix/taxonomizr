@@ -60,13 +60,13 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">makeNewick</span><span class="op">(</span>
-  <span class="va">taxa</span>,
-  naSub <span class="op">=</span> <span class="st">"_"</span>,
-  excludeTerminalNAs <span class="op">=</span> <span class="cn">FALSE</span>,
-  quote <span class="op">=</span> <span class="cn">NULL</span>,
-  terminator <span class="op">=</span> <span class="st">";"</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">makeNewick</span><span class="op">(</span></span>
+<span>  <span class="va">taxa</span>,</span>
+<span>  naSub <span class="op">=</span> <span class="st">"_"</span>,</span>
+<span>  excludeTerminalNAs <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  quote <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  terminator <span class="op">=</span> <span class="st">";"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -104,15 +104,15 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">taxa</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'A'</span>,<span class="st">'A'</span>,<span class="st">'A'</span>,<span class="st">'B'</span>,<span class="st">'B'</span>,<span class="st">'C'</span>,<span class="st">'D'</span>,<span class="st">'D'</span>,<span class="st">'E'</span>,<span class="st">'F'</span>,<span class="st">'G'</span>,<span class="st">'H'</span><span class="op">)</span>,nrow<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu">makeNewick</span><span class="op">(</span><span class="va">taxa</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">taxa</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'A'</span>,<span class="st">'A'</span>,<span class="st">'A'</span>,<span class="st">'B'</span>,<span class="st">'B'</span>,<span class="st">'C'</span>,<span class="st">'D'</span>,<span class="st">'D'</span>,<span class="st">'E'</span>,<span class="st">'F'</span>,<span class="st">'G'</span>,<span class="st">'H'</span><span class="op">)</span>,nrow<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">makeNewick</span><span class="op">(</span><span class="va">taxa</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "((((F,G)D)B,((H)E)C)A);"</span>
-<span class="r-in"><span class="va">taxa</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'A'</span>,<span class="st">'A'</span>,<span class="st">'A'</span>,<span class="st">'B'</span>,<span class="cn">NA</span>,<span class="st">'C'</span>,<span class="st">'D'</span>,<span class="st">'D'</span>,<span class="cn">NA</span>,<span class="st">'F'</span>,<span class="st">'G'</span>,<span class="cn">NA</span><span class="op">)</span>,nrow<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu">makeNewick</span><span class="op">(</span><span class="va">taxa</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="va">taxa</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'A'</span>,<span class="st">'A'</span>,<span class="st">'A'</span>,<span class="st">'B'</span>,<span class="cn">NA</span>,<span class="st">'C'</span>,<span class="st">'D'</span>,<span class="st">'D'</span>,<span class="cn">NA</span>,<span class="st">'F'</span>,<span class="st">'G'</span>,<span class="cn">NA</span><span class="op">)</span>,nrow<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">makeNewick</span><span class="op">(</span><span class="va">taxa</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "((((F)D)B,((G)D)_,((_)_)C)A);"</span>
-<span class="r-in"><span class="fu">makeNewick</span><span class="op">(</span><span class="va">taxa</span>,excludeTerminalNAs<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">makeNewick</span><span class="op">(</span><span class="va">taxa</span>,excludeTerminalNAs<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "((((F)D)B,((G)D)_,C)A);"</span>
-<span class="r-in"><span class="fu">makeNewick</span><span class="op">(</span><span class="va">taxa</span>,quote<span class="op">=</span><span class="st">"'"</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">makeNewick</span><span class="op">(</span><span class="va">taxa</span>,quote<span class="op">=</span><span class="st">"'"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "(((('F')'D')'B',(('G')'D')_,((_)_)'C')'A');"</span>
 </code></pre></div>
     </div>
@@ -128,7 +128,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

@@ -60,7 +60,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">getAccessions</span><span class="op">(</span><span class="va">taxaId</span>, <span class="va">sqlFile</span>, version <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"version"</span>, <span class="st">"base"</span><span class="op">)</span>, limit <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">getAccessions</span><span class="op">(</span><span class="va">taxaId</span>, <span class="va">sqlFile</span>, version <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"version"</span>, <span class="st">"base"</span><span class="op">)</span>, limit <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -94,18 +94,18 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">taxa</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span class="r-in">  <span class="st">"accession\taccession.version\ttaxid\tgi"</span>,</span>
-<span class="r-in">  <span class="st">"Z17427\tZ17427.1\t3702\t16569"</span>,</span>
-<span class="r-in">  <span class="st">"Z17428\tZ17428.1\t3702\t16570"</span>,</span>
-<span class="r-in">  <span class="st">"Z17429\tZ17429.1\t3702\t16571"</span>,</span>
-<span class="r-in">  <span class="st">"Z17430\tZ17430.1\t3702\t16572"</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"><span class="va">inFile</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">sqlFile</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines</a></span><span class="op">(</span><span class="va">taxa</span>,<span class="va">inFile</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="read.accession2taxid.html">read.accession2taxid</a></span><span class="op">(</span><span class="va">inFile</span>,<span class="va">sqlFile</span>,vocal<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu">getAccessions</span><span class="op">(</span><span class="fl">3702</span>,<span class="va">sqlFile</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">taxa</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="st">"accession\taccession.version\ttaxid\tgi"</span>,</span></span>
+<span class="r-in"><span>  <span class="st">"Z17427\tZ17427.1\t3702\t16569"</span>,</span></span>
+<span class="r-in"><span>  <span class="st">"Z17428\tZ17428.1\t3702\t16570"</span>,</span></span>
+<span class="r-in"><span>  <span class="st">"Z17429\tZ17429.1\t3702\t16571"</span>,</span></span>
+<span class="r-in"><span>  <span class="st">"Z17430\tZ17430.1\t3702\t16572"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">inFile</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">sqlFile</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines</a></span><span class="op">(</span><span class="va">taxa</span>,<span class="va">inFile</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="read.accession2taxid.html">read.accession2taxid</a></span><span class="op">(</span><span class="va">inFile</span>,<span class="va">sqlFile</span>,vocal<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">getAccessions</span><span class="op">(</span><span class="fl">3702</span>,<span class="va">sqlFile</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   taxa accession</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 3702  Z17427.1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2 3702  Z17428.1</span>
@@ -125,7 +125,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

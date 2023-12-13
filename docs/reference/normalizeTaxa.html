@@ -60,12 +60,12 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">normalizeTaxa</span><span class="op">(</span>
-  <span class="va">rawTaxa</span>,
-  cladeRegex <span class="op">=</span> <span class="st">"^clade$|^clade\\.[0-9]+$|^$|no rank"</span>,
-  rootFill <span class="op">=</span> <span class="st">"_ROOT_"</span>,
-  lineageOrder <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">normalizeTaxa</span><span class="op">(</span></span>
+<span>  <span class="va">rawTaxa</span>,</span>
+<span>  cladeRegex <span class="op">=</span> <span class="st">"^clade$|^clade\\.[0-9]+$|^$|no rank"</span>,</span>
+<span>  rootFill <span class="op">=</span> <span class="st">"_ROOT_"</span>,</span>
+<span>  lineageOrder <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -99,41 +99,41 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">rawTaxa</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span class="r-in">   <span class="st">'81907'</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>species <span class="op">=</span> <span class="st">"Alectura lathami"</span>, genus <span class="op">=</span> <span class="st">"Alectura"</span>,</span>
-<span class="r-in">     family <span class="op">=</span> <span class="st">"Megapodiidae"</span>, order <span class="op">=</span> <span class="st">"Galliformes"</span>, superorder <span class="op">=</span> <span class="st">"Galloanserae"</span>,</span>
-<span class="r-in">     infraclass <span class="op">=</span> <span class="st">"Neognathae"</span>, class <span class="op">=</span> <span class="st">"Aves"</span>, clade <span class="op">=</span> <span class="st">"Coelurosauria"</span>,</span>
-<span class="r-in">     clade.1 <span class="op">=</span> <span class="st">"Theropoda"</span>, clade.2 <span class="op">=</span> <span class="st">"Saurischia"</span>, clade.3 <span class="op">=</span> <span class="st">"Dinosauria"</span>,</span>
-<span class="r-in">     clade.4 <span class="op">=</span> <span class="st">"Archosauria"</span>, clade.5 <span class="op">=</span> <span class="st">"Archelosauria"</span>, clade.6 <span class="op">=</span> <span class="st">"Sauria"</span>,</span>
-<span class="r-in">     clade.7 <span class="op">=</span> <span class="st">"Sauropsida"</span>, clade.8 <span class="op">=</span> <span class="st">"Amniota"</span>, clade.9 <span class="op">=</span> <span class="st">"Tetrapoda"</span>,</span>
-<span class="r-in">     clade.10 <span class="op">=</span> <span class="st">"Dipnotetrapodomorpha"</span>, superclass <span class="op">=</span> <span class="st">"Sarcopterygii"</span>,</span>
-<span class="r-in">     clade.11 <span class="op">=</span> <span class="st">"Euteleostomi"</span>, clade.12 <span class="op">=</span> <span class="st">"Teleostomi"</span>, clade.13 <span class="op">=</span> <span class="st">"Gnathostomata"</span>,</span>
-<span class="r-in">     clade.14 <span class="op">=</span> <span class="st">"Vertebrata"</span>, subphylum <span class="op">=</span> <span class="st">"Craniata"</span>, phylum <span class="op">=</span> <span class="st">"Chordata"</span>,</span>
-<span class="r-in">     clade.15 <span class="op">=</span> <span class="st">"Deuterostomia"</span>, clade.16 <span class="op">=</span> <span class="st">"Bilateria"</span>, clade.17 <span class="op">=</span> <span class="st">"Eumetazoa"</span>,</span>
-<span class="r-in">     kingdom <span class="op">=</span> <span class="st">"Metazoa"</span>, clade.18 <span class="op">=</span> <span class="st">"Opisthokonta"</span>, superkingdom <span class="op">=</span> <span class="st">"Eukaryota"</span>,</span>
-<span class="r-in">     <span class="st">'no rank'</span> <span class="op">=</span> <span class="st">"cellular organisms"</span><span class="op">)</span>,</span>
-<span class="r-in">   <span class="st">'8496'</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>species <span class="op">=</span> <span class="st">"Alligator mississippiensis"</span>,</span>
-<span class="r-in">     genus <span class="op">=</span> <span class="st">"Alligator"</span>, subfamily <span class="op">=</span> <span class="st">"Alligatorinae"</span>, family <span class="op">=</span> <span class="st">"Alligatoridae"</span>,</span>
-<span class="r-in">     order <span class="op">=</span> <span class="st">"Crocodylia"</span>, clade <span class="op">=</span> <span class="st">"Archosauria"</span>, clade.1 <span class="op">=</span> <span class="st">"Archelosauria"</span>,</span>
-<span class="r-in">     clade.2 <span class="op">=</span> <span class="st">"Sauria"</span>, clade.3 <span class="op">=</span> <span class="st">"Sauropsida"</span>, clade.4 <span class="op">=</span> <span class="st">"Amniota"</span>,</span>
-<span class="r-in">     clade.5 <span class="op">=</span> <span class="st">"Tetrapoda"</span>, clade.6 <span class="op">=</span> <span class="st">"Dipnotetrapodomorpha"</span>, superclass <span class="op">=</span> <span class="st">"Sarcopterygii"</span>,</span>
-<span class="r-in">     clade.7 <span class="op">=</span> <span class="st">"Euteleostomi"</span>, clade.8 <span class="op">=</span> <span class="st">"Teleostomi"</span>, clade.9 <span class="op">=</span> <span class="st">"Gnathostomata"</span>,</span>
-<span class="r-in">     clade.10 <span class="op">=</span> <span class="st">"Vertebrata"</span>, subphylum <span class="op">=</span> <span class="st">"Craniata"</span>, phylum <span class="op">=</span> <span class="st">"Chordata"</span>,</span>
-<span class="r-in">     clade.11 <span class="op">=</span> <span class="st">"Deuterostomia"</span>, clade.12 <span class="op">=</span> <span class="st">"Bilateria"</span>, clade.13 <span class="op">=</span> <span class="st">"Eumetazoa"</span>,</span>
-<span class="r-in">     kingdom <span class="op">=</span> <span class="st">"Metazoa"</span>, clade.14 <span class="op">=</span> <span class="st">"Opisthokonta"</span>, superkingdom <span class="op">=</span> <span class="st">"Eukaryota"</span>,</span>
-<span class="r-in">     <span class="st">'no rank'</span> <span class="op">=</span> <span class="st">"cellular organisms"</span><span class="op">)</span>,</span>
-<span class="r-in">   <span class="st">'38654'</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>species <span class="op">=</span> <span class="st">"Alligator sinensis"</span>,</span>
-<span class="r-in">     genus <span class="op">=</span> <span class="st">"Alligator"</span>, subfamily <span class="op">=</span> <span class="st">"Alligatorinae"</span>, family <span class="op">=</span> <span class="st">"Alligatoridae"</span>,</span>
-<span class="r-in">     order <span class="op">=</span> <span class="st">"Crocodylia"</span>, clade <span class="op">=</span> <span class="st">"Archosauria"</span>, clade.1 <span class="op">=</span> <span class="st">"Archelosauria"</span>,</span>
-<span class="r-in">     clade.2 <span class="op">=</span> <span class="st">"Sauria"</span>, clade.3 <span class="op">=</span> <span class="st">"Sauropsida"</span>, clade.4 <span class="op">=</span> <span class="st">"Amniota"</span>,</span>
-<span class="r-in">     clade.5 <span class="op">=</span> <span class="st">"Tetrapoda"</span>, clade.6 <span class="op">=</span> <span class="st">"Dipnotetrapodomorpha"</span>, superclass <span class="op">=</span> <span class="st">"Sarcopterygii"</span>,</span>
-<span class="r-in">     clade.7 <span class="op">=</span> <span class="st">"Euteleostomi"</span>, clade.8 <span class="op">=</span> <span class="st">"Teleostomi"</span>, clade.9 <span class="op">=</span> <span class="st">"Gnathostomata"</span>,</span>
-<span class="r-in">     clade.10 <span class="op">=</span> <span class="st">"Vertebrata"</span>, subphylum <span class="op">=</span> <span class="st">"Craniata"</span>, phylum <span class="op">=</span> <span class="st">"Chordata"</span>,</span>
-<span class="r-in">     clade.11 <span class="op">=</span> <span class="st">"Deuterostomia"</span>, clade.12 <span class="op">=</span> <span class="st">"Bilateria"</span>, clade.13 <span class="op">=</span> <span class="st">"Eumetazoa"</span>,</span>
-<span class="r-in">     kingdom <span class="op">=</span> <span class="st">"Metazoa"</span>, clade.14 <span class="op">=</span> <span class="st">"Opisthokonta"</span>, superkingdom <span class="op">=</span> <span class="st">"Eukaryota"</span>,</span>
-<span class="r-in">     <span class="st">'no rank'</span> <span class="op">=</span> <span class="st">"cellular organisms"</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"><span class="fu">normalizeTaxa</span><span class="op">(</span><span class="va">rawTaxa</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">rawTaxa</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>   <span class="st">'81907'</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>species <span class="op">=</span> <span class="st">"Alectura lathami"</span>, genus <span class="op">=</span> <span class="st">"Alectura"</span>,</span></span>
+<span class="r-in"><span>     family <span class="op">=</span> <span class="st">"Megapodiidae"</span>, order <span class="op">=</span> <span class="st">"Galliformes"</span>, superorder <span class="op">=</span> <span class="st">"Galloanserae"</span>,</span></span>
+<span class="r-in"><span>     infraclass <span class="op">=</span> <span class="st">"Neognathae"</span>, class <span class="op">=</span> <span class="st">"Aves"</span>, clade <span class="op">=</span> <span class="st">"Coelurosauria"</span>,</span></span>
+<span class="r-in"><span>     clade.1 <span class="op">=</span> <span class="st">"Theropoda"</span>, clade.2 <span class="op">=</span> <span class="st">"Saurischia"</span>, clade.3 <span class="op">=</span> <span class="st">"Dinosauria"</span>,</span></span>
+<span class="r-in"><span>     clade.4 <span class="op">=</span> <span class="st">"Archosauria"</span>, clade.5 <span class="op">=</span> <span class="st">"Archelosauria"</span>, clade.6 <span class="op">=</span> <span class="st">"Sauria"</span>,</span></span>
+<span class="r-in"><span>     clade.7 <span class="op">=</span> <span class="st">"Sauropsida"</span>, clade.8 <span class="op">=</span> <span class="st">"Amniota"</span>, clade.9 <span class="op">=</span> <span class="st">"Tetrapoda"</span>,</span></span>
+<span class="r-in"><span>     clade.10 <span class="op">=</span> <span class="st">"Dipnotetrapodomorpha"</span>, superclass <span class="op">=</span> <span class="st">"Sarcopterygii"</span>,</span></span>
+<span class="r-in"><span>     clade.11 <span class="op">=</span> <span class="st">"Euteleostomi"</span>, clade.12 <span class="op">=</span> <span class="st">"Teleostomi"</span>, clade.13 <span class="op">=</span> <span class="st">"Gnathostomata"</span>,</span></span>
+<span class="r-in"><span>     clade.14 <span class="op">=</span> <span class="st">"Vertebrata"</span>, subphylum <span class="op">=</span> <span class="st">"Craniata"</span>, phylum <span class="op">=</span> <span class="st">"Chordata"</span>,</span></span>
+<span class="r-in"><span>     clade.15 <span class="op">=</span> <span class="st">"Deuterostomia"</span>, clade.16 <span class="op">=</span> <span class="st">"Bilateria"</span>, clade.17 <span class="op">=</span> <span class="st">"Eumetazoa"</span>,</span></span>
+<span class="r-in"><span>     kingdom <span class="op">=</span> <span class="st">"Metazoa"</span>, clade.18 <span class="op">=</span> <span class="st">"Opisthokonta"</span>, superkingdom <span class="op">=</span> <span class="st">"Eukaryota"</span>,</span></span>
+<span class="r-in"><span>     <span class="st">'no rank'</span> <span class="op">=</span> <span class="st">"cellular organisms"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>   <span class="st">'8496'</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>species <span class="op">=</span> <span class="st">"Alligator mississippiensis"</span>,</span></span>
+<span class="r-in"><span>     genus <span class="op">=</span> <span class="st">"Alligator"</span>, subfamily <span class="op">=</span> <span class="st">"Alligatorinae"</span>, family <span class="op">=</span> <span class="st">"Alligatoridae"</span>,</span></span>
+<span class="r-in"><span>     order <span class="op">=</span> <span class="st">"Crocodylia"</span>, clade <span class="op">=</span> <span class="st">"Archosauria"</span>, clade.1 <span class="op">=</span> <span class="st">"Archelosauria"</span>,</span></span>
+<span class="r-in"><span>     clade.2 <span class="op">=</span> <span class="st">"Sauria"</span>, clade.3 <span class="op">=</span> <span class="st">"Sauropsida"</span>, clade.4 <span class="op">=</span> <span class="st">"Amniota"</span>,</span></span>
+<span class="r-in"><span>     clade.5 <span class="op">=</span> <span class="st">"Tetrapoda"</span>, clade.6 <span class="op">=</span> <span class="st">"Dipnotetrapodomorpha"</span>, superclass <span class="op">=</span> <span class="st">"Sarcopterygii"</span>,</span></span>
+<span class="r-in"><span>     clade.7 <span class="op">=</span> <span class="st">"Euteleostomi"</span>, clade.8 <span class="op">=</span> <span class="st">"Teleostomi"</span>, clade.9 <span class="op">=</span> <span class="st">"Gnathostomata"</span>,</span></span>
+<span class="r-in"><span>     clade.10 <span class="op">=</span> <span class="st">"Vertebrata"</span>, subphylum <span class="op">=</span> <span class="st">"Craniata"</span>, phylum <span class="op">=</span> <span class="st">"Chordata"</span>,</span></span>
+<span class="r-in"><span>     clade.11 <span class="op">=</span> <span class="st">"Deuterostomia"</span>, clade.12 <span class="op">=</span> <span class="st">"Bilateria"</span>, clade.13 <span class="op">=</span> <span class="st">"Eumetazoa"</span>,</span></span>
+<span class="r-in"><span>     kingdom <span class="op">=</span> <span class="st">"Metazoa"</span>, clade.14 <span class="op">=</span> <span class="st">"Opisthokonta"</span>, superkingdom <span class="op">=</span> <span class="st">"Eukaryota"</span>,</span></span>
+<span class="r-in"><span>     <span class="st">'no rank'</span> <span class="op">=</span> <span class="st">"cellular organisms"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>   <span class="st">'38654'</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>species <span class="op">=</span> <span class="st">"Alligator sinensis"</span>,</span></span>
+<span class="r-in"><span>     genus <span class="op">=</span> <span class="st">"Alligator"</span>, subfamily <span class="op">=</span> <span class="st">"Alligatorinae"</span>, family <span class="op">=</span> <span class="st">"Alligatoridae"</span>,</span></span>
+<span class="r-in"><span>     order <span class="op">=</span> <span class="st">"Crocodylia"</span>, clade <span class="op">=</span> <span class="st">"Archosauria"</span>, clade.1 <span class="op">=</span> <span class="st">"Archelosauria"</span>,</span></span>
+<span class="r-in"><span>     clade.2 <span class="op">=</span> <span class="st">"Sauria"</span>, clade.3 <span class="op">=</span> <span class="st">"Sauropsida"</span>, clade.4 <span class="op">=</span> <span class="st">"Amniota"</span>,</span></span>
+<span class="r-in"><span>     clade.5 <span class="op">=</span> <span class="st">"Tetrapoda"</span>, clade.6 <span class="op">=</span> <span class="st">"Dipnotetrapodomorpha"</span>, superclass <span class="op">=</span> <span class="st">"Sarcopterygii"</span>,</span></span>
+<span class="r-in"><span>     clade.7 <span class="op">=</span> <span class="st">"Euteleostomi"</span>, clade.8 <span class="op">=</span> <span class="st">"Teleostomi"</span>, clade.9 <span class="op">=</span> <span class="st">"Gnathostomata"</span>,</span></span>
+<span class="r-in"><span>     clade.10 <span class="op">=</span> <span class="st">"Vertebrata"</span>, subphylum <span class="op">=</span> <span class="st">"Craniata"</span>, phylum <span class="op">=</span> <span class="st">"Chordata"</span>,</span></span>
+<span class="r-in"><span>     clade.11 <span class="op">=</span> <span class="st">"Deuterostomia"</span>, clade.12 <span class="op">=</span> <span class="st">"Bilateria"</span>, clade.13 <span class="op">=</span> <span class="st">"Eumetazoa"</span>,</span></span>
+<span class="r-in"><span>     kingdom <span class="op">=</span> <span class="st">"Metazoa"</span>, clade.14 <span class="op">=</span> <span class="st">"Opisthokonta"</span>, superkingdom <span class="op">=</span> <span class="st">"Eukaryota"</span>,</span></span>
+<span class="r-in"><span>     <span class="st">'no rank'</span> <span class="op">=</span> <span class="st">"cellular organisms"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">normalizeTaxa</span><span class="op">(</span><span class="va">rawTaxa</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       _ROOT_.1             superkingdom superkingdom.1 kingdom   kingdom.1  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 81907 "cellular organisms" "Eukaryota"  "Opisthokonta" "Metazoa" "Eumetazoa"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 8496  "cellular organisms" "Eukaryota"  "Opisthokonta" "Metazoa" "Eumetazoa"</span>
@@ -180,7 +180,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

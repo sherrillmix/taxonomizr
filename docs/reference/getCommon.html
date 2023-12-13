@@ -60,7 +60,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">getCommon</span><span class="op">(</span><span class="va">taxa</span>, sqlFile <span class="op">=</span> <span class="st">"nameNode.sqlite"</span>, types <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">getCommon</span><span class="op">(</span><span class="va">taxa</span>, sqlFile <span class="op">=</span> <span class="st">"nameNode.sqlite"</span>, types <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -90,41 +90,41 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">namesText</span><span class="op">&lt;-</span><span class="st">"9894\t|\tGiraffa camelopardalis (Linnaeus, 1758)\t|\t\t|\tauthority\t|</span>
-<span class="r-in">9894\t|\tGiraffa camelopardalis\t|\t\t|\tscientific name\t|</span>
-<span class="r-in">9894\t|\tgiraffe\t|\t\t|\tgenbank common name\t|</span>
-<span class="r-in">9909\t|\taurochs\t|\t\t|\tgenbank common name\t|</span>
-<span class="r-in">9909\t|\tBos primigenius Bojanus, 1827\t|\t\t|\tauthority\t|</span>
-<span class="r-in">9909\t|\tBos primigenius\t|\t\t|\tscientific name\t|</span>
-<span class="r-in">9913\t|\tBos bovis\t|\t\t|\tsynonym\t|</span>
-<span class="r-in">9913\t|\tBos primigenius taurus\t|\t\t|\tsynonym\t|</span>
-<span class="r-in">9913\t|\tBos taurus Linnaeus, 1758\t|\t\t|\tauthority\t|</span>
-<span class="r-in">9913\t|\tBos taurus\t|\t\t|\tscientific name\t|</span>
-<span class="r-in">9913\t|\tBovidae sp. Adi Nefas\t|\t\t|\tincludes\t|</span>
-<span class="r-in">9913\t|\tbovine\t|\t\t|\tcommon name\t|</span>
-<span class="r-in">9913\t|\tcattle\t|\t\t|\tgenbank common name\t|</span>
-<span class="r-in">9913\t|\tcow\t|\t\t|\tcommon name\t|</span>
-<span class="r-in">9913\t|\tdairy cow\t|\t\t|\tcommon name\t|</span>
-<span class="r-in">9913\t|\tdomestic cattle\t|\t\t|\tcommon name\t|</span>
-<span class="r-in">9913\t|\tdomestic cow\t|\t\t|\tcommon name\t|</span>
-<span class="r-in">9913\t|\tox\t|\t\t|\tcommon name\t|</span>
-<span class="r-in">9913\t|\toxen\t|\t\t|\tcommon name\t|</span>
-<span class="r-in">9916\t|\tBoselaphus\t|\t\t|\tscientific name\t|"</span></span>
-<span class="r-in"><span class="va">tmpFile</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines</a></span><span class="op">(</span><span class="va">namesText</span>,<span class="va">tmpFile</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">sqlFile</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="read.names.sql.html">read.names.sql</a></span><span class="op">(</span><span class="va">tmpFile</span>,<span class="va">sqlFile</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu">getCommon</span><span class="op">(</span><span class="fl">9909</span>,<span class="va">sqlFile</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">namesText</span><span class="op">&lt;-</span><span class="st">"9894\t|\tGiraffa camelopardalis (Linnaeus, 1758)\t|\t\t|\tauthority\t|</span></span></span>
+<span class="r-in"><span><span class="st">9894\t|\tGiraffa camelopardalis\t|\t\t|\tscientific name\t|</span></span></span>
+<span class="r-in"><span><span class="st">9894\t|\tgiraffe\t|\t\t|\tgenbank common name\t|</span></span></span>
+<span class="r-in"><span><span class="st">9909\t|\taurochs\t|\t\t|\tgenbank common name\t|</span></span></span>
+<span class="r-in"><span><span class="st">9909\t|\tBos primigenius Bojanus, 1827\t|\t\t|\tauthority\t|</span></span></span>
+<span class="r-in"><span><span class="st">9909\t|\tBos primigenius\t|\t\t|\tscientific name\t|</span></span></span>
+<span class="r-in"><span><span class="st">9913\t|\tBos bovis\t|\t\t|\tsynonym\t|</span></span></span>
+<span class="r-in"><span><span class="st">9913\t|\tBos primigenius taurus\t|\t\t|\tsynonym\t|</span></span></span>
+<span class="r-in"><span><span class="st">9913\t|\tBos taurus Linnaeus, 1758\t|\t\t|\tauthority\t|</span></span></span>
+<span class="r-in"><span><span class="st">9913\t|\tBos taurus\t|\t\t|\tscientific name\t|</span></span></span>
+<span class="r-in"><span><span class="st">9913\t|\tBovidae sp. Adi Nefas\t|\t\t|\tincludes\t|</span></span></span>
+<span class="r-in"><span><span class="st">9913\t|\tbovine\t|\t\t|\tcommon name\t|</span></span></span>
+<span class="r-in"><span><span class="st">9913\t|\tcattle\t|\t\t|\tgenbank common name\t|</span></span></span>
+<span class="r-in"><span><span class="st">9913\t|\tcow\t|\t\t|\tcommon name\t|</span></span></span>
+<span class="r-in"><span><span class="st">9913\t|\tdairy cow\t|\t\t|\tcommon name\t|</span></span></span>
+<span class="r-in"><span><span class="st">9913\t|\tdomestic cattle\t|\t\t|\tcommon name\t|</span></span></span>
+<span class="r-in"><span><span class="st">9913\t|\tdomestic cow\t|\t\t|\tcommon name\t|</span></span></span>
+<span class="r-in"><span><span class="st">9913\t|\tox\t|\t\t|\tcommon name\t|</span></span></span>
+<span class="r-in"><span><span class="st">9913\t|\toxen\t|\t\t|\tcommon name\t|</span></span></span>
+<span class="r-in"><span><span class="st">9916\t|\tBoselaphus\t|\t\t|\tscientific name\t|"</span></span></span>
+<span class="r-in"><span><span class="va">tmpFile</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines</a></span><span class="op">(</span><span class="va">namesText</span>,<span class="va">tmpFile</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">sqlFile</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="read.names.sql.html">read.names.sql</a></span><span class="op">(</span><span class="va">tmpFile</span>,<span class="va">sqlFile</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">getCommon</span><span class="op">(</span><span class="fl">9909</span>,<span class="va">sqlFile</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[1]]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                            name                type</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1                       aurochs genbank common name</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2 Bos primigenius Bojanus, 1827           authority</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3               Bos primigenius     scientific name</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="fu">getCommon</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">9894</span>,<span class="fl">9913</span><span class="op">)</span>,<span class="va">sqlFile</span><span class="op">)</span>,<span class="kw">function</span><span class="op">(</span><span class="va">xx</span><span class="op">)</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">xx</span><span class="op">$</span><span class="va">name</span>,collapse<span class="op">=</span><span class="st">'; '</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="fu">getCommon</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">9894</span>,<span class="fl">9913</span><span class="op">)</span>,<span class="va">sqlFile</span><span class="op">)</span>,<span class="kw">function</span><span class="op">(</span><span class="va">xx</span><span class="op">)</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">xx</span><span class="op">$</span><span class="va">name</span>,collapse<span class="op">=</span><span class="st">'; '</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Giraffa camelopardalis (Linnaeus, 1758); Giraffa camelopardalis; giraffe"                                                                                                </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [2] "Bos bovis; Bos primigenius taurus; Bos taurus Linnaeus, 1758; Bos taurus; Bovidae sp. Adi Nefas; bovine; cattle; cow; dairy cow; domestic cattle; domestic cow; ox; oxen"</span>
-<span class="r-in"><span class="fu">getCommon</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">9999999</span>,<span class="fl">9916</span>,<span class="fl">9894</span>,<span class="fl">9913</span><span class="op">)</span>,<span class="va">sqlFile</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"common name"</span>,<span class="st">"genbank common name"</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">getCommon</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">9999999</span>,<span class="fl">9916</span>,<span class="fl">9894</span>,<span class="fl">9913</span><span class="op">)</span>,<span class="va">sqlFile</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"common name"</span>,<span class="st">"genbank common name"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[1]]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -160,7 +160,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>
