@@ -6,11 +6,11 @@ Type: Package
 LazyLoad: yes
 Author: Scott Sherrill-Mix [aut, cre]
 Authors@R: c(person("Scott", "Sherrill-Mix", role = c("aut", "cre"),
-                     email = "shescott@upenn.edu"))
+                     email = "ssm@msu.edu"))
 BugReports: https://github.com/sherrillmix/taxonomizr/issues
 Description: Functions for assigning taxonomy to NCBI accession numbers and taxon IDs based on NCBI's accession2taxid and taxdump files. This package allows the user to download NCBI data dumps and create a local database for fast and local taxonomic assignment.
 Version: 0.10.5
-Date: 2023-04-14
+Date: 2023-12-13
 Suggests:
     testthat,
     knitr,
@@ -23,5 +23,4 @@ Imports:
     data.table,
     curl (>= 5.0.0)
 Encoding: UTF-8
-RoxygenNote: 7.2.1
 VignetteBuilder: knitr
