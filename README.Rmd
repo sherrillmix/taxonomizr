@@ -388,7 +388,7 @@ taxonomizr::read.names.sql('names.dmp','nameNode.sqlite',overwrite=TRUE)
 ```
 
 
-### Condensing taxonomy
+### Condensing taxonomy a.k.a. lowest common ancestor LCA
 You can use the `condenseTaxa` function to find the agreements among taxonomic hits. For example to condense the taxonomy from the previous section to the lowest taxonomic rank shared by all three taxa:
 
 ```{r,eval=FALSE}
