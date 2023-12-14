@@ -1,5 +1,5 @@
 Package: taxonomizr
-Maintainer: Scott Sherrill-Mix <shescott@upenn.edu>
+Maintainer: Scott Sherrill-Mix <ssm@msu.edu>
 License: GPL (>=2) | file LICENSE
 Title: Functions to Work with NCBI Accessions and Taxonomy
 Type: Package
@@ -10,7 +10,7 @@ Authors@R: c(person("Scott", "Sherrill-Mix", role = c("aut", "cre"),
 BugReports: https://github.com/sherrillmix/taxonomizr/issues
 Description: Functions for assigning taxonomy to NCBI accession numbers and taxon IDs based on NCBI's accession2taxid and taxdump files. This package allows the user to download NCBI data dumps and create a local database for fast and local taxonomic assignment.
 Version: 0.10.5
-Date: 2023-12-13
+Date: 2023-12-14
 Suggests:
     testthat,
     knitr,
@@ -24,3 +24,4 @@ Imports:
     curl (>= 5.0.0)
 Encoding: UTF-8
 VignetteBuilder: knitr
+RoxygenNote: 7.2.3
