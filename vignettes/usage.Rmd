@@ -599,7 +599,7 @@ makeNewick(taxa,excludeTerminalNAs=TRUE)
 
 Note that taxa may be the most specific taxon for a given taxa in the taxonomy matrix but will not be a leaf in the resulting tree if it appears in other taxonomy e.g. Chordata in this example. 
 
-## Note: NCBI Name changes in early 2023
+## Note: NCBI name changes in early 2023
 
 Please note that the [NCBI change their naming of several major prokaryote phylums](https://ncbiinsights.ncbi.nlm.nih.gov/2022/11/14/prokaryotic-phylum-name-changes/) e.g. [Firmicutes became Bacillota](https://ftp.ncbi.nih.gov/pub/taxonomy/Major_taxonomic_updates_2023.txt) in early 2023.
 Please watch out for any problems that could arise. For example: 
