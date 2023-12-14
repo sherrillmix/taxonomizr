@@ -599,6 +599,15 @@ makeNewick(taxa,excludeTerminalNAs=TRUE)
 
 Note that taxa may be the most specific taxon for a given taxa in the taxonomy matrix but will not be a leaf in the resulting tree if it appears in other taxonomy e.g. Chordata in this example. 
 
+## Note: NCBI Name changes in early 2023
+
+Please note that the [NCBI change their naming of several major prokaryote phylums](https://ncbiinsights.ncbi.nlm.nih.gov/2022/11/14/prokaryotic-phylum-name-changes/) e.g. [Firmicutes became Bacillota](https://ftp.ncbi.nih.gov/pub/taxonomy/Major_taxonomic_updates_2023.txt) in early 2023.
+Please watch out for any problems that could arise. For example: 
+  * names of assigned taxonomy may shift after updating a database to a post-change version
+  * comparisons of old analyses performed pre-change to new analyses performed post-change will need to be done with care
+
+If I understand things correctly, then the actual taxonomy ID will not change so it might be wise to retain the taxonomy ID for all analyses. Then on final analysis, the taxonomic names can be assigned based on whatever naming scheme is in use at that time.
+
 
 
 ## Changelog
@@ -607,6 +616,7 @@ Note that taxa may be the most specific taxon for a given taxa in the taxonomy m
   * Catch 404 errors and report as errors
   * Add resume argument to download functions
   * Don't retain temp files for downloads if less than 10kb
+  * README touchups
 
 ### v0.10.4
   * Minor improvement to output md5 and modification date for downloads to aid in debugging network issues
