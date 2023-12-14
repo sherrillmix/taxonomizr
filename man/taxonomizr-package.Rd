@@ -39,7 +39,7 @@ More specialized functions are:
 \code{\link{prepareDatabase}}, \code{\link{accessionToTaxa}}, \code{\link{getTaxonomy}}
 }
 \author{
-\strong{Maintainer}: Scott Sherrill-Mix \email{shescott@upenn.edu}
+\strong{Maintainer}: Scott Sherrill-Mix \email{ssm@msu.edu}
 
 }
 \keyword{internal}
