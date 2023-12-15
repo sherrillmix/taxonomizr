@@ -689,9 +689,9 @@ test_that("Test getAccession2taxid",{
   file.remove(list.files(tmp2,'^nucl_.*.gz$',full.names=TRUE))
   writeLines(sprintf('%s EXTRATEXT',fakeMd5),sprintf('%s.md5',file.path(tmp,targets[2])))
   expect_error(getAccession2taxid(tmp2,baseUrl=sprintf('file://%s',tmp),types=c('nucl_XxXx','nucl_XyXyX')),NA)
-  expect_error(getAccession2taxid(tmp2,baseUrl=sprintf('file://COMPLETE__/NONSENSE__/PATH__/'),types=c('newFile','newFile2')),'missing|[Cc]ould ?n.t open')
+  expect_error(getAccession2taxid(tmp2,baseUrl=sprintf('file://COMPLETE__/NONSENSE__/PATH__/'),types=c('newFile','newFile2')),NULL) #,'missing|[Cc]ould ?n.t open'  error message too variable across OS
   #intentional duplication to make sure file not created
-  expect_error(getAccession2taxid(tmp2,baseUrl=sprintf('file://COMPLETE__/NONSENSE__/PATH__/'),types=c('newFile','newFile2')),'missing|[Cc]ould ?n.t open')
+  expect_error(getAccession2taxid(tmp2,baseUrl=sprintf('file://COMPLETE__/NONSENSE__/PATH__/'),types=c('newFile','newFile2')),NULL) #error message too variable across OS
   expect_false(file.exists(file.path(tmp2,'newFile.accession2taxid.gz')))
   expect_false(file.exists(file.path(tmp2,'newFile2.accession2taxid.gz')))
 })
