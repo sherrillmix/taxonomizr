@@ -178,7 +178,7 @@ read.nodes.sql<-function(nodeFile,sqlFile='nameNode.sqlite',overwrite=FALSE){
   }
   splitLines<-do.call(rbind,lapply(strsplit(readLines(nodeFile),'\\s*\\|\\s*'),'[',1:3))
   colnames(splitLines)<-c('id','parent','rank')
-  splitLines<-data.frame('id'=as.integer(splitLines[,'id']),'rank'=splitLines[,'rank'],'parent'=as.numeric(splitLines[,'parent']),stringsAsFactors=FALSE)
+  splitLines<-data.frame('id'=as.integer(splitLines[,'id']),'rank'=splitLines[,'rank'],'parent'=as.integer(splitLines[,'parent']),stringsAsFactors=FALSE)
   db <- RSQLite::dbConnect(RSQLite::SQLite(), dbname=sqlFile)
   on.exit(RSQLite::dbDisconnect(db),add=TRUE)
   RSQLite::dbWriteTable(conn = db, name = "nodes", value =splitLines)
