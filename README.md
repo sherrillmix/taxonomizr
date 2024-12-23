@@ -24,7 +24,7 @@ More specialized functions are:
 And a simple use case might look like (see below for more details):
 
 
-```r
+``` r
 library(taxonomizr)
 #note this will require a lot of hard drive space, bandwidth and time to process all the data from NCBI
 prepareDatabase('accessionTaxa.sql')
@@ -39,18 +39,18 @@ This package downloads a few databases from NCBI and stores them in an easily ac
 ## Installation
 The package is on CRAN, so it should install with a simple:
 
-```r
+``` r
 install.packages("taxonomizr")
 ```
 If you want the development version directly from github, use the [<code>devtools</code>](https://github.com/r-lib/devtools) library and run:
 
-```r
+``` r
 devtools::install_github("sherrillmix/taxonomizr")
 ```
 
 To use the library, load it in R:
 
-```r
+``` r
 library(taxonomizr)
 ```
 
@@ -58,7 +58,7 @@ library(taxonomizr)
 Since version 0.5.0, there is a simple function to run all preparations. Note that you'll need a bit of time, download bandwidth and hard drive space before running this command (we're downloading taxonomic assignments for every record in NCBI). To create a SQLite database called `accessionTaxa.sql` in the current working directory (you may want to store this somewhere more centrally located so it does not need to be duplicated with every project), we can run:
 
 
-```r
+``` r
 prepareDatabase('accessionTaxa.sql')
 ```
 
@@ -112,7 +112,7 @@ If everything works then that should have prepared a SQLite database ready for u
 All files are cached locally and so the preparation is only required once (delete/rename the SQLite database and recall the function to regenerate the database). It is not necessary to manually check for the presence of the database since the function checks to see if SQLite database is present and if so skips downloading/processing. For example, running the command again produces:
 
 
-```r
+``` r
 prepareDatabase('accessionTaxa.sql')
 ```
 
@@ -128,7 +128,7 @@ Note that if you only want the taxonomic data and do not want to assign taxonomy
 
 
 
-```r
+``` r
 prepareDatabase(getAccessions=FALSE)
 ```
 
@@ -144,7 +144,7 @@ prepareDatabase(getAccessions=FALSE)
 And if you area assigning taxonomy to protein data, then you would want to grab the `prot.accession2taxid.gz` from NCBI by specifying the `types='prot'` argument (or `types=c("nucl_gb", "nucl_wgs","prot")` for proteins and nucleotides):
 
 
-```r
+``` r
 prepareDatabase(types='prot')
 ```
 
@@ -207,7 +207,7 @@ So to identify a taxon for a given sequence you would blast it against e.g. the 
 So just as an example, reading in blast results might look something like:
 
 
-```r
+``` r
 blastResults<-read.table('XXXX.blast',header=FALSE,stringsAsFactors=FALSE)
 #grab the 4th |-separated field from the reference name in the second column
 accessions<-sapply(strsplit(blastResults[,2],'\\|'),'[',4)
@@ -219,7 +219,7 @@ accessions<-sapply(strsplit(blastResults[,2],'\\|'),'[',4)
 Now we are ready to convert NCBI accession numbers to taxonomic IDs. For example, to find the taxonomic IDs associated with NCBI accession numbers "LN847353.1" and "AL079352.3":
 
 
-```r
+``` r
 taxaId<-accessionToTaxa(c("LN847353.1","AL079352.3"),"accessionTaxa.sql")
 print(taxaId)
 ```
@@ -231,7 +231,7 @@ print(taxaId)
 And to get the taxonomy for those IDs:
 
 
-```r
+``` r
 getTaxonomy(taxaId,'accessionTaxa.sql')
 ```
 
@@ -248,7 +248,7 @@ You can also get taxonomy for NCBI accession numbers without versions (the .X fo
 
 
 
-```r
+``` r
 taxaId<-accessionToTaxa(c("LN847353","AL079352"),"accessionTaxa.sql")
 print(taxaId)
 ```
@@ -259,7 +259,7 @@ print(taxaId)
 
 
 
-```r
+``` r
 taxaId<-accessionToTaxa(c("LN847353","AL079352"),"accessionTaxa.sql",version='base')
 print(taxaId)
 ```
@@ -273,7 +273,7 @@ print(taxaId)
 
 If you'd like to find IDs for taxonomic names then you can do something like:
 
-```r
+``` r
 taxaId<-getId(c('Homo sapiens','Bos taurus','Homo','Alces alces'),'accessionTaxa.sql')
 print(taxaId)
 ```
@@ -285,7 +285,7 @@ print(taxaId)
 And again to get the taxonomy for those IDs use `getTaxonomy`:
 
 
-```r
+``` r
 taxa<-getTaxonomy(taxaId,'accessionTaxa.sql')
 print(taxa)
 ```
@@ -305,7 +305,7 @@ print(taxa)
 ### Finding descendants for a given taxa
 The function `getDescents` can be used to find all the descendants at a taxonomic level for a given taxa. For example to find all species (the default) in the Homininae subfamily (taxonomic ID 207598):
 
-```r
+``` r
 getDescendants(207598,'accessionTaxa.sql')
 ```
 
@@ -318,7 +318,7 @@ getDescendants(207598,'accessionTaxa.sql')
 
 Or all genuses:
 
-```r
+``` r
 getDescendants(207598,'accessionTaxa.sql','genus')
 ```
 
@@ -333,7 +333,7 @@ Note that an index for the nodes table was added in v0.10.1 to make this run fas
 If you'd like to find all common and other types of names for a given taxa ID then you can use `getCommon`:
 
 
-```r
+``` r
 getCommon(c(9913,9606),'accessionTaxa.sql')
 ```
 
@@ -364,7 +364,7 @@ getCommon(c(9913,9606),'accessionTaxa.sql')
 Or specify only a certain type(s) of name ("common" names seem to often be split between "common name" and "genbank common name"):
 
 
-```r
+``` r
 getCommon(c(9913,9606,9894),'accessionTaxa.sql',c('genbank common name','common name'))
 ```
 
@@ -392,7 +392,7 @@ getCommon(c(9913,9606,9894),'accessionTaxa.sql',c('genbank common name','common 
 Note that databases created with `taxonomizr` versions earlier than v0.9.4 do not contain the `type` field and so the database will have to be reloaded to use this function. For example, this could be done by calling:
 
 
-```r
+``` r
 taxonomizr::getNamesAndNodes()
 taxonomizr::read.names.sql('names.dmp','nameNode.sqlite',overwrite=TRUE)
 ```
@@ -402,7 +402,7 @@ taxonomizr::read.names.sql('names.dmp','nameNode.sqlite',overwrite=TRUE)
 You can use the `condenseTaxa` function to find the agreements among taxonomic hits. For example to condense the taxonomy from the previous section to the lowest taxonomic rank shared by all three taxa:
 
 
-```r
+``` r
 condenseTaxa(taxa)
 ```
 
@@ -414,7 +414,7 @@ condenseTaxa(taxa)
 This function can also be fed a large number of grouped hits, e.g. BLAST hits for high throughput sequencing reads after filtering for the best hits for each read, and output a condensed taxonomy for each grouping:
 
 
-```r
+``` r
 groupings<-c('read1','read2','read1','read2')
 condenseTaxa(taxa,groupings)
 ```
@@ -432,7 +432,7 @@ condenseTaxa(taxa,groupings)
 To get all taxonomic assignments for a given taxa regardless of their particular rank, you can use the `getRawTaxonomy` function. Note that there are often many intermediate ranks outside the more common taxonomic ranks. The function returns a list since different IDs can have differing numbers of ranks. It is used similarly to `getTaxonomy`:
 
 
-```r
+``` r
 getRawTaxonomy(c(9606,9913),'accessionTaxa.sql')
 ```
 
@@ -488,7 +488,7 @@ These raw taxonomy with varying numbers of levels can be normalized so that all 
 
 
 
-```r
+``` r
 raw<-getRawTaxonomy(c(9606,9913),'accessionTaxa.sql')
 normalizeTaxa(raw)
 ```
@@ -544,7 +544,7 @@ normalizeTaxa(raw,lineageOrder=c('infraorder','suborder','superorder','infraclas
 To find all the accessions for a given taxonomic ID, you can use the `getAccessions` function. This is a bit of an unusual use case so to preserve space, an index is not created by default in `read.accession2taxid`. If you are going to use this function, you will want to rebuild the SQLite database with the `indexTaxa` argument set to true with something like:
 
 
-```r
+``` r
 read.accession2taxid(list.files('.','accession2taxid.gz$'),'accessionTaxa.sql',indexTaxa=TRUE,overwrite=TRUE)
 ```
 
@@ -567,7 +567,7 @@ read.accession2taxid(list.files('.','accession2taxid.gz$'),'accessionTaxa.sql',i
 Then you can get the accessions for taxa 3702 with a command like (note that the limit argument is used here in order to preserve space):
 
 
-```r
+``` r
 getAccessions(3702,'accessionTaxa.sql',limit=10)
 ```
 
@@ -592,7 +592,7 @@ This is probably only useful in a few specific cases but a convenience function 
 
 
 
-```r
+``` r
 taxa
 ```
 
@@ -603,7 +603,7 @@ taxa
 ## [3,] "Eukaryota" "Chordata" "Mammalia" NA         "Cervidae"  "Alces"
 ```
 
-```r
+``` r
 makeNewick(taxa)
 ```
 
@@ -614,7 +614,7 @@ makeNewick(taxa)
 If quotes are needed, then specify the `quote` argument:
 
 
-```r
+``` r
 makeNewick(taxa,quote="'")
 ```
 
@@ -625,7 +625,7 @@ makeNewick(taxa,quote="'")
 By default, `makeNewick` includes trailing nodes that are all NA in the tree e.g.:
 
 
-```r
+``` r
 taxa[3,3:6]<-NA
 print(taxa)
 ```
@@ -637,7 +637,7 @@ print(taxa)
 ## [3,] "Eukaryota" "Chordata" NA         NA         NA          NA
 ```
 
-```r
+``` r
 makeNewick(taxa)
 ```
 
@@ -647,7 +647,7 @@ makeNewick(taxa)
 
 If these nodes are not desired then set `excludeTerminalNAs` to `FALSE`:
 
-```r
+``` r
 makeNewick(taxa,excludeTerminalNAs=TRUE)
 ```
 
@@ -669,6 +669,12 @@ If I understand things correctly, then the actual taxonomy ID will not change so
 
 
 ## Changelog
+
+### v0.10.7 
+  * Store `nodes` table's `parent` column as INT instead of REAL
+
+### v0.10.6
+  * Fix test for error message that was variable across platforms
 
 ### v0.10.5
   * Catch 404 errors and report as errors
@@ -751,7 +757,7 @@ In order to avoid constant internet access and slow APIs, the first step in usin
 ### Download names and nodes
 First, download the necessary names and nodes files from [NCBI](https://ftp.ncbi.nih.gov/pub/taxonomy/):
 
-```r
+``` r
 getNamesAndNodes()
 ```
 
@@ -763,7 +769,7 @@ getNamesAndNodes()
 
 Then download accession to taxa id conversion files from [NCBI](https://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/). **Note:** this is a pretty _big_ download (several gigabytes):
 
-```r
+``` r
 #this is a big download
 getAccession2taxid()
 ```
@@ -779,7 +785,7 @@ getAccession2taxid()
 
 If you would also like to identify protein accession numbers, also download the prot file from NCBI (again this is a _big_ download):
 
-```r
+``` r
 #this is a big download
 getAccession2taxid(types='prot')
 ```
@@ -796,7 +802,7 @@ getAccession2taxid(types='prot')
 Then process the downloaded names and nodes files into a more easily accessed form:
 
 
-```r
+``` r
 read.names.sql('names.dmp','accessionTaxa.sql')
 read.nodes.sql('nodes.dmp','accessionTaxa.sql')
 ```
@@ -804,7 +810,7 @@ read.nodes.sql('nodes.dmp','accessionTaxa.sql')
 Next process the downloaded accession files into the same database (this one could take a while):
 
 
-```r
+``` r
 read.accession2taxid(list.files('.','accession2taxid.gz$'),'accessionTaxa.sql')
 ```
 
