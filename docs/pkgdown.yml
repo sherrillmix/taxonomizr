@@ -3,7 +3,7 @@ pkgdown: 2.1.0
 pkgdown_sha: ~
 articles:
   usage: usage.html
-last_built: 2025-02-27T17:39Z
+last_built: 2025-02-27T18:20Z
 urls:
   reference: https://sherrillmix.github.io/taxonomizr/reference
   article: https://sherrillmix.github.io/taxonomizr/articles
