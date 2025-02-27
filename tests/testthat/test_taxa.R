@@ -155,7 +155,7 @@ test_that("Test trimTaxa",{
   expect_equal(readLines(tmp2),c('2\t4','3\t5','4\t6'))
   expect_error(taxonomizr:::trimTaxa(tmp,tmp2,c(2,4)),NA)
   expect_equal(readLines(tmp2),rep(c('2\t4','3\t5','4\t6'),2))
-  with_mock(`R.utils::gunzip`=function(...){},expect_error(taxonomizr:::trimTaxa(tmp,tmp2),'unzip'))
+  with_mocked_bindings(`gunzip`=function(...){},expect_error(taxonomizr:::trimTaxa(tmp,tmp2),'unzip'),.package='R.utils')
   out<-c(
     'head\t1\t2\t3',
     'a\t2\t3\t4',
@@ -560,8 +560,8 @@ test_that("Test getParentNodes",{
   expect_equal(taxonomizr:::getParentNodes(c(9606,9605),tmp),data.frame('name'=c('Homo sapiens','Homo'),'parent'=c(9605,207598),'rank'=c('species','genus'),stringsAsFactors=FALSE))
   expect_equal(taxonomizr:::getParentNodes(c('a'=9606,'b'=9605),tmp),data.frame('name'=c('Homo sapiens','Homo'),'parent'=c(9605,207598),'rank'=c('species','genus'),stringsAsFactors=FALSE))
   expect_equal(taxonomizr:::getParentNodes(c(NA,9606,9999999,9606),tmp),data.frame('name'=c(NA,'Homo sapiens',NA,'Homo sapiens'),'parent'=c(NA,9605,NA,9605),'rank'=c(NA,'species',NA,'species'),stringsAsFactors=FALSE))
-  with_mock(`RSQLite::dbGetQuery`=function(...){data.frame('id'=c(9999))},expect_error(taxonomizr:::getParentNodes(c(9606,9605),tmp),'finding'))
-  with_mock(`RSQLite::dbGetQuery`=function(...){data.frame('id'=c(9605,9606))},expect_error(taxonomizr:::getParentNodes(c(9606,9605),tmp),'finding'))
+  with_mocked_bindings(`dbGetQuery`=function(...){data.frame('id'=c(9999))},expect_error(taxonomizr:::getParentNodes(c(9606,9605),tmp),'finding'),.package="RSQLite")
+  with_mocked_bindings(`dbGetQuery`=function(...){data.frame('id'=c(9605,9606))},expect_error(taxonomizr:::getParentNodes(c(9606,9605),tmp),'finding'),.package="RSQLite")
 })
 
 test_that("Test checkDownloadMd5",{
@@ -609,9 +609,9 @@ test_that("Test accessionToTaxa",{
   expect_equal(accessionToTaxa(c("Z17430","NOTREAL","X62402","Z17429","X62402"),sqlFile,'base'),c(3702,NA,9606,3702,9606))
   expect_equal(accessionToTaxa(as.factor(c("Z17430","NOTREAL","X62402","Z17429","X62402")),sqlFile,'base'),c(3702,NA,9606,3702,9606))
   expect_equal(accessionToTaxa(c("Z17430","NOTREAL","X62402","Z17429","X62402"),sqlFile,'version'),as.integer(c(NA,NA,NA,NA,NA)))
-  with_mock(`RSQLite::dbGetQuery`=function(...){data.frame('accession'=c(9605,9606))},expect_error(accessionToTaxa(c("Z17430.1","X62402.1"),sqlFile),'mismatch'))
-  with_mock(`RSQLite::dbGetQuery`=function(...){data.frame('accession'=c("X62402.1","Z17430.1"))},expect_error(accessionToTaxa(c("Z17430.1","X62402.1"),sqlFile),'mismatch'))
-  with_mock(`RSQLite::dbGetQuery`=function(...){data.frame('accession'=c("NOTREAL","NOTREAL2","NOTREAL3"))},expect_error(accessionToTaxa(c("Z17430.1","X62402.1"),sqlFile),'mismatch'))
+  with_mocked_bindings(`dbGetQuery`=function(...){data.frame('accession'=c(9605,9606))},expect_error(accessionToTaxa(c("Z17430.1","X62402.1"),sqlFile),'mismatch'),.package="RSQLite")
+  with_mocked_bindings(`dbGetQuery`=function(...){data.frame('accession'=c("X62402.1","Z17430.1"))},expect_error(accessionToTaxa(c("Z17430.1","X62402.1"),sqlFile),'mismatch'),.package="RSQLite")
+  with_mocked_bindings(`dbGetQuery`=function(...){data.frame('accession'=c("NOTREAL","NOTREAL2","NOTREAL3"))},expect_error(accessionToTaxa(c("Z17430.1","X62402.1"),sqlFile),'mismatch'),.package="RSQLite")
 })
 
 test_that("Test condenseTaxa",{
@@ -661,7 +661,7 @@ test_that("Test getNamesAndNodes",{
   #windows throws "incomplete block on file"
   expect_error(getNamesAndNodes(tmp,fakeFile,'NOTREAL.FILE'),'finding|incomplete')
   tmp<-tempfile()
-  with_mock(`file.copy`=function(...)TRUE,expect_error(getNamesAndNodes(tmp,fakeFile),'copying'))
+  with_mocked_bindings(`file.copy`=function(...)TRUE,expect_error(getNamesAndNodes(tmp,fakeFile),'copying'),.package='base')
   if(.Platform$OS.type == "windows")file.remove('fakeNamesNodes.tar')
   tmp<-tempfile()
   dir.create(tmp)
@@ -973,16 +973,16 @@ test_that("Test resumableDownload",{
   expect_equal(readLines(tmpFile2),c('This','is','a','test'))
   expect_error(resumableDownload('file://NOTAREALFILE.FAKE',tmpFile2),'error')
   expect_silent(resumableDownload(sprintf('file://%s',tmpFile),tmpFile2,tmpFile=tmpFile3,quiet=TRUE)) #this doesn't actually verify curl is silent
-  expect_error(with_mock('curl::multi_download'=function(...){data.frame(success=FALSE,status_code=200)},resumableDownload('file://NOTAREALFILE.FAKE',tmpFile2)()),'^Download failed.$')
-  expect_error(with_mock('curl::multi_download'=function(...){data.frame(success=FALSE,status_code=200,'error'='XYZ')},resumableDownload('file://NOTAREALFILE.FAKE',tmpFile2)),'XYZ.')
-  expect_error(with_mock('curl::multi_download'=function(...){data.frame(success=FALSE,status_code=200,'error'='XYZ')},resumableDownload('file://NOTAREALFILE.FAKE',tmpFile2)),'XYZ".$')
-  expect_error(with_mock('curl::multi_download'=function(...){data.frame(success=TRUE,status_code=400)},resumableDownload('file://NOTAREALFILE.FAKE',tmpFile2)),'400')
-  expect_error(with_mock('curl::multi_download'=function(xx,yy,...){file.copy(xx,yy);data.frame(success=TRUE,status_code=200)},resumableDownload(tmpFile,tmpFile2)),NA)
-  expect_error(with_mock('curl::multi_download'=function(xx,yy,...){file.copy(xx,yy);data.frame(success=TRUE,status_code=206)},resumableDownload(tmpFile,tmpFile2)),NA)
-  expect_error(with_mock('curl::multi_download'=function(xx,yy,...){file.copy(xx,yy);data.frame(success=TRUE,status_code=0)},resumableDownload(tmpFile,tmpFile2)),NA)
+  expect_error(with_mocked_bindings('multi_download'=function(...){data.frame(success=FALSE,status_code=200)},resumableDownload('file://NOTAREALFILE.FAKE',tmpFile2)(),.package='curl'),'^Download failed.$')
+  expect_error(with_mocked_bindings('multi_download'=function(...){data.frame(success=FALSE,status_code=200,'error'='XYZ')},resumableDownload('file://NOTAREALFILE.FAKE',tmpFile2),.package='curl'),'XYZ.')
+  expect_error(with_mocked_bindings('multi_download'=function(...){data.frame(success=FALSE,status_code=200,'error'='XYZ')},resumableDownload('file://NOTAREALFILE.FAKE',tmpFile2),.package='curl'),'XYZ".$')
+  expect_error(with_mocked_bindings('multi_download'=function(...){data.frame(success=TRUE,status_code=400)},resumableDownload('file://NOTAREALFILE.FAKE',tmpFile2),.package='curl'),'400')
+  expect_error(with_mocked_bindings('multi_download'=function(xx,yy,...){file.copy(xx,yy);data.frame(success=TRUE,status_code=200)},resumableDownload(tmpFile,tmpFile2),.package='curl'),NA)
+  expect_error(with_mocked_bindings('multi_download'=function(xx,yy,...){file.copy(xx,yy);data.frame(success=TRUE,status_code=206)},resumableDownload(tmpFile,tmpFile2),.package='curl'),NA)
+  expect_error(with_mocked_bindings('multi_download'=function(xx,yy,...){file.copy(xx,yy);data.frame(success=TRUE,status_code=0)},resumableDownload(tmpFile,tmpFile2),.package='curl'),NA)
   #too small download so just deleted
-  expect_error(with_mock('curl::multi_download'=function(...){writeLines('XXX',list(...)[[2]]);data.frame(success=FALSE,status_code=400,'error'='XYZ')},resumableDownload('file://NOTAREALFILE.FAKE',tmpFile2,tmpFile=tmpFile3)),'"XYZ".$') #an inverted regex for Progress would be better
-  expect_error(with_mock('curl::multi_download'=function(...){writeLines(paste(rep('X',10000),collapse='Y'),list(...)[[2]]);data.frame(success=FALSE,status_code=400,'error'='XYZ')},resumableDownload('file://NOTAREALFILE.FAKE',tmpFile2,tmpFile=tmpFile3)),'Progress')
+  expect_error(with_mocked_bindings('multi_download'=function(...){writeLines('XXX',list(...)[[2]]);data.frame(success=FALSE,status_code=400,'error'='XYZ')},resumableDownload('file://NOTAREALFILE.FAKE',tmpFile2,tmpFile=tmpFile3),.package='curl'),'"XYZ".$') #an inverted regex for Progress would be better
+  expect_error(with_mocked_bindings('multi_download'=function(...){writeLines(paste(rep('X',10000),collapse='Y'),list(...)[[2]]);data.frame(success=FALSE,status_code=400,'error'='XYZ')},resumableDownload('file://NOTAREALFILE.FAKE',tmpFile2,tmpFile=tmpFile3),.package='curl'),'Progress')
   unlink(tmpFile3)
   expect_error(resumableDownload("https://ftp.ncbi.nih.gov/NONEXISTENT__/PATH__/notARealFile.txt",tmpFile3),'404')
   expect_false(file.exists(tmpFile3))
