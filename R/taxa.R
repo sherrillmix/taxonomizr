@@ -486,6 +486,7 @@ checkDownloadMd5<-function(url,file,errorIfNoMd5=FALSE){
 #' @param ids a vector of ids to find taxonomy for
 #' @param sqlFile a string giving the path to a SQLite file containing names and nodes tables
 #' @param desiredTaxa a vector of strings giving the desired taxa levels
+#' @param getNames a logical indicating whether to convert taxon IDs to names if TRUE or simply return the taxon ID if FALSE
 #' @param ... legacy additional arguments to original data.table based getTaxonomy function. Used only for support for deprecated function, do not use in new code.
 #' @return a matrix of taxonomic strings with a row for each id and a column for each desiredTaxa rank
 #' @export
@@ -557,7 +558,7 @@ checkDownloadMd5<-function(url,file,errorIfNoMd5=FALSE){
 #' writeLines(nodesText,tmpFile)
 #' taxaNodes<-read.nodes.sql(tmpFile,sqlFile)
 #' getTaxonomy(c(9606,9605),sqlFile)
-getTaxonomy<-function(ids,sqlFile='nameNode.sqlite',..., desiredTaxa=c('superkingdom','phylum','class','order','family','genus','species')){
+getTaxonomy<-function(ids,sqlFile='nameNode.sqlite',..., desiredTaxa=c('superkingdom','phylum','class','order','family','genus','species'),getNames=TRUE){
   if('data.table' %in% class(sqlFile)){
     return(getTaxonomy2(ids,sqlFile,...,desiredTaxa=desiredTaxa))
   }
@@ -571,7 +572,8 @@ getTaxonomy<-function(ids,sqlFile='nameNode.sqlite',..., desiredTaxa=c('superkin
     parents<-getParentNodes(currentIds[stillWorking],sqlFile)
     for(ii in desiredTaxa[desiredTaxa %in% parents$rank]){
       selector<-parents[,'rank']==ii&!is.na(parents[,'rank'])
-      taxa[which(stillWorking)[selector],ii]<-parents[selector,'name']
+      if(getNames)taxa[which(stillWorking)[selector],ii]<-parents[selector,'name']
+      else taxa[which(stillWorking)[selector],ii]<-currentIds[which(stillWorking)[selector]]
     }
     rep<-rep+1
     currentIds[stillWorking]<-parents$parent
