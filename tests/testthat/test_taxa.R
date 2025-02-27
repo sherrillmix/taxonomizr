@@ -212,6 +212,7 @@ test_that("Test read.accession2taxid",{
 })
 
 test_that("Test getTaxonomy and getRawTaxonomy and getDescendants",{
+
   namesText<-c(
     "1\t|\tall\t|\t\t|\tsynonym\t|",
     "1\t|\troot\t|\t\t|\tscientific name\t|",
@@ -267,12 +268,21 @@ test_that("Test getTaxonomy and getRawTaxonomy and getDescendants",{
     "Eukaryota","Chordata","Mammalia","Primates","Hominidae","Homo","Homo sapiens",
     "Eukaryota","Chordata","Mammalia","Primates","Hominidae","Homo",NA
   ),byrow=TRUE,dimnames=list(c('9606','9605'),desiredTaxa),nrow=2)
+  outID<-matrix(c(
+    "2759","7711","40674","9443","9604","9605","9606",
+    "2759","7711","40674","9443","9604","9605",NA
+  ),byrow=TRUE,dimnames=list(c('9606','9605'),desiredTaxa),nrow=2)
   expect_equal(getTaxonomy(c(9606,9605),tmp,desiredTaxa=desiredTaxa),out)
+  expect_equal(getTaxonomy(c(9606,9605),tmp,desiredTaxa=desiredTaxa,getNames=TRUE),out)
+  expect_equal(getTaxonomy(c(9606,9605),tmp,desiredTaxa=desiredTaxa,getNames=FALSE),outID)
   expect_equal(getTaxonomy(c(9605,9606,9605),tmp,desiredTaxa=desiredTaxa),out[c(2,1,2),])
+  expect_equal(getTaxonomy(c(9605,9606,9605),tmp,desiredTaxa=desiredTaxa,getNames=FALSE),outID[c(2,1,2),])
   expect_equal(getTaxonomy(c(9605,9606,9605),tmp,desiredTaxa=desiredTaxa[3:1]),out[c(2,1,2),3:1])
   expect_equal(getTaxonomy(9606,tmp,desiredTaxa='NOTREAL'),matrix(as.character(NA),dimnames=list(9606,'NOTREAL')))
+  expect_equal(getTaxonomy(9606,tmp,desiredTaxa='NOTREAL',getNames=FALSE),matrix(as.character(NA),dimnames=list(9606,'NOTREAL')))
   expect_equal(getTaxonomy(9999999,tmp,desiredTaxa='class'),matrix(as.character(NA),dimnames=list(9999999,'class')))
   expect_equal(getTaxonomy(c(9999999,9606),tmp,desiredTaxa='class'),matrix(c(NA,'Mammalia'),dimnames=list(c('9999999','   9606'),'class'),nrow=2))
+  expect_equal(getTaxonomy(c(9999999,9606),tmp,desiredTaxa='class',getNames=FALSE),matrix(c(NA,'40674'),dimnames=list(c('9999999','   9606'),'class'),nrow=2))
   expect_equal(getTaxonomy(c(),tmp,desiredTaxa=desiredTaxa),NULL)
   desiredRaw<-list(`9606` = c(species = "Homo sapiens", genus = "Homo", subfamily = "Homininae", family = "Hominidae", superfamily = "Hominoidea", parvorder = "Catarrhini", infraorder = "Simiiformes", suborder = "Haplorrhini", order = "Primates", superorder = "Euarchontoglires", `no rank` = "Boreoeutheria", `no rank.1` = "Eutheria", `no rank.2` = "Theria", class = "Mammalia", `no rank.3` = "Amniota", `no rank.4` = "Tetrapoda", `no rank.5` = "Dipnotetrapodomorpha", `no rank.6` = "Sarcopterygii", `no rank.7` = "Euteleostomi", `no rank.8` = "Teleostomi", `no rank.9` = "Gnathostomata", `no rank.10` = "Vertebrata", subphylum = "Craniata", phylum = "Chordata", `no rank.11` = "Deuterostomia", `no rank.12` = "Bilateria", `no rank.13` = "Eumetazoa", kingdom = "Metazoa", `no rank.14` = "Opisthokonta", superkingdom = "Eukaryota", `no rank.15` = "cellular organisms"), `9605` = c(genus = "Homo", subfamily = "Homininae", family = "Hominidae", superfamily = "Hominoidea", parvorder = "Catarrhini", infraorder = "Simiiformes", suborder = "Haplorrhini", order = "Primates", superorder = "Euarchontoglires", `no rank` = "Boreoeutheria", `no rank.1` = "Eutheria", `no rank.2` = "Theria", class = "Mammalia", `no rank.3` = "Amniota", `no rank.4` = "Tetrapoda", `no rank.5` = "Dipnotetrapodomorpha", `no rank.6` = "Sarcopterygii", `no rank.7` = "Euteleostomi", `no rank.8` = "Teleostomi", `no rank.9` = "Gnathostomata", `no rank.10` = "Vertebrata", subphylum = "Craniata", phylum = "Chordata", `no rank.11` = "Deuterostomia", `no rank.12` = "Bilateria", `no rank.13` = "Eumetazoa", kingdom = "Metazoa", `no rank.14` = "Opisthokonta", superkingdom = "Eukaryota", `no rank.15` = "cellular organisms"))
   expect_equal(getRawTaxonomy(c(9606,9605),tmp),desiredRaw)
@@ -318,7 +328,9 @@ test_that("Test getTaxonomy and getRawTaxonomy and getDescendants",{
   expect_equal(sort(getDescendants('1',tmp,'superkingdom')),sort(c('Bacteria','Eukaryota')))
   expect_warning(getDescendants("ASDASD",tmp),'coercion')
   expect_error(getDescendants(9606,tmp2),'cycle')
+
 })
+
 
 test_that("Test getTaxonomy and getRawTaxonomy with duplicated taxa ranks",{
   namesText<-c(
