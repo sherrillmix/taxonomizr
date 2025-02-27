@@ -10,3 +10,4 @@
 ^doc$
 ^Meta$
 ^tests/testthat/testthat-problems.rds$
+^_pkgdown.yml$
