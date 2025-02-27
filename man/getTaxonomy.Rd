@@ -9,7 +9,8 @@ getTaxonomy(
   sqlFile = "nameNode.sqlite",
   ...,
   desiredTaxa = c("superkingdom", "phylum", "class", "order", "family", "genus",
-    "species")
+    "species"),
+  getNames = TRUE
 )
 }
 \arguments{
@@ -20,6 +21,8 @@ getTaxonomy(
 \item{...}{legacy additional arguments to original data.table based getTaxonomy function. Used only for support for deprecated function, do not use in new code.}
 
 \item{desiredTaxa}{a vector of strings giving the desired taxa levels}
+
+\item{getNames}{a logical indicating whether to convert taxon IDs to names if TRUE or simply return the taxon ID if FALSE}
 }
 \value{
 a matrix of taxonomic strings with a row for each id and a column for each desiredTaxa rank
