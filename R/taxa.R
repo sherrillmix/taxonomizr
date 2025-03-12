@@ -123,7 +123,7 @@ read.names.sql<-function(nameFile,sqlFile='nameNode.sqlite',overwrite=FALSE){
 #' @examples
 #' nodes<-c(
 #'  "1\t|\t1\t|\tno rank\t|\t\t|\t8\t|\t0\t|\t1\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
-#'  "2\t|\t131567\t|\tsuperkingdom\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
+#'  "2\t|\t131567\t|\tdomain\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
 #'  "6\t|\t335928\t|\tgenus\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\t\t|",
 #'  "7\t|\t6\t|\tspecies\t|\tAC\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|",
 #'  "9\t|\t32199\t|\tspecies\t|\tBA\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|"
@@ -154,7 +154,7 @@ read.nodes<-function(nodeFile){
 #' @examples
 #' nodes<-c(
 #'  "1\t|\t1\t|\tno rank\t|\t\t|\t8\t|\t0\t|\t1\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
-#'  "2\t|\t131567\t|\tsuperkingdom\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
+#'  "2\t|\t131567\t|\tdomain\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
 #'  "6\t|\t335928\t|\tgenus\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\t\t|",
 #'  "7\t|\t6\t|\tspecies\t|\tAC\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|",
 #'  "9\t|\t32199\t|\tspecies\t|\tBA\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|"
@@ -386,7 +386,7 @@ read.accession2taxid<-function(taxaFiles,sqlFile,vocal=TRUE,extraSqlCommand='',i
 #' taxaNames<-read.names(tmpFile)
 #' nodesText<-c(
 #'  "1\t|\t1\t|\tno rank\t|\t\t|\t8\t|\t0\t|\t1\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
-#'   "2\t|\t131567\t|\tsuperkingdom\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
+#'   "2\t|\t131567\t|\tdomain\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
 #'   "6\t|\t335928\t|\tgenus\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\t\t|",
 #'   "7\t|\t6\t|\tspecies\t|\tAC\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|",
 #'   "9\t|\t32199\t|\tspecies\t|\tBA\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|",
@@ -402,13 +402,13 @@ read.accession2taxid<-function(taxaFiles,sqlFile,vocal=TRUE,extraSqlCommand='',i
 #'   "7776\t|\t7742\t|\tno rank", "7742\t|\t89593\t|\tno rank", "89593\t|\t7711\t|\tsubphylum",
 #'   "7711\t|\t33511\t|\tphylum", "33511\t|\t33213\t|\tno rank", "33213\t|\t6072\t|\tno rank",
 #'   "6072\t|\t33208\t|\tno rank", "33208\t|\t33154\t|\tkingdom",
-#'   "33154\t|\t2759\t|\tno rank", "2759\t|\t131567\t|\tsuperkingdom",
+#'   "33154\t|\t2759\t|\tno rank", "2759\t|\t131567\t|\tdomain",
 #'   "131567\t|\t1\t|\tno rank"
 #' )
 #' writeLines(nodesText,tmpFile)
 #' taxaNodes<-read.nodes(tmpFile)
 #' getTaxonomy2(c(9606,9605),taxaNodes,taxaNames,mc.cores=1)
-getTaxonomy2<-function(ids,taxaNodes ,taxaNames, desiredTaxa=c('superkingdom','phylum','class','order','family','genus','species'),mc.cores=1,debug=FALSE){
+getTaxonomy2<-function(ids,taxaNodes ,taxaNames, desiredTaxa=c('domain','phylum','class','order','family','genus','species'),mc.cores=1,debug=FALSE){
   .Deprecated('getTaxonomy','taxonomizr',"taxonomizr is moving from data.table to SQLite databases to improve performance. This will require changing nodes and names processing. Please see ?getTaxonomy or ?taxonomizrSwitch")
   ids<-as.numeric(ids)
   if(length(ids)==0)return(NULL)
@@ -536,7 +536,7 @@ checkDownloadMd5<-function(url,file,errorIfNoMd5=FALSE){
 #' taxaNames<-read.names.sql(tmpFile,sqlFile)
 #' nodesText<-c(
 #'  "1\t|\t1\t|\tno rank\t|\t\t|\t8\t|\t0\t|\t1\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
-#'   "2\t|\t131567\t|\tsuperkingdom\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
+#'   "2\t|\t131567\t|\tdomain\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
 #'   "6\t|\t335928\t|\tgenus\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\t\t|",
 #'   "7\t|\t6\t|\tspecies\t|\tAC\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|",
 #'   "9\t|\t32199\t|\tspecies\t|\tBA\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|",
@@ -552,13 +552,13 @@ checkDownloadMd5<-function(url,file,errorIfNoMd5=FALSE){
 #'   "7776\t|\t7742\t|\tno rank", "7742\t|\t89593\t|\tno rank", "89593\t|\t7711\t|\tsubphylum",
 #'   "7711\t|\t33511\t|\tphylum", "33511\t|\t33213\t|\tno rank", "33213\t|\t6072\t|\tno rank",
 #'   "6072\t|\t33208\t|\tno rank", "33208\t|\t33154\t|\tkingdom",
-#'   "33154\t|\t2759\t|\tno rank", "2759\t|\t131567\t|\tsuperkingdom",
+#'   "33154\t|\t2759\t|\tno rank", "2759\t|\t131567\t|\tdomain",
 #'   "131567\t|\t1\t|\tno rank"
 #' )
 #' writeLines(nodesText,tmpFile)
 #' taxaNodes<-read.nodes.sql(tmpFile,sqlFile)
 #' getTaxonomy(c(9606,9605),sqlFile)
-getTaxonomy<-function(ids,sqlFile='nameNode.sqlite',..., desiredTaxa=c('superkingdom','phylum','class','order','family','genus','species'),getNames=TRUE){
+getTaxonomy<-function(ids,sqlFile='nameNode.sqlite',..., desiredTaxa=c('domain','phylum','class','order','family','genus','species'),getNames=TRUE){
   if('data.table' %in% class(sqlFile)){
     return(getTaxonomy2(ids,sqlFile,...,desiredTaxa=desiredTaxa))
   }
@@ -637,7 +637,7 @@ getTaxonomy<-function(ids,sqlFile='nameNode.sqlite',..., desiredTaxa=c('superkin
 #' taxaNames<-read.names.sql(tmpFile,sqlFile)
 #' nodesText<-c(
 #'  "1\t|\t1\t|\tno rank\t|\t\t|\t8\t|\t0\t|\t1\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
-#'   "2\t|\t131567\t|\tsuperkingdom\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
+#'   "2\t|\t131567\t|\tdomain\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
 #'   "6\t|\t335928\t|\tgenus\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\t\t|",
 #'   "7\t|\t6\t|\tspecies\t|\tAC\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|",
 #'   "9\t|\t32199\t|\tspecies\t|\tBA\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|",
@@ -653,7 +653,7 @@ getTaxonomy<-function(ids,sqlFile='nameNode.sqlite',..., desiredTaxa=c('superkin
 #'   "7776\t|\t7742\t|\tno rank", "7742\t|\t89593\t|\tno rank", "89593\t|\t7711\t|\tsubphylum",
 #'   "7711\t|\t33511\t|\tphylum", "33511\t|\t33213\t|\tno rank", "33213\t|\t6072\t|\tno rank",
 #'   "6072\t|\t33208\t|\tno rank", "33208\t|\t33154\t|\tkingdom",
-#'   "33154\t|\t2759\t|\tno rank", "2759\t|\t131567\t|\tsuperkingdom",
+#'   "33154\t|\t2759\t|\tno rank", "2759\t|\t131567\t|\tdomain",
 #'   "131567\t|\t1\t|\tno rank", '1425170\t|\t9605\t|\tspecies'
 #' )
 #' writeLines(nodesText,tmpFile)
@@ -730,7 +730,7 @@ getDescendants<-function(ids,sqlFile='nameNode.sqlite', desiredTaxa='species'){
 #' taxaNames<-read.names.sql(tmpFile,sqlFile)
 #' nodesText<-c(
 #'  "1\t|\t1\t|\tno rank\t|\t\t|\t8\t|\t0\t|\t1\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
-#'   "2\t|\t131567\t|\tsuperkingdom\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
+#'   "2\t|\t131567\t|\tdomain\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
 #'   "6\t|\t335928\t|\tgenus\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\t\t|",
 #'   "7\t|\t6\t|\tspecies\t|\tAC\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|",
 #'   "9\t|\t32199\t|\tspecies\t|\tBA\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|",
@@ -746,7 +746,7 @@ getDescendants<-function(ids,sqlFile='nameNode.sqlite', desiredTaxa='species'){
 #'   "7776\t|\t7742\t|\tno rank", "7742\t|\t89593\t|\tno rank", "89593\t|\t7711\t|\tsubphylum",
 #'   "7711\t|\t33511\t|\tphylum", "33511\t|\t33213\t|\tno rank", "33213\t|\t6072\t|\tno rank",
 #'   "6072\t|\t33208\t|\tno rank", "33208\t|\t33154\t|\tkingdom",
-#'   "33154\t|\t2759\t|\tno rank", "2759\t|\t131567\t|\tsuperkingdom",
+#'   "33154\t|\t2759\t|\tno rank", "2759\t|\t131567\t|\tdomain",
 #'   "131567\t|\t1\t|\tno rank"
 #' )
 #' writeLines(nodesText,tmpFile)
@@ -1275,7 +1275,7 @@ makeNewick<-function(taxa,naSub='_',excludeTerminalNAs=FALSE,quote=NULL,terminat
 #'      clade.11 = "Euteleostomi", clade.12 = "Teleostomi", clade.13 = "Gnathostomata",
 #'      clade.14 = "Vertebrata", subphylum = "Craniata", phylum = "Chordata",
 #'      clade.15 = "Deuterostomia", clade.16 = "Bilateria", clade.17 = "Eumetazoa",
-#'      kingdom = "Metazoa", clade.18 = "Opisthokonta", superkingdom = "Eukaryota",
+#'      kingdom = "Metazoa", clade.18 = "Opisthokonta", domain = "Eukaryota",
 #'      'no rank' = "cellular organisms"),
 #'    '8496' = c(species = "Alligator mississippiensis",
 #'      genus = "Alligator", subfamily = "Alligatorinae", family = "Alligatoridae",
@@ -1285,7 +1285,7 @@ makeNewick<-function(taxa,naSub='_',excludeTerminalNAs=FALSE,quote=NULL,terminat
 #'      clade.7 = "Euteleostomi", clade.8 = "Teleostomi", clade.9 = "Gnathostomata",
 #'      clade.10 = "Vertebrata", subphylum = "Craniata", phylum = "Chordata",
 #'      clade.11 = "Deuterostomia", clade.12 = "Bilateria", clade.13 = "Eumetazoa",
-#'      kingdom = "Metazoa", clade.14 = "Opisthokonta", superkingdom = "Eukaryota",
+#'      kingdom = "Metazoa", clade.14 = "Opisthokonta", domain = "Eukaryota",
 #'      'no rank' = "cellular organisms"),
 #'    '38654' = c(species = "Alligator sinensis",
 #'      genus = "Alligator", subfamily = "Alligatorinae", family = "Alligatoridae",
@@ -1295,7 +1295,7 @@ makeNewick<-function(taxa,naSub='_',excludeTerminalNAs=FALSE,quote=NULL,terminat
 #'      clade.7 = "Euteleostomi", clade.8 = "Teleostomi", clade.9 = "Gnathostomata",
 #'      clade.10 = "Vertebrata", subphylum = "Craniata", phylum = "Chordata",
 #'      clade.11 = "Deuterostomia", clade.12 = "Bilateria", clade.13 = "Eumetazoa",
-#'      kingdom = "Metazoa", clade.14 = "Opisthokonta", superkingdom = "Eukaryota",
+#'      kingdom = "Metazoa", clade.14 = "Opisthokonta", domain = "Eukaryota",
 #'      'no rank' = "cellular organisms")
 #' )
 #' normalizeTaxa(rawTaxa)

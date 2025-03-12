@@ -19,12 +19,12 @@ test_that("Test read.names",{
 test_that("Test read.nodes",{
   nodes<-c(
     "1\t|\t1\t|\tno rank\t|\t\t|\t8\t|\t0\t|\t1\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
-    "2\t|\t131567\t|\tsuperkingdom\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
+    "2\t|\t131567\t|\tdomain\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
     "6\t|\t335928\t|\tgenus\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\t\t|",
     "7\t|\t6\t|\tspecies\t|\tAC\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|",
     "9\t|\t32199\t|\tspecies\t|\tBA\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|"
   )
-  out<-data.table::data.table('id'=c(1:2,6:7,9),'rank'=c('no rank','superkingdom','genus','species','species'),'parent'=c(1,131567,335928,6,32199),key='id')
+  out<-data.table::data.table('id'=c(1:2,6:7,9),'rank'=c('no rank','domain','genus','species','species'),'parent'=c(1,131567,335928,6,32199),key='id')
   expect_warning(expect_equal(read.nodes(textConnection(nodes)),out))
   expect_warning(read.nodes(textConnection(nodes)),'SQLite')
 })
@@ -57,13 +57,13 @@ test_that("Test read.names.sql",{
 test_that("Test read.nodes.sql",{
   nodes<-c(
     "1\t|\t1\t|\tno rank\t|\t\t|\t8\t|\t0\t|\t1\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
-    "2\t|\t131567\t|\tsuperkingdom\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
+    "2\t|\t131567\t|\tdomain\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
     "6\t|\t335928\t|\tgenus\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\t\t|",
     "7\t|\t6\t|\tspecies\t|\tAC\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|",
     "9\t|\t32199\t|\tspecies\t|\tBA\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|"
   )
   tmp<-tempfile()
-  out<-data.frame('id'=c(1:2,6:7,9),'rank'=c('no rank','superkingdom','genus','species','species'),'parent'=c(1,131567,335928,6,32199),stringsAsFactors=FALSE)
+  out<-data.frame('id'=c(1:2,6:7,9),'rank'=c('no rank','domain','genus','species','species'),'parent'=c(1,131567,335928,6,32199),stringsAsFactors=FALSE)
   expect_equal(read.nodes.sql(textConnection(nodes),tmp),tmp)
   expect_true(file.exists(tmp))
   expect_message(read.nodes.sql(textConnection(nodes),tmp),'contains')
@@ -240,7 +240,7 @@ test_that("Test getTaxonomy and getRawTaxonomy and getDescendants",{
   )
   nodesText<-c(
    "1\t|\t1\t|\tno rank\t|\t\t|\t8\t|\t0\t|\t1\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
-    "2\t|\t131567\t|\tsuperkingdom\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
+    "2\t|\t131567\t|\tdomain\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
     "6\t|\t335928\t|\tgenus\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\t\t|",
     "7\t|\t6\t|\tspecies\t|\tAC\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|",
     "9\t|\t32199\t|\tspecies\t|\tBA\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|",
@@ -256,14 +256,14 @@ test_that("Test getTaxonomy and getRawTaxonomy and getDescendants",{
     "7776\t|\t7742\t|\tno rank", "7742\t|\t89593\t|\tno rank", "89593\t|\t7711\t|\tsubphylum",
     "7711\t|\t33511\t|\tphylum", "33511\t|\t33213\t|\tno rank", "33213\t|\t6072\t|\tno rank",
     "6072\t|\t33208\t|\tno rank", "33208\t|\t33154\t|\tkingdom",
-    "33154\t|\t2759\t|\tno rank", "2759\t|\t131567\t|\tsuperkingdom",
+    "33154\t|\t2759\t|\tno rank", "2759\t|\t131567\t|\tdomain",
     "131567\t|\t1\t|\tno rank",  '1425170\t|\t9605\t|\tspecies',
     "1234567890\t|\t1234567891\t|\tspecies", "1234567891\t|\t40674\t|\tfamily"
   )
   tmp<-tempfile()
   read.names.sql(textConnection(namesText),tmp)
   read.nodes.sql(textConnection(nodesText),tmp)
-  desiredTaxa<-c('superkingdom','phylum','class','order','family','genus','species')
+  desiredTaxa<-c('domain','phylum','class','order','family','genus','species')
   out<-matrix(c(
     "Eukaryota","Chordata","Mammalia","Primates","Hominidae","Homo","Homo sapiens",
     "Eukaryota","Chordata","Mammalia","Primates","Hominidae","Homo",NA
@@ -284,7 +284,7 @@ test_that("Test getTaxonomy and getRawTaxonomy and getDescendants",{
   expect_equal(getTaxonomy(c(9999999,9606),tmp,desiredTaxa='class'),matrix(c(NA,'Mammalia'),dimnames=list(c('9999999','   9606'),'class'),nrow=2))
   expect_equal(getTaxonomy(c(9999999,9606),tmp,desiredTaxa='class',getNames=FALSE),matrix(c(NA,'40674'),dimnames=list(c('9999999','   9606'),'class'),nrow=2))
   expect_equal(getTaxonomy(c(),tmp,desiredTaxa=desiredTaxa),NULL)
-  desiredRaw<-list(`9606` = c(species = "Homo sapiens", genus = "Homo", subfamily = "Homininae", family = "Hominidae", superfamily = "Hominoidea", parvorder = "Catarrhini", infraorder = "Simiiformes", suborder = "Haplorrhini", order = "Primates", superorder = "Euarchontoglires", `no rank` = "Boreoeutheria", `no rank.1` = "Eutheria", `no rank.2` = "Theria", class = "Mammalia", `no rank.3` = "Amniota", `no rank.4` = "Tetrapoda", `no rank.5` = "Dipnotetrapodomorpha", `no rank.6` = "Sarcopterygii", `no rank.7` = "Euteleostomi", `no rank.8` = "Teleostomi", `no rank.9` = "Gnathostomata", `no rank.10` = "Vertebrata", subphylum = "Craniata", phylum = "Chordata", `no rank.11` = "Deuterostomia", `no rank.12` = "Bilateria", `no rank.13` = "Eumetazoa", kingdom = "Metazoa", `no rank.14` = "Opisthokonta", superkingdom = "Eukaryota", `no rank.15` = "cellular organisms"), `9605` = c(genus = "Homo", subfamily = "Homininae", family = "Hominidae", superfamily = "Hominoidea", parvorder = "Catarrhini", infraorder = "Simiiformes", suborder = "Haplorrhini", order = "Primates", superorder = "Euarchontoglires", `no rank` = "Boreoeutheria", `no rank.1` = "Eutheria", `no rank.2` = "Theria", class = "Mammalia", `no rank.3` = "Amniota", `no rank.4` = "Tetrapoda", `no rank.5` = "Dipnotetrapodomorpha", `no rank.6` = "Sarcopterygii", `no rank.7` = "Euteleostomi", `no rank.8` = "Teleostomi", `no rank.9` = "Gnathostomata", `no rank.10` = "Vertebrata", subphylum = "Craniata", phylum = "Chordata", `no rank.11` = "Deuterostomia", `no rank.12` = "Bilateria", `no rank.13` = "Eumetazoa", kingdom = "Metazoa", `no rank.14` = "Opisthokonta", superkingdom = "Eukaryota", `no rank.15` = "cellular organisms"))
+  desiredRaw<-list(`9606` = c(species = "Homo sapiens", genus = "Homo", subfamily = "Homininae", family = "Hominidae", superfamily = "Hominoidea", parvorder = "Catarrhini", infraorder = "Simiiformes", suborder = "Haplorrhini", order = "Primates", superorder = "Euarchontoglires", `no rank` = "Boreoeutheria", `no rank.1` = "Eutheria", `no rank.2` = "Theria", class = "Mammalia", `no rank.3` = "Amniota", `no rank.4` = "Tetrapoda", `no rank.5` = "Dipnotetrapodomorpha", `no rank.6` = "Sarcopterygii", `no rank.7` = "Euteleostomi", `no rank.8` = "Teleostomi", `no rank.9` = "Gnathostomata", `no rank.10` = "Vertebrata", subphylum = "Craniata", phylum = "Chordata", `no rank.11` = "Deuterostomia", `no rank.12` = "Bilateria", `no rank.13` = "Eumetazoa", kingdom = "Metazoa", `no rank.14` = "Opisthokonta", domain = "Eukaryota", `no rank.15` = "cellular organisms"), `9605` = c(genus = "Homo", subfamily = "Homininae", family = "Hominidae", superfamily = "Hominoidea", parvorder = "Catarrhini", infraorder = "Simiiformes", suborder = "Haplorrhini", order = "Primates", superorder = "Euarchontoglires", `no rank` = "Boreoeutheria", `no rank.1` = "Eutheria", `no rank.2` = "Theria", class = "Mammalia", `no rank.3` = "Amniota", `no rank.4` = "Tetrapoda", `no rank.5` = "Dipnotetrapodomorpha", `no rank.6` = "Sarcopterygii", `no rank.7` = "Euteleostomi", `no rank.8` = "Teleostomi", `no rank.9` = "Gnathostomata", `no rank.10` = "Vertebrata", subphylum = "Craniata", phylum = "Chordata", `no rank.11` = "Deuterostomia", `no rank.12` = "Bilateria", `no rank.13` = "Eumetazoa", kingdom = "Metazoa", `no rank.14` = "Opisthokonta", domain = "Eukaryota", `no rank.15` = "cellular organisms"))
   expect_equal(getRawTaxonomy(c(9606,9605),tmp),desiredRaw)
   expect_equal(getRawTaxonomy(c(9606,9605,9605,9606),tmp),desiredRaw[c(1:2,2:1)])
   expect_equal(getRawTaxonomy(c(),tmp),NULL)
@@ -303,7 +303,7 @@ test_that("Test getTaxonomy and getRawTaxonomy and getDescendants",{
   expect_warning(getRawTaxonomy('9605,123',tmp),'coercion')
   cycle<-c(
    "9606\t|\t9605\t|\tno rank\t|\t\t|\t8\t|\t0\t|\t1\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
-   "9605\t|\t9606\t|\tsuperkingdom\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|"
+   "9605\t|\t9606\t|\tdomain\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|"
   )
   tmp2<-tempfile()
   read.names.sql(textConnection(namesText),tmp2)
@@ -325,7 +325,7 @@ test_that("Test getTaxonomy and getRawTaxonomy and getDescendants",{
   expect_equal(getDescendants('1',tmp,'suborder'),c('Haplorrhini'))
   expect_equal(sort(getDescendants('1',tmp,c('suborder','species'))),sort(c('Haplorrhini','Homo sapiens','Homo heidelbergensis','MADE UP')))
   expect_equal(sort(getDescendants('1',tmp,'family')),sort(c('Hominidae',NA)))
-  expect_equal(sort(getDescendants('1',tmp,'superkingdom')),sort(c('Bacteria','Eukaryota')))
+  expect_equal(sort(getDescendants('1',tmp,'domain')),sort(c('Bacteria','Eukaryota')))
   expect_warning(getDescendants("ASDASD",tmp),'coercion')
   expect_error(getDescendants(9606,tmp2),'cycle')
 
@@ -347,7 +347,7 @@ test_that("Test getTaxonomy and getRawTaxonomy with duplicated taxa ranks",{
   )
   nodesText<-c(
    "1\t|\t1\t|\tno rank\t|\t\t|\t8\t|\t0\t|\t1\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
-    "2\t|\t1\t|\tsuperkingdom\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
+    "2\t|\t1\t|\tdomain\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
     "3\t|\t2\t|\tclade",
     "4\t|\t3\t|\tclade",
     "5\t|\t4\t|\tclade",
@@ -357,14 +357,14 @@ test_that("Test getTaxonomy and getRawTaxonomy with duplicated taxa ranks",{
   tmp<-tempfile()
   read.names.sql(textConnection(namesText),tmp)
   read.nodes.sql(textConnection(nodesText),tmp)
-  desiredTaxa<-c('superkingdom','clade')
+  desiredTaxa<-c('domain','clade')
   out<-matrix(c(
     "Bacteria","Clade A",
     "Bacteria","Clade A"
   ),byrow=TRUE,dimnames=list(c('7','6'),desiredTaxa),nrow=2)
   expect_equal(getTaxonomy(c(7,6),tmp,desiredTaxa=desiredTaxa),out)
-  expect_equal(getRawTaxonomy(c(7,6,3),tmp),list('7'=c('clade'='Clade E','clade.1'='Clade D','clade.2'='Clade C','clade.3'='Clade B','clade.4'='Clade A','superkingdom'='Bacteria'),'6'=c('clade'='Clade D','clade.1'='Clade C','clade.2'='Clade B','clade.3'='Clade A','superkingdom'='Bacteria'),'3'=c('clade'='Clade A','superkingdom'='Bacteria')))
-  expect_equal(getRawTaxonomy(c(7),tmp),list('7'=c('clade'='Clade E','clade.1'='Clade D','clade.2'='Clade C','clade.3'='Clade B','clade.4'='Clade A','superkingdom'='Bacteria')))
+  expect_equal(getRawTaxonomy(c(7,6,3),tmp),list('7'=c('clade'='Clade E','clade.1'='Clade D','clade.2'='Clade C','clade.3'='Clade B','clade.4'='Clade A','domain'='Bacteria'),'6'=c('clade'='Clade D','clade.1'='Clade C','clade.2'='Clade B','clade.3'='Clade A','domain'='Bacteria'),'3'=c('clade'='Clade A','domain'='Bacteria')))
+  expect_equal(getRawTaxonomy(c(7),tmp),list('7'=c('clade'='Clade E','clade.1'='Clade D','clade.2'='Clade C','clade.3'='Clade B','clade.4'='Clade A','domain'='Bacteria')))
 })
 
 test_that("Test getTaxonomy with deprecated data.tables",{
@@ -394,7 +394,7 @@ test_that("Test getTaxonomy with deprecated data.tables",{
   taxaNames<-expect_warning(read.names(textConnection(namesText)))
   nodesText<-c(
    "1\t|\t1\t|\tno rank\t|\t\t|\t8\t|\t0\t|\t1\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
-    "2\t|\t131567\t|\tsuperkingdom\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
+    "2\t|\t131567\t|\tdomain\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
     "6\t|\t335928\t|\tgenus\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\t\t|",
     "7\t|\t6\t|\tspecies\t|\tAC\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|",
     "9\t|\t32199\t|\tspecies\t|\tBA\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|",
@@ -410,11 +410,11 @@ test_that("Test getTaxonomy with deprecated data.tables",{
     "7776\t|\t7742\t|\tno rank", "7742\t|\t89593\t|\tno rank", "89593\t|\t7711\t|\tsubphylum",
     "7711\t|\t33511\t|\tphylum", "33511\t|\t33213\t|\tno rank", "33213\t|\t6072\t|\tno rank",
     "6072\t|\t33208\t|\tno rank", "33208\t|\t33154\t|\tkingdom",
-    "33154\t|\t2759\t|\tno rank", "2759\t|\t131567\t|\tsuperkingdom",
+    "33154\t|\t2759\t|\tno rank", "2759\t|\t131567\t|\tdomain",
     "131567\t|\t1\t|\tno rank"
   )
   taxaNodes<-expect_warning(read.nodes(textConnection(nodesText)))
-  desiredTaxa<-c('superkingdom','phylum','class','order','family','genus','species')
+  desiredTaxa<-c('domain','phylum','class','order','family','genus','species')
   out<-matrix(c(
     "Eukaryota","Chordata","Mammalia","Primates","Hominidae","Homo","Homo sapiens",
     "Eukaryota","Chordata","Mammalia","Primates","Hominidae","Homo",NA
@@ -465,7 +465,7 @@ test_that("Test getTaxonomy2",{
   taxaNames<-expect_warning(read.names(textConnection(namesText)))
   nodesText<-c(
    "1\t|\t1\t|\tno rank\t|\t\t|\t8\t|\t0\t|\t1\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
-    "2\t|\t131567\t|\tsuperkingdom\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
+    "2\t|\t131567\t|\tdomain\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
     "6\t|\t335928\t|\tgenus\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\t\t|",
     "7\t|\t6\t|\tspecies\t|\tAC\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|",
     "9\t|\t32199\t|\tspecies\t|\tBA\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|",
@@ -481,11 +481,11 @@ test_that("Test getTaxonomy2",{
     "7776\t|\t7742\t|\tno rank", "7742\t|\t89593\t|\tno rank", "89593\t|\t7711\t|\tsubphylum",
     "7711\t|\t33511\t|\tphylum", "33511\t|\t33213\t|\tno rank", "33213\t|\t6072\t|\tno rank",
     "6072\t|\t33208\t|\tno rank", "33208\t|\t33154\t|\tkingdom",
-    "33154\t|\t2759\t|\tno rank", "2759\t|\t131567\t|\tsuperkingdom",
+    "33154\t|\t2759\t|\tno rank", "2759\t|\t131567\t|\tdomain",
     "131567\t|\t1\t|\tno rank"
   )
   taxaNodes<-expect_warning(read.nodes(textConnection(nodesText)))
-  desiredTaxa<-c('superkingdom','phylum','class','order','family','genus','species')
+  desiredTaxa<-c('domain','phylum','class','order','family','genus','species')
   out<-matrix(c(
     "Eukaryota","Chordata","Mammalia","Primates","Hominidae","Homo","Homo sapiens",
     "Eukaryota","Chordata","Mammalia","Primates","Hominidae","Homo",NA
@@ -511,7 +511,7 @@ test_that("Test getTaxonomy2",{
 test_that("Test getParentNodes",{
   nodesText<-c(
    "1\t|\t1\t|\tno rank\t|\t\t|\t8\t|\t0\t|\t1\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
-    "2\t|\t131567\t|\tsuperkingdom\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
+    "2\t|\t131567\t|\tdomain\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
     "6\t|\t335928\t|\tgenus\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\t\t|",
     "7\t|\t6\t|\tspecies\t|\tAC\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|",
     "9\t|\t32199\t|\tspecies\t|\tBA\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|",
@@ -527,7 +527,7 @@ test_that("Test getParentNodes",{
     "7776\t|\t7742\t|\tno rank", "7742\t|\t89593\t|\tno rank", "89593\t|\t7711\t|\tsubphylum",
     "7711\t|\t33511\t|\tphylum", "33511\t|\t33213\t|\tno rank", "33213\t|\t6072\t|\tno rank",
     "6072\t|\t33208\t|\tno rank", "33208\t|\t33154\t|\tkingdom",
-    "33154\t|\t2759\t|\tno rank", "2759\t|\t131567\t|\tsuperkingdom",
+    "33154\t|\t2759\t|\tno rank", "2759\t|\t131567\t|\tdomain",
     "131567\t|\t1\t|\tno rank"
   )
   namesText<-c(
