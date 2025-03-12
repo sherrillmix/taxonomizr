@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">taxonomizr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.8</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -22,7 +22,7 @@
   </ul></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/sherrillmix/taxonomizr/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="nav-link" href="https://github.com/sherrillmix/taxonomizr/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
 
 
@@ -32,7 +32,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Get all taxonomy for a taxa</h1>
-      <small class="dont-index">Source: <a href="https://github.com/sherrillmix/taxonomizr/blob/HEAD/R/taxa.R" class="external-link"><code>R/taxa.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/sherrillmix/taxonomizr/blob/HEAD/R/taxa.R"><code>R/taxa.R</code></a></small>
       <div class="d-none name"><code>getRawTaxonomy.Rd</code></div>
     </div>
 
@@ -112,7 +112,7 @@
 <span class="r-in"><span><span class="va">taxaNames</span><span class="op">&lt;-</span><span class="fu"><a href="read.names.sql.html">read.names.sql</a></span><span class="op">(</span><span class="va">tmpFile</span>,<span class="va">sqlFile</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">nodesText</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span> <span class="st">"1\t|\t1\t|\tno rank\t|\t\t|\t8\t|\t0\t|\t1\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|"</span>,</span></span>
-<span class="r-in"><span>  <span class="st">"2\t|\t131567\t|\tsuperkingdom\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|"</span>,</span></span>
+<span class="r-in"><span>  <span class="st">"2\t|\t131567\t|\tdomain\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|"</span>,</span></span>
 <span class="r-in"><span>  <span class="st">"6\t|\t335928\t|\tgenus\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\t\t|"</span>,</span></span>
 <span class="r-in"><span>  <span class="st">"7\t|\t6\t|\tspecies\t|\tAC\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|"</span>,</span></span>
 <span class="r-in"><span>  <span class="st">"9\t|\t32199\t|\tspecies\t|\tBA\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|"</span>,</span></span>
@@ -128,7 +128,7 @@
 <span class="r-in"><span>  <span class="st">"7776\t|\t7742\t|\tno rank"</span>, <span class="st">"7742\t|\t89593\t|\tno rank"</span>, <span class="st">"89593\t|\t7711\t|\tsubphylum"</span>,</span></span>
 <span class="r-in"><span>  <span class="st">"7711\t|\t33511\t|\tphylum"</span>, <span class="st">"33511\t|\t33213\t|\tno rank"</span>, <span class="st">"33213\t|\t6072\t|\tno rank"</span>,</span></span>
 <span class="r-in"><span>  <span class="st">"6072\t|\t33208\t|\tno rank"</span>, <span class="st">"33208\t|\t33154\t|\tkingdom"</span>,</span></span>
-<span class="r-in"><span>  <span class="st">"33154\t|\t2759\t|\tno rank"</span>, <span class="st">"2759\t|\t131567\t|\tsuperkingdom"</span>,</span></span>
+<span class="r-in"><span>  <span class="st">"33154\t|\t2759\t|\tno rank"</span>, <span class="st">"2759\t|\t131567\t|\tdomain"</span>,</span></span>
 <span class="r-in"><span>  <span class="st">"131567\t|\t1\t|\tno rank"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines</a></span><span class="op">(</span><span class="va">nodesText</span>,<span class="va">tmpFile</span><span class="op">)</span></span></span>
@@ -153,7 +153,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>           "Vertebrata"             "Craniata"             "Chordata" </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             no rank.11             no rank.12             no rank.13 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        "Deuterostomia"            "Bilateria"            "Eumetazoa" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                kingdom             no rank.14           superkingdom </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                kingdom             no rank.14                 domain </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              "Metazoa"         "Opisthokonta"            "Eukaryota" </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             no rank.15 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   "cellular organisms" </span>
@@ -177,7 +177,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>             "Craniata"             "Chordata"        "Deuterostomia" </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             no rank.12             no rank.13                kingdom </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            "Bilateria"            "Eumetazoa"              "Metazoa" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             no rank.14           superkingdom             no rank.15 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             no rank.14                 domain             no rank.15 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         "Opisthokonta"            "Eukaryota"   "cellular organisms" </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>

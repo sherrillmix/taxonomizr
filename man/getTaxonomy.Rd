@@ -8,8 +8,7 @@ getTaxonomy(
   ids,
   sqlFile = "nameNode.sqlite",
   ...,
-  desiredTaxa = c("superkingdom", "phylum", "class", "order", "family", "genus",
-    "species"),
+  desiredTaxa = c("domain", "phylum", "class", "order", "family", "genus", "species"),
   getNames = TRUE
 )
 }
@@ -75,7 +74,7 @@ writeLines(namesText,tmpFile)
 taxaNames<-read.names.sql(tmpFile,sqlFile)
 nodesText<-c(
  "1\t|\t1\t|\tno rank\t|\t\t|\t8\t|\t0\t|\t1\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
-  "2\t|\t131567\t|\tsuperkingdom\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
+  "2\t|\t131567\t|\tdomain\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|",
   "6\t|\t335928\t|\tgenus\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\t\t|",
   "7\t|\t6\t|\tspecies\t|\tAC\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|",
   "9\t|\t32199\t|\tspecies\t|\tBA\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|",
@@ -91,7 +90,7 @@ nodesText<-c(
   "7776\t|\t7742\t|\tno rank", "7742\t|\t89593\t|\tno rank", "89593\t|\t7711\t|\tsubphylum",
   "7711\t|\t33511\t|\tphylum", "33511\t|\t33213\t|\tno rank", "33213\t|\t6072\t|\tno rank",
   "6072\t|\t33208\t|\tno rank", "33208\t|\t33154\t|\tkingdom",
-  "33154\t|\t2759\t|\tno rank", "2759\t|\t131567\t|\tsuperkingdom",
+  "33154\t|\t2759\t|\tno rank", "2759\t|\t131567\t|\tdomain",
   "131567\t|\t1\t|\tno rank"
 )
 writeLines(nodesText,tmpFile)

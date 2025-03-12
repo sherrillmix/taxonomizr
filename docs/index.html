@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">taxonomizr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.8</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -43,7 +43,7 @@
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="search.json">
 </form></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/sherrillmix/taxonomizr/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="nav-link" href="https://github.com/sherrillmix/taxonomizr/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
@@ -63,7 +63,7 @@
 <p>More specialized functions are: * <code>getId</code>: convert a biological name to taxonomic ID * <code>getRawTaxonomy</code>: find all taxonomic ranks for a taxonomic ID * <code>normalizeTaxa</code>: combine raw taxonomies with different taxonomic ranks * <code>condenseTaxa</code>: condense a set of taxa to their most specific common branch * <code>makeNewick</code>: generate a Newick formatted tree from taxonomic output * <code>getAccessions</code>: find accessions for a given taxonomic ID * <code>getDescendants</code>: find descendants for a given taxonomic ID</p>
 <p>And a simple use case might look like (see below for more details):</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sherrillmix/taxonomizr/" class="external-link">taxonomizr</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sherrillmix/taxonomizr/">taxonomizr</a></span><span class="op">)</span></span>
 <span><span class="co">#note this will require a lot of hard drive space, bandwidth and time to process all the data from NCBI</span></span>
 <span><span class="fu"><a href="reference/prepareDatabase.html">prepareDatabase</a></span><span class="op">(</span><span class="st">'accessionTaxa.sql'</span><span class="op">)</span></span>
 <span><span class="va">blastAccessions</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Z17430.1"</span>,<span class="st">"Z17429.1"</span>,<span class="st">"X62402.1"</span><span class="op">)</span> </span>
@@ -86,7 +86,7 @@
 <code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"sherrillmix/taxonomizr"</span><span class="op">)</span></span></code></pre></div>
 <p>To use the library, load it in R:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sherrillmix/taxonomizr/" class="external-link">taxonomizr</a></span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sherrillmix/taxonomizr/">taxonomizr</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="preparation">Preparation<a name="preparation"></a>
@@ -445,6 +445,13 @@ read2   gi|160426828|gb|CP000885.1|     68.46   1763    452     82      3       
 <h2 id="changelog">Changelog<a class="anchor" aria-label="anchor" href="#changelog"></a>
 </h2>
 <div class="section level3">
+<h3 id="v0111">v0.11.1<a class="anchor" aria-label="anchor" href="#v0111"></a>
+</h3>
+<ul>
+<li>Change superkingdom to domain in default taxonomic levels to match <a href="https://ncbiinsights.ncbi.nlm.nih.gov/2024/06/04/changes-ncbi-taxonomy-classifications/" class="external-link">NCBI changes</a>.</li>
+</ul>
+</div>
+<div class="section level3">
 <h3 id="v0108">v0.10.8<a class="anchor" aria-label="anchor" href="#v0108"></a>
 </h3>
 <ul>
@@ -675,8 +682,8 @@ read2   gi|160426828|gb|CP000885.1|     68.46   1763    452     82      3       
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
 <li><a href="https://cloud.r-project.org/package=taxonomizr" class="external-link">View on CRAN</a></li>
-<li><a href="https://github.com/sherrillmix/taxonomizr/" class="external-link">Browse source code</a></li>
-<li><a href="https://github.com/sherrillmix/taxonomizr/issues" class="external-link">Report a bug</a></li>
+<li><a href="https://github.com/sherrillmix/taxonomizr/">Browse source code</a></li>
+<li><a href="https://github.com/sherrillmix/taxonomizr/issues">Report a bug</a></li>
 </ul>
 </div>
 

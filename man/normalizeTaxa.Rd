@@ -38,7 +38,7 @@ rawTaxa<-list(
      clade.11 = "Euteleostomi", clade.12 = "Teleostomi", clade.13 = "Gnathostomata",
      clade.14 = "Vertebrata", subphylum = "Craniata", phylum = "Chordata",
      clade.15 = "Deuterostomia", clade.16 = "Bilateria", clade.17 = "Eumetazoa",
-     kingdom = "Metazoa", clade.18 = "Opisthokonta", superkingdom = "Eukaryota",
+     kingdom = "Metazoa", clade.18 = "Opisthokonta", domain = "Eukaryota",
      'no rank' = "cellular organisms"),
    '8496' = c(species = "Alligator mississippiensis",
      genus = "Alligator", subfamily = "Alligatorinae", family = "Alligatoridae",
@@ -48,7 +48,7 @@ rawTaxa<-list(
      clade.7 = "Euteleostomi", clade.8 = "Teleostomi", clade.9 = "Gnathostomata",
      clade.10 = "Vertebrata", subphylum = "Craniata", phylum = "Chordata",
      clade.11 = "Deuterostomia", clade.12 = "Bilateria", clade.13 = "Eumetazoa",
-     kingdom = "Metazoa", clade.14 = "Opisthokonta", superkingdom = "Eukaryota",
+     kingdom = "Metazoa", clade.14 = "Opisthokonta", domain = "Eukaryota",
      'no rank' = "cellular organisms"),
    '38654' = c(species = "Alligator sinensis",
      genus = "Alligator", subfamily = "Alligatorinae", family = "Alligatoridae",
@@ -58,7 +58,7 @@ rawTaxa<-list(
      clade.7 = "Euteleostomi", clade.8 = "Teleostomi", clade.9 = "Gnathostomata",
      clade.10 = "Vertebrata", subphylum = "Craniata", phylum = "Chordata",
      clade.11 = "Deuterostomia", clade.12 = "Bilateria", clade.13 = "Eumetazoa",
-     kingdom = "Metazoa", clade.14 = "Opisthokonta", superkingdom = "Eukaryota",
+     kingdom = "Metazoa", clade.14 = "Opisthokonta", domain = "Eukaryota",
      'no rank' = "cellular organisms")
 )
 normalizeTaxa(rawTaxa)
