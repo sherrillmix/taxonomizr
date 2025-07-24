@@ -783,7 +783,7 @@ getRawTaxonomy<-function (ids,sqlFile='nameNode.sqlite'){
 #'
 #' @param accessions a vector of NCBI accession strings to convert to taxa
 #' @param sqlFile a string giving the path to a SQLite file screated by \code{\link{read.accession2taxid}}
-#' @param version either 'version' indicating that taxaids are versioned e.g. Z17427.1 or 'base' indicating that taxaids do not have version numbers e.g. Z17427
+#' @param version either 'version' indicating that taxaids are versioned e.g. Z17427.1 or 'base' indicating that taxaids do not have version numbers e.g. Z17427 (default: 'version')
 #' @return a vector of NCBI taxa ids
 #' @export
 #' @references \url{https://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/}
@@ -1173,7 +1173,7 @@ prepareDatabase<-function(sqlFile='nameNode.sqlite',tmpDir='.',getAccessions=TRU
 #' Find accessions numbers for a given taxa ID the NCBI taxonomy. This will be pretty slow unless the database was built with indexTaxa=TRUE since the database would not have an index for taxaId.
 #' @param taxaId a vector of taxonomic IDs
 #' @param sqlFile a string giving the path to a SQLite file created by \code{\link{read.accession2taxid}}
-#' @param version either 'version' indicating that taxaids are versioned e.g. Z17427.1 or 'base' indicating that taxaids do not have version numbers e.g. Z17427
+#' @param version either 'version' indicating that taxaids are versioned e.g. Z17427.1 or 'base' indicating that taxaids do not have version numbers e.g. Z17427 (default: 'version')
 #' @param limit return only this number of accessions or NULL for no limits
 #' @return a vector of character strings giving taxa IDs (potentially comma concatenated for any taxa with ambiguous names)
 #' @seealso \code{\link{read.accession2taxid}}

@@ -10,8 +10,8 @@ Authors@R: c(person("Scott", "Sherrill-Mix", role = c("aut", "cre"),
 BugReports: https://github.com/sherrillmix/taxonomizr/issues
 Description: Functions for assigning taxonomy to NCBI accession numbers and taxon IDs based on NCBI's accession2taxid and taxdump files. This package allows the user to download NCBI data dumps and create a local database for fast and local taxonomic assignment.
 URL: https://github.com/sherrillmix/taxonomizr/
-Version: 0.11.1
-Date: 2025-03-12
+Version: 0.11.2
+Date: 2025-07-23
 Suggests:
     testthat,
     knitr,
