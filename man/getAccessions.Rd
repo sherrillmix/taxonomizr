@@ -11,7 +11,7 @@ getAccessions(taxaId, sqlFile, version = c("version", "base"), limit = NULL)
 
 \item{sqlFile}{a string giving the path to a SQLite file created by \code{\link{read.accession2taxid}}}
 
-\item{version}{either 'version' indicating that taxaids are versioned e.g. Z17427.1 or 'base' indicating that taxaids do not have version numbers e.g. Z17427}
+\item{version}{either 'version' indicating that taxaids are versioned e.g. Z17427.1 or 'base' indicating that taxaids do not have version numbers e.g. Z17427 (default: 'version')}
 
 \item{limit}{return only this number of accessions or NULL for no limits}
 }
